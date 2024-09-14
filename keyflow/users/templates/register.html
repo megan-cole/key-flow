@@ -1,0 +1,9 @@
+<h>Sign Up Page</h>
+
+{%block content%}
+<form action="users/" method = "POST">
+    {{ form }}
+    {% csrf_token %}
+    <button>Sign Up</button>
+</form>
+{%endblock%}
