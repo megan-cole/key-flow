@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'typetest.apps.TypetestConfig'   #typetest/apps.py
+    'typetest.apps.TypetestConfig',   #typetest/apps.py
+    'users.apps.UsersConfig',         #users/app.py
 ]
 
 MIDDLEWARE = [
