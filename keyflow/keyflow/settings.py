@@ -79,8 +79,12 @@ WSGI_APPLICATION = 'keyflow.wsgi.application'
 #update database here*****
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'root',
+        'PASSWORD': 'keyflow12!',
+        'HOST': 'keyflow.c10qkasu88gl.us-east-2.rds.amazonaws.com',
+        'PORT': '5432'
     }
 }
 
