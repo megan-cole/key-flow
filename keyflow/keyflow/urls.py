@@ -23,10 +23,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('typetest.urls')),
-    path('', RedirectView.as_view(url='typetest/')),
-    path('', include('users.urls')),
-    path('', RedirectView.as_view(url='users/register'))
+    path('', include('home.urls'))
 ]
+
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
