@@ -1,24 +1,14 @@
 from django.db import models
 from django.urls import reverse
+from users.models import Accounts
 
-# Create your models here.
 
-"""class TestStats(models.Model):
-    #A typical class defining a model, derived from the Model class.
-
-    # Fields
-    wpm = models.IntegerField(defualt=0)
-    # …
-
-    # Metadata
-    class Meta:
-        ordering = ['-my_field_name']
-
-    # Methods
-    def get_absolute_url(self):
-        #Returns the URL to access a particular instance of MyModelName.
-        return reverse('model-detail-view', args=[str(self.id)])
-
-    def __str__(self):
-        #String for representing the MyModelName object (in Admin site etc.).
-        return self.wpm"""
+# Table that stores information about users stats on different modes
+class Statistics(models.Model):
+    username = models.ForeignKey(Accounts,on_delete=models.CASCADE)
+    gameMode = models.CharField(max_length=64)
+    wpm = models.PositiveIntegerField()
+    accuracy = models.PositiveIntegerField()
+    # letters missed is a dictionary that will contain (missed letters : frequency)
+    lettersMissed = models.JSONField(default=dict,blank=True)  
+    
