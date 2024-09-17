@@ -85,7 +85,7 @@ DATABASES = {
         'USER': 'root',
         'PASSWORD': 'keyflow12!',
         'HOST': 'keyflow.c10qkasu88gl.us-east-2.rds.amazonaws.com',
-        'PORT': '5432'
+        'PORT': '8080'
     }
 }
 
