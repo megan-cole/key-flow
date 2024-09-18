@@ -1,0 +1,11 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<body>
+    <form action="users/register/" method = "POST">
+        {% csrf_token %}
+        {{ form }}
+        <button>Sign Up</button>
+    </form>
+</body>
