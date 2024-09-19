@@ -3,9 +3,9 @@
 <html lang="en">
 
 <body>
-    <form action="/" method = "POST">
+    <form action="/register/" method = "post">
         {% csrf_token %}
         {{ form }}
-        <button>Sign Up</button>
+        <input type = "submit" value="Sign Up" />
     </form>
 </body>

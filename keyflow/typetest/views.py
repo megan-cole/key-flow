@@ -11,12 +11,16 @@ def typetest(request):
 
 def register_view(request):
     if request.method == "POST":
-        print("bello")
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            print("hello")
-            form.save()
-            return redirect("/")
-
+            try:
+                data = form.cleaned_data
+                newuser = Accounts.objects.create(username=data['username'], emailAddress=data['emailAddress'], firstName=data['firstName'], lastName=data['lastName'], password=['password2'], battlePass=data['battlePass'])
+                newuser.save()
+                return redirect("/")
+            except Exception as e:
+                print(e)
+            #finally:
+                
     form = UserRegistrationForm()
     return render(request, "register.html", {"form": form})

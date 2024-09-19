@@ -7,7 +7,6 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
     dependencies = [
         ("typetest", "0001_initial"),
-        ("users", "0003_initial"),
     ]
 
     operations = [
@@ -15,7 +14,7 @@ class Migration(migrations.Migration):
             model_name="statistics",
             name="username",
             field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, to="users.accounts"
+                on_delete=django.db.models.deletion.CASCADE, to="typetest.accounts"
             ),
         ),
         migrations.DeleteModel(

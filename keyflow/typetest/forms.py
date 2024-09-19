@@ -2,11 +2,11 @@ from django import forms
 from django.contrib.auth.models import User  
 from django.contrib.auth.forms import UserCreationForm  
 from django.core.exceptions import ValidationError  
-from django.forms.fields import EmailField  
-from django.forms.forms import Form  
+from django.forms.fields import EmailField 
+from django.forms import ModelForm 
+from django.forms.forms import Form 
 
-class UserRegistrationForm(UserCreationForm):
-
+class UserRegistrationForm(Form):
     #form fields
     username = forms.CharField(label="Username", max_length=64)
     emailAddress = forms.EmailField(label="Email", max_length=64)
@@ -16,6 +16,7 @@ class UserRegistrationForm(UserCreationForm):
     password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
     battlePass = forms.BooleanField(label="BattlePass", required=False)
 
+    '''
     #function to check if username already exists
     def username_clean(self):  
         username = self.cleaned_data['username'].lower()  
@@ -40,10 +41,5 @@ class UserRegistrationForm(UserCreationForm):
         if password1 and password2 and password1 != password2:  
             raise ValidationError("Password don't match")  
         return password2 
-
-    def save(self, commit = True): 
-        username = username_clean()
-        emailAddress = email_clean()
-        password2 = clean_password()
-        user = Accounts(username=username, firstName=fistName, lastName=lastName, password=password2, emailAddress=emailAddress, battlePass=battlePass)  
-        return user 
+    '''
+         

@@ -1,6 +1,5 @@
 from django.db import models
 from django.urls import reverse
-from users.models import Accounts
 
 class Accounts(models.Model):
     username = models.CharField(max_length=64)
