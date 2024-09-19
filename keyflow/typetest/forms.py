@@ -8,13 +8,13 @@ from django.forms.forms import Form
 class UserRegistrationForm(UserCreationForm):
 
     #form fields
-    username = forms.CharField(label="username", max_length=64)
-    firstName = forms.CharField(label="firstName", max_length=32)
-    lastName = forms.CharField(label="lastName", max_length=32)
-    password1 = forms.CharField(label='password', widget=forms.PasswordInput)  
+    username = forms.CharField(label="Username", max_length=64)
+    emailAddress = forms.EmailField(label="Email", max_length=64)
+    firstName = forms.CharField(label="First Name", max_length=32)
+    lastName = forms.CharField(label="Last Name", max_length=32)
+    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)  
     password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
-    emailAddress = forms.EmailField(label="email", max_length=64)
-    battlePass = forms.BooleanField(label="battlePass", default=False)
+    battlePass = forms.BooleanField(label="BattlePass", required=False)
 
     #function to check if username already exists
     def username_clean(self):  
@@ -33,7 +33,7 @@ class UserRegistrationForm(UserCreationForm):
         return email  
   
     #function to test if passwords match
-    def clean_password2(self):  
+    def password_clean(self):  
         password1 = self.cleaned_data['password1']  
         password2 = self.cleaned_data['password2']  
   
@@ -41,10 +41,9 @@ class UserRegistrationForm(UserCreationForm):
             raise ValidationError("Password don't match")  
         return password2 
 
-    def save(self, commit = True):  
-        user = User.objects.create_user(  
-            self.cleaned_data['username'],  
-            self.cleaned_data['email'],  
-            self.cleaned_data['password1']  
-        )  
+    def save(self, commit = True): 
+        username = username_clean()
+        emailAddress = email_clean()
+        password2 = clean_password()
+        user = Accounts(username=username, firstName=fistName, lastName=lastName, password=password2, emailAddress=emailAddress, battlePass=battlePass)  
         return user 

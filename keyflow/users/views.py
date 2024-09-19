@@ -5,8 +5,10 @@ from .forms import UserRegistrationForm
 
 def register_view(request):
     if request.method == "POST":
+        print("bello")
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
+            print("hello")
             form.save()
             return redirect("home/")
 
