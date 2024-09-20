@@ -3,6 +3,9 @@
 <html lang="en">
 
 <body>
+    {% if error != "" %}
+        {{error}}
+    {%endif%}
     <form action="/register/" method = "post">
         {% csrf_token %}
         {{ form }}
