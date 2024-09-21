@@ -1,24 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Typing Test</title>
-    <style>
-        body {
+{% extends 'index.html' %}
+
+{% block navbar %}
+    {% include 'navbar.html' %}
+{% endblock %}
+
+{% block content %}
+        <style>
+            body {
             margin: 0;
-            padding: 0;
-        }
-        canvas {
-            display: block;
-        }
-    </style>
-    <!-- Include Phaser.js -->
-    <script src="{% static 'Phaser/phaser.min.js' %}"></script>
-    <!-- Include your game logic script -->
-    <script src="{% static 'Phaser/game.js' %}"></script>
-</head>
-<body>
-    <!-- The Phaser game will render here -->
-</body>
-</html>
+                padding: 0;
+            }
+            canvas {
+                display: block;
+            }
+        </style>
+        
+        
+<!--Include Phaser.js 
+<script src="{% static 'Phaser/phaser.min.js' %}"></script>
+Include your game logic script 
+<script src="{% static 'Phaser/game.js' %}"></script> -->
+{% endblock %}

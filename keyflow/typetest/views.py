@@ -9,6 +9,9 @@ def index(request):
 def typetest(request):
     return render(request, 'typetest.html')
 
+def leaderboard(request):
+    return render(request, 'leaderboard.html')
+
 def register_view(request):
     if request.method == "POST":
         print("bello")

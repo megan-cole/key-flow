@@ -1,7 +1,10 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'index.html' %}
 
+{% block navbar %}
+{% include  'navbar.html' %}
+{% endblock %}
+    
+{% block content %}
 <body>
     <form action="/" method = "POST">
         {% csrf_token %}
@@ -9,3 +12,4 @@
         <button>Sign Up</button>
     </form>
 </body>
+{% endblock %}
