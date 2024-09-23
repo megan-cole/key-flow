@@ -8,15 +8,7 @@ class Accounts(models.Model):
     password = models.CharField(max_length=64)
     emailAddress = models.EmailField(max_length=64)
     battlePass = models.BooleanField(default=False)
-
-'''
- demonstration how to add an account to the Accounts table
- user = Accounts.objects.create(
-        username='megan',firstName='Megan',
-        lastName='Cole',password='password',
-        emailAddress='hi@gmail.com')
-'''
-
+    profilePicture = models.ImageField(upload_to='images/', default=None)
 
 # Table that stores information about users stats on different modes
 class Statistics(models.Model):
