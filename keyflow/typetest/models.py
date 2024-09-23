@@ -5,7 +5,7 @@ class Accounts(models.Model):
     username = models.CharField(max_length=64)
     firstName = models.CharField(max_length=32)
     lastName = models.CharField(max_length=32)
-    password = models.CharField(max_length=64)
+    password = models.CharField(max_length=256)
     emailAddress = models.EmailField(max_length=64)
     battlePass = models.BooleanField(default=False)
     profilePicture = models.ImageField(upload_to='images/', default=None)

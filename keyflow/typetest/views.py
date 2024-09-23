@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import Accounts, Statistics
 from .forms import UserRegistrationForm
+from django.contrib.auth.hashers import make_password
 # Create your views here.
 
 def index(request):
@@ -42,9 +43,13 @@ def register_view(request):
                 
                 #add user to database
                 if error == "":
-                    newuser = Accounts.objects.create(username=data['username'], emailAddress=data['emailAddress'], firstName=data['firstName'], lastName=data['lastName'], password=data['password2'], battlePass=data['battlePass'])
-                    newuser.save()
-                    return redirect("/")
+                    try:
+                        newuser = Accounts.objects.create(username=data['username'].lower(), emailAddress=data['emailAddress'].lower(), firstName=data['firstName'], lastName=data['lastName'], battlePass=data['battlePass'])
+                        newuser.password = make_password(data['password2'])
+                        newuser.save()
+                        return redirect("/")
+                    except Exception as e:
+                        print(e)
             except Exception as e:
                 print(e)
                 
