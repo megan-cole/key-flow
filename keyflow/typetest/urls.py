@@ -7,7 +7,9 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('typetest/', views.typetest, name='typetest'),
     path('register/', views.register_view, name='register'),
-    path('leaderboard/', views.leaderboard, name='leaderboard')
+    path('leaderboard/', views.leaderboard, name='leaderboard'),
+    path('generateSentences/',views.generateSentences,name='generateSentences'),
+    path('getStatistics/',views.getStatistics,name='getStatistics')
 ]
 
 if settings.DEBUG:

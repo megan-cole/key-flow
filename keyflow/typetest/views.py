@@ -2,7 +2,10 @@ from django.shortcuts import render, redirect
 from .models import Accounts, Statistics
 from .forms import UserRegistrationForm
 from django.contrib.auth.hashers import make_password
-# Create your views here.
+from wonderwords import RandomWord
+from django.http import JsonResponse
+import random
+import json
 
 def index(request):
     return render(request, 'index.html')
@@ -55,3 +58,66 @@ def register_view(request):
                 
     form = UserRegistrationForm()
     return render(request, "register.html", {"form": form, "error": error})
+
+# function to use Wonderwords to generate sentences of random words
+def generateSentences(request):
+
+    ''' 
+    right now, for the basic version, just going to generate a list of random words
+    with no conditions for the words to put in sentences for the user to type
+    '''
+
+    r = RandomWord()
+
+    # generate a list of 200 random words
+    words = r.random_words(200)
+
+    # make a string of numWords space separated randomly generated words
+    numWords = 10
+    sentence = ' '.join(random.choices(words,k=numWords))
+    
+        
+    # return a JSON response that can be fetched by Phaser to get the words
+    return JsonResponse({'sentence': sentence})
+    
+# function to retrieve the statistics from game.js that should be passed
+# whenever a game has ended
+def getStatistics(request):
+
+    if request.method == 'POST':
+
+        # parse json into dictionary
+        data = json.loads(request.body)
+
+        # this line might not be right, have to see if its getting user
+        user = request.user
+
+        # get data from game
+        wpm = data.get('wpm')
+        lettersMissed = data.get('lettersMissed')
+
+        # get sentence so we know the letter frequency
+        sentence = data.get('sentence')
+
+        # if user is an anonymous user (not logged in) don't save their stats
+        if request.user.is_authenticated:
+
+            # calculate wpm, accuracy, and letters missed and store in database
+            # just putting empty for now
+            accuracy = 0
+
+            # create the dictionary that stores frequency of letters missed
+            lettersDict = {}
+
+            '''
+            Statistics.objects.create(
+                user=user,
+                wpm = wpm,
+                accuracy = accuracy,
+                lettersMissed = lettersDict
+            )
+            '''
+        
+        return JsonResponse({'success':True})
+
+    return JsonResponse({'success':False})
