@@ -20,10 +20,14 @@ from django.urls import include
 from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('typetest.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('logout/', LogoutView.as_view(next_page='index'), name='logout'),
 ]
+
 
 urlpatterns += static(settings.STATIC_URL)
