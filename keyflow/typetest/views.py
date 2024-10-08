@@ -13,6 +13,9 @@ def index(request):
 def typetest(request):
     return render(request, 'typetest.html')
 
+def profile(request):
+    return render(request, 'profile.html')
+
 def leaderboard(request):
     return render(request, 'leaderboard.html')
 
