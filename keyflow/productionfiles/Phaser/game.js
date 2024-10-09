@@ -3,12 +3,13 @@ window.onload = function() {
         let typedText = '';  
         let startTime = 0;
         let textDisplay, userInputDisplay;
+        
 
     
-        textDisplay = scene.add.text(50, 100, textToType, { fontSize: '32px Arial', fill: '#ffffff' });  // Correct color to '#ffffff'
+        textDisplay = scene.add.text(50, 100, textToType, { fontSize: '32px Arial', fill: '#ffffff', wordWrap: {width: 600, useAdvancedWrap: true} });  // Correct color to '#ffffff'
         
      
-        userInputDisplay = scene.add.text(50, 200, typedText, { fontSize: '32px Arial', fill: '#ffffff' });
+        userInputDisplay = scene.add.text(50, 200, typedText, { fontSize: '32px Arial', fill: '#ffffff',wordWrap: {width: 600, useAdvancedWrap: true} });
 
         function startTyping() {
             if (startTime === 0) {
@@ -48,8 +49,18 @@ window.onload = function() {
         }
 
         create() {
-            const textToType = "This is sample text for our typing test in Phaser";
-            createTypingGame(this, textToType);  
+          //  const textToType = "This is sample text for our typing test in Phaser";
+            let textToType = ''
+            getSentences().then(sentence => {
+                if (sentence) {
+                    textToType = sentence
+                }
+                console.log(textToType)
+                createTypingGame(this, textToType);
+            });
+            
+
+              
         }
     }
 
@@ -66,15 +77,14 @@ window.onload = function() {
 };
 
 function getSentences() {
-    fetch('/generateSentences/')
+    return fetch('/generateSentences/')
         // get the data from the django view and parse it in javascript
         .then(response => response.json())
         .then(data => {
-            // extract the sentence
-            let sentence = data.sentence;
-            console.log("Generated Sentence: ", sentence);
-            this.displaySentence(sentence)
-        })
+            // extract the sentence and return it
+            return data.sentence;
+            
+        });
 
 }
 

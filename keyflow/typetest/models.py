@@ -8,7 +8,7 @@ class Accounts(models.Model):
     password = models.CharField(max_length=256)
     emailAddress = models.EmailField(max_length=64)
     battlePass = models.BooleanField(default=False)
-    profilePicture = models.ImageField(upload_to='images/', default=None)
+    profilePicture = models.ImageField(upload_to='images/', null=True, blank=True)
 
 # Table that stores information about users stats on different modes
 class Statistics(models.Model):
