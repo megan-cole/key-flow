@@ -6,6 +6,8 @@ from wonderwords import RandomWord
 from django.http import JsonResponse
 import random
 import json
+import math
+from django.views.decorators.csrf import csrf_exempt
 
 def index(request):
     return render(request, 'index.html')
@@ -85,7 +87,9 @@ def generateSentences(request):
     
 # function to retrieve the statistics from game.js that should be passed
 # whenever a game has ended
+@csrf_exempt
 def getStatistics(request):
+
 
     if request.method == 'POST':
 
@@ -101,23 +105,26 @@ def getStatistics(request):
 
         # get sentence so we know the letter frequency
         sentence = data.get('sentence')
+   
+        accuracy = 0
+
+        # accuracy is the # of letters missed // of num letters in sentence
+        numLettersMissed = sum(lettersMissed.values())
+        numLetters = len(sentence) - sentence.count(' ')
+        accuracy = ((numLetters-numLettersMissed) / float(numLetters)) * 100
 
         # if user is an anonymous user (not logged in) don't save their stats
         if request.user.is_authenticated:
 
             # calculate wpm, accuracy, and letters missed and store in database
-            # just putting empty for now
-            accuracy = 0
-
-            # create the dictionary that stores frequency of letters missed
-            lettersDict = {}
-
+            
+            
             '''
             Statistics.objects.create(
                 user=user,
                 wpm = wpm,
                 accuracy = accuracy,
-                lettersMissed = lettersDict
+                lettersMissed = lettersMissed
             )
             '''
         
