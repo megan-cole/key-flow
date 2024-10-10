@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.conf import settings
 
 class UserManager(BaseUserManager):
     def create_user(self, username, firstName, lastName, emailAddress, battlePass, profilePicture=None, password=None):
@@ -81,7 +82,7 @@ class CustomUser(AbstractBaseUser):
 
 # Table that stores information about users stats on different modes
 class Statistics(models.Model):
-    username = models.ForeignKey(Accounts,on_delete=models.CASCADE)
+    username = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
     gameMode = models.CharField(max_length=64)
     wpm = models.PositiveIntegerField()
     accuracy = models.PositiveIntegerField()
