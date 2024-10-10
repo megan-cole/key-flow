@@ -27,7 +27,11 @@ def register_view(request):
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             try:
+                newuser = form.save()
+                return redirect("/")
+                '''
                 data = form.cleaned_data
+
 
                 #check for duplicate username
                 usern = Accounts.objects.filter(username = data['username'].lower())
@@ -44,7 +48,7 @@ def register_view(request):
                     return render(request, "register.html", {"form": form, "error": error})
 
                 #check if passwords match
-                if data['password1'] != data['password2']:
+                if data['password'] != data['password2']:
                     error = "Passwords don't match"
                     form = UserRegistrationForm()
                     return render(request, "register.html", {"form": form, "error": error})
@@ -52,14 +56,15 @@ def register_view(request):
                 #add user to database
                 if error == "":
                     try:
-                        newuser = Accounts.objects.create(username=data['username'].lower(), emailAddress=data['emailAddress'].lower(), firstName=data['firstName'], lastName=data['lastName'], battlePass=data['battlePass'])
-                        newuser.password = make_password(data['password2'])
+                        newuser = Accounts.objects.create_user(username=data['username'].lower(), emailAddress=data['emailAddress'].lower(), password=data['password'], firstName=data['firstName'], lastName=data['lastName'], battlePass=data['battlePass'])
                         newuser.save()
                         return redirect("/")
                     except Exception as e:
-                        print(e)
+                        print("the exception is:", e)
+            '''
             except Exception as e:
                 print(e)
+            
                 
     form = UserRegistrationForm()
     return render(request, "register.html", {"form": form, "error": error})
