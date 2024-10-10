@@ -121,17 +121,28 @@ def getStatistics(request):
         # if user is an anonymous user (not logged in) don't save their stats
         if request.user.is_authenticated:
 
-            # calculate wpm, accuracy, and letters missed and store in database
-            
-            
-            '''
-            Statistics.objects.create(
-                user=user,
-                wpm = wpm,
-                accuracy = accuracy,
-                lettersMissed = lettersMissed
-            )
-            '''
+            # store data from only previous 10 attempts, so if there are more 
+            # than 10 records for this user, remove the earliest one
+            userRecords = Statistics.objects.filter(username=user,gameMode='basic')
+            numRecords = userRecords.count()
+
+            # if more than 10 records, delete earliest record
+            if numRecords >= 10:
+                earliestRecord = userRecords.order_by('id').first()
+                earliestRecord.delete()
+
+            # store data in database for user
+            try:
+                Statistics.objects.create(
+                    username = user,
+                    gameMode = 'basic',
+                    wpm = wpm,
+                    accuracy = accuracy,
+                    lettersMissed = lettersMissed
+                )
+            except Exception as e:
+                print('error', e)
+
         
         return JsonResponse({'success':True})
 
