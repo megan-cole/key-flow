@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .models import Accounts, Statistics
 from .forms import UserRegistrationForm
 from django.contrib.auth.hashers import make_password
-from wonderwords import RandomWord
+from wonderwords import RandomWord, RandomSentence
 from django.http import JsonResponse
 import random
 import json
@@ -75,20 +75,51 @@ def generateSentences(request):
     ''' 
     right now, for the basic version, just going to generate a list of random words
     with no conditions for the words to put in sentences for the user to type
-    '''
+    
 
     r = RandomWord()
 
+    # parameterize words generated with these variables, change based on 
+    # difficulty levels
+    minLength = 2
+    maxLength = 10
+
     # generate a list of 200 random words
-    words = r.random_words(200)
+    words = r.random_words(200,word_min_length=minLength,word_max_length=maxLength)
+
 
     # make a string of numWords space separated randomly generated words
     numWords = 10
-    sentence = ' '.join(random.choices(words,k=numWords))
-    
+    sentence = ' '.join(random.sample(words,k=numWords))
+    '''
+
+    # other option, instead of just generating random words, generate a bunch of sentences
+
+    # for easiest difficulty level, use bare_bone_with_adjectives
+    # for medium difficulty level, use sentence
+
+    s = RandomSentence()
+    easy, medium, hard = True, False, False # get these vals passed in
+    time = 30       # get this val passed in based on timer selected in game
+
+    numWords = (time / 60.0) * 150
+    numSentences = math.ceil(numWords / 4.0)
+    if easy:
+        sentences = [s.bare_bone_with_adjective() for _ in range(numSentences)]
+
+        # for easy, no capitalization or punctuation?
+
+        # remove capitalization and punctuation
+        for i in range(len(sentences)):
+            sentences[i] = sentences[i][:-1].lower()
+            
+        text = ' '.join(random.sample(sentences,k=numSentences))
+    elif medium:
+        sentences = [s.sentence() for _ in range(numSentences)]
+        text = ' '.join(random.sample(sentences,k=numSentences))
         
     # return a JSON response that can be fetched by Phaser to get the words
-    return JsonResponse({'sentence': sentence})
+    return JsonResponse({'text': text})
     
 # function to retrieve the statistics from game.js that should be passed
 # whenever a game has ended

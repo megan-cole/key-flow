@@ -5,6 +5,9 @@ window.onload = function() {
         let textDisplay, userInputDisplay;
         let lettersMissed = {}
         let backspace = false;   // track if the user is still backspacing
+        let currentSentence = textToType.split(' ').slice(0,6).join(' ');    // get first 6 words
+        let wordIndex = 0;       // where the next line will start
+        let curTyped = '';      // what the user has currently typed based on the line they're on
 
         // initialize letters missed dictionary to 0 for a-z
         for (let i = 97; i <= 122; i++) {
@@ -13,10 +16,10 @@ window.onload = function() {
         }
         
 
-        textDisplay = scene.add.text(50, 100, textToType, { fontSize: '32px Arial', fill: '#ffffff', wordWrap: {width: 600, useAdvancedWrap: true} });  // Correct color to '#ffffff'
+        textDisplay = scene.add.text(50, 100, currentSentence, { fontSize: '32px Arial', fill: '#ffffff', wordWrap: {width: 600, useAdvancedWrap: true} });  // Correct color to '#ffffff'
         
      
-        userInputDisplay = scene.add.text(50, 200, typedText, { fontSize: '32px Arial', fill: '#ffffff',wordWrap: {width: 600, useAdvancedWrap: true} });
+        userInputDisplay = scene.add.text(50, 200, curTyped, { fontSize: '32px Arial', fill: '#ffffff',wordWrap: {width: 600, useAdvancedWrap: true} });
 
         function startTyping() {
             if (startTime === 0) {
@@ -31,21 +34,31 @@ window.onload = function() {
             if (key.length === 1) {  
                 startTyping();
                 typedText += key;
+                curTyped += key;
 
                 // if the user had been back spacing, but now they hit this key, they probably typed
                 // this key wrong
                 if (backspace === true) {
-                    console.log('backspace true')
                     lettersMissed[key]++;
                     backspace = false;
                 }
             } else if (key === 'Backspace') {
                 typedText = typedText.slice(0, -1);  
+                curTyped = curTyped.slice(0,-1);
                 backspace = true;
             }
 
-            
-            userInputDisplay.setText(typedText);
+            userInputDisplay.setText(curTyped);
+
+            // user has typed first line, then reset their text and move onto the next line
+            if (curTyped === currentSentence && typedText != textToType) {
+                userInputDisplay.setText('');
+                wordIndex += 6;                 // move to next 6 words
+                currentSentence = textToType.split(' ').slice(wordIndex,wordIndex+6).join(' ');
+                textDisplay.setText(currentSentence);
+                curTyped = '';
+                typedText += ' ';
+            }
 
             // check if matches
             if (typedText === textToType) {
@@ -71,9 +84,9 @@ window.onload = function() {
 
             // asynchronously receive the sentence from the function that generates it from django
             let textToType = ''
-            getSentences().then(sentence => {
-                if (sentence) {
-                    textToType = sentence
+            getSentences().then(text => {
+                if (text) {
+                    textToType = text
                 }
                 createTypingGame(this, textToType);
             });
@@ -101,7 +114,7 @@ function getSentences() {
         .then(response => response.json())
         .then(data => {
             // extract the sentence and return it
-            return data.sentence;
+            return data.text;
             
         });
 
