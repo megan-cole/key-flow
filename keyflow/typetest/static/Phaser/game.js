@@ -135,14 +135,6 @@ window.onload = function() {
     const game = new Phaser.Game(config);  // initializing game
 
     getDifficulty(game);
-
-    class NewGameButton extends Phaser.Scene{
-        create(){
-            const newgamebutton = this.add.text(100, 100, 'New Game', { fill: '#0f0'})
-            .setInteractive()
-            .on('pointerdown', () => createTypingGame());
-        }
-    }
 };
 
 /*
