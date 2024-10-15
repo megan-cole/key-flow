@@ -70,6 +70,7 @@ def register_view(request):
     return render(request, "register.html", {"form": form, "error": error})
 
 # function to use Wonderwords to generate sentences of random words
+@csrf_exempt
 def generateSentences(request):
 
     ''' 
@@ -97,14 +98,16 @@ def generateSentences(request):
 
     # for easiest difficulty level, use bare_bone_with_adjectives
     # for medium difficulty level, use sentence
+    if request.method == 'POST':
+
+        difficulty = json.loads(request.body).get('difficulty','easy')
 
     s = RandomSentence()
-    easy, medium, hard = True, False, False # get these vals passed in
-    time = 30       # get this val passed in based on timer selected in game
+    time = 5       # get this val passed in based on timer selected in game
 
     numWords = (time / 60.0) * 150
     numSentences = math.ceil(numWords / 4.0)
-    if easy:
+    if difficulty.lower() == 'easy':
         sentences = [s.bare_bone_with_adjective() for _ in range(numSentences)]
 
         # for easy, no capitalization or punctuation?
@@ -114,12 +117,17 @@ def generateSentences(request):
             sentences[i] = sentences[i][:-1].lower()
             
         text = ' '.join(random.sample(sentences,k=numSentences))
-    elif medium:
+    elif difficulty.lower() == 'medium':
         sentences = [s.sentence() for _ in range(numSentences)]
         text = ' '.join(random.sample(sentences,k=numSentences))
-        
+    elif difficulty.lower()=='hard':
+        # add customizations later
+        sentences = [s.sentence() for _ in range(numSentences)]
+        text = ' '.join(random.sample(sentences,k=numSentences))
+
+            
     # return a JSON response that can be fetched by Phaser to get the words
-    return JsonResponse({'text': text})
+    return JsonResponse({'text':text})
     
 # function to retrieve the statistics from game.js that should be passed
 # whenever a game has ended

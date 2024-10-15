@@ -1,8 +1,8 @@
+let textDisplay, userInputDisplay;
 window.onload = function() {
     function createTypingGame(scene, textToType) {
         let typedText = '';  
         let startTime = 0;
-        let textDisplay, userInputDisplay;
         let lettersMissed = {}
         let backspace = false;   // track if the user is still backspacing
         let currentSentence = textToType.split(' ').slice(0,6).join(' ');    // get first 6 words
@@ -14,12 +14,19 @@ window.onload = function() {
             const letter = String.fromCharCode(i);
             lettersMissed[letter] = 0;
         }
-        
+
+        if(textDisplay) {
+            textDisplay.destroy();
+        }
+        if(userInputDisplay) {
+            userInputDisplay.destroy();
+        }
 
         textDisplay = scene.add.text(50, 100, currentSentence, { fontSize: '32px Arial', fill: '#ffffff', wordWrap: {width: 600, useAdvancedWrap: true} });  // Correct color to '#ffffff'
-        
+
      
         userInputDisplay = scene.add.text(50, 200, curTyped, { fontSize: '32px Arial', fill: '#ffffff',wordWrap: {width: 600, useAdvancedWrap: true} });
+
 
         function startTyping() {
             if (startTime === 0) {
@@ -82,19 +89,21 @@ window.onload = function() {
 
         create() {
 
+        }
+
+        
+        newSentence(text) {
             // asynchronously receive the sentence from the function that generates it from django
             let textToType = ''
-            getSentences().then(text => {
-                if (text) {
-                    textToType = text
-                }
-                createTypingGame(this, textToType);
-            });
-            
 
-              
+                if (text) {
+                    textToType = text;
+                    createTypingGame(this, textToType);
+                }
+                
+            };
         }
-    }
+
 
     // create phaser game
     const config = {
@@ -106,8 +115,11 @@ window.onload = function() {
     };
 
     const game = new Phaser.Game(config);  // initializing game
+
+    getDifficulty(game);
 };
 
+/*
 function getSentences() {
     return fetch('/generateSentences/')
         // get the data from the django view and parse it in javascript
@@ -118,7 +130,7 @@ function getSentences() {
             
         });
 
-}
+}*/
 
 // function to send the statistics from phaser js to django view
 // "getStatistics"
@@ -137,3 +149,48 @@ function passStatistics(wpm, lettersMissed, sentence) {
     })
 
 }
+
+function getSen(difficulty) {
+    return fetch('/generateSentences/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            'difficulty': difficulty
+        })
+    }) 
+    // get the data from the django view and parse it in javascript
+    .then(response => response.json())
+    .then(data => {
+        // extract the sentence and return it
+        return data.text;
+        
+    })
+
+}
+
+function getDifficulty(game) {
+        let selected = false;
+
+        // get difficulty level
+        const dropdown = document.querySelectorAll('.dropdown-item');
+        const dropdownButton = document.getElementById('dropdownMenuButton');
+        dropdown.forEach(item => {
+            item.addEventListener('click', (e)=> {
+                e.preventDefault();
+                difficulty = e.currentTarget.value;
+                dropdownButton.textContent = e.currentTarget.value;
+                selected = true;
+
+
+                const scene = game.scene.getScene('TypingScene');
+                getSen(difficulty).then(text => {
+                    scene.newSentence(text);
+                })
+
+            })
+        })
+    
+}
+
