@@ -1,4 +1,4 @@
-let textDisplay, userInputDisplay;
+let textDisplay, userInputDisplay, gameDone;
 window.onload = function() {
     function createTypingGame(scene, textToType) {
         let typedText = '';  
@@ -20,6 +20,9 @@ window.onload = function() {
         }
         if(userInputDisplay) {
             userInputDisplay.destroy();
+        }
+        if(gameDone){
+            gameDone.destroy();
         }
 
         textDisplay = scene.add.text(50, 100, currentSentence, { fontSize: '32px Arial', fill: '#ffffff', wordWrap: {width: 600, useAdvancedWrap: true} });  // Correct color to '#ffffff'
@@ -75,9 +78,11 @@ window.onload = function() {
                  // pass these statistics to the function to send them back to django
                 passStatistics(wpm,lettersMissed,textToType);
 
-                scene.add.text(50, 300, `Well done! Time: ${elapsedTime.toFixed(2)}s. WPM: ${wpm}`, { fontSize: '32px Arial', fill: '#ff0000' });
+                gameDone = scene.add.text(50, 300, `Well done! Time: ${elapsedTime.toFixed(2)}s. WPM: ${wpm}`, { fontSize: '32px Arial', fill: '#ff0000' });
                 typedText = '';  //resets
                 startTime = 0;  
+                
+                
             }
         });
     }
@@ -88,8 +93,22 @@ window.onload = function() {
         }
 
         create() {
+            this.newgamebutton = this.add.text(50, 400, 'New Game', { fill: '#0f0'})
+            .setInteractive()
+            .on('pointerdown', () => getSen(difficulty).then(text => {
+                this.newSentence(text);
+            }))
+            .on('pointerover', () => this.hoverState())
+            .on('pointerout', () => this.restState());
 
         }
+
+        hoverState(){
+            this.newgamebutton.setStyle({ fill: '#ff0'});
+        }
+        restState() {
+            this.newgamebutton.setStyle({ fill: '#0f0' });
+          }
 
         
         newSentence(text) {
@@ -104,19 +123,26 @@ window.onload = function() {
             };
         }
 
-
     // create phaser game
     const config = {
         type: Phaser.AUTO,
         width: 800,
         height: 600,
-        backgroundColor: '#07ffb0',  // mint color :)
+        backgroundColor: '#142733',  // sorry it was hurting my eyes >_<
         scene: TypingScene  
     };
 
     const game = new Phaser.Game(config);  // initializing game
 
     getDifficulty(game);
+
+    class NewGameButton extends Phaser.Scene{
+        create(){
+            const newgamebutton = this.add.text(100, 100, 'New Game', { fill: '#0f0'})
+            .setInteractive()
+            .on('pointerdown', () => createTypingGame());
+        }
+    }
 };
 
 /*
