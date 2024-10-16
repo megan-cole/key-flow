@@ -24,18 +24,32 @@ window.onload = function() {
         if(gameDone){
             gameDone.destroy();
         }
+        if(scene.timeText) {
+            scene.timeText.destroy();
+        }
 
         textDisplay = scene.add.text(50, 100, currentSentence, { fontSize: '32px Arial', fill: '#ffffff', wordWrap: {width: 600, useAdvancedWrap: true} });  // Correct color to '#ffffff'
 
      
         userInputDisplay = scene.add.text(50, 200, curTyped, { fontSize: '32px Arial', fill: '#ffffff',wordWrap: {width: 600, useAdvancedWrap: true} });
-
+        
+        var timeTextStyle = {font: "32px Arial",  fill: '#99ffcc'};    // somethings are inevitable :)
+        scene.timeText = scene.add.text(16,16, "Time Elapsed: ", timeTextStyle)
 
         function startTyping() {
             if (startTime === 0) {
                 startTime = new Date().getTime();  // Start timer
             }
         }
+
+        function updateTime() {                     //updates timer
+            if (startTime > 0) {
+                const currentTime = new Date().getTime();
+                const elapsedTime = (currentTime - startTime) / 1000;
+                scene.timeText.setText("Time Elapsed: " + elapsedTime.toFixed(2) + " seconds");
+            }
+        }
+        scene.updateTime = updateTime;
         
         //user input
         scene.input.keyboard.on('keydown', function(event) {
@@ -80,7 +94,8 @@ window.onload = function() {
 
                 gameDone = scene.add.text(50, 300, `Well done! Time: ${elapsedTime.toFixed(2)}s. WPM: ${wpm}`, { fontSize: '32px Arial', fill: '#ff0000' });
                 typedText = '';  //resets
-                startTime = 0;  
+                startTime = 0;
+                scene.updateTime = null;  
                 
                 
             }
@@ -90,6 +105,8 @@ window.onload = function() {
     class TypingScene extends Phaser.Scene {
         constructor() {
             super({ key: 'TypingScene' });
+            this.timeText = null;
+            this.updateTime = null;
         }
 
         create() {
@@ -101,6 +118,12 @@ window.onload = function() {
             .on('pointerover', () => this.hoverState())
             .on('pointerout', () => this.restState());
 
+        }
+        update(){
+            if(this.updateTime)
+            {
+                this.updateTime();
+            }
         }
 
         hoverState(){
@@ -128,13 +151,21 @@ window.onload = function() {
         type: Phaser.AUTO,
         width: 800,
         height: 600,
-        backgroundColor: '#142733',  // sorry it was hurting my eyes >_<
+        backgroundColor: '#142733',  // sorry it was hurting my eyes >_< its okay i guess ;(
         scene: TypingScene  
     };
 
     const game = new Phaser.Game(config);  // initializing game
 
     getDifficulty(game);
+
+    class NewGameButton extends Phaser.Scene{
+        create(){
+            const newgamebutton = this.add.text(100, 100, 'New Game', { fill: '#0f0'})
+            .setInteractive()
+            .on('pointerdown', () => createTypingGame());
+        }
+    }
 };
 
 /*
