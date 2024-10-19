@@ -40,27 +40,6 @@ def register_view(request):
 @csrf_exempt
 def generateSentences(request):
 
-    ''' 
-    right now, for the basic version, just going to generate a list of random words
-    with no conditions for the words to put in sentences for the user to type
-    
-
-    r = RandomWord()
-
-    # parameterize words generated with these variables, change based on 
-    # difficulty levels
-    minLength = 2
-    maxLength = 10
-
-    # generate a list of 200 random words
-    words = r.random_words(200,word_min_length=minLength,word_max_length=maxLength)
-
-
-    # make a string of numWords space separated randomly generated words
-    numWords = 10
-    sentence = ' '.join(random.sample(words,k=numWords))
-    '''
-
     # other option, instead of just generating random words, generate a bunch of sentences
 
     # for easiest difficulty level, use bare_bone_with_adjectives
@@ -87,10 +66,39 @@ def generateSentences(request):
     elif difficulty.lower() == 'medium':
         sentences = [s.sentence() for _ in range(numSentences)]
         text = ' '.join(random.sample(sentences,k=numSentences))
-    elif difficulty.lower()=='hard':
-        # add customizations later
+    elif difficulty.lower() == 'hard':
+        
+        
         sentences = [s.sentence() for _ in range(numSentences)]
         text = ' '.join(random.sample(sentences,k=numSentences))
+
+        # randomly capitalize letters in the sentence
+        textLen = len(text)
+        randomIndices = random.sample(range(0,textLen),textLen//3)
+
+       
+        newText = ''
+        for i in range(len(text)):
+            if i in randomIndices:
+                newText += text[i].upper()
+            else:
+                newText += text[i]
+        # vary the punctuation characters
+        text = ''
+        hyphen = False
+        puncChars = ['.','?','!',',',':',';',':','-']
+        for i in range(len(newText)):
+            if newText[i] == '.':
+                punc = random.choice(puncChars)
+                text += punc
+                if punc == '-':
+                    hyphen = True
+            else:
+                # remove space after hyphen to combine the words
+                if hyphen:
+                    hyphen = False 
+                else:
+                    text += newText[i]
 
             
     # return a JSON response that can be fetched by Phaser to get the words
@@ -104,6 +112,7 @@ def getStatistics(request):
 
     if request.method == 'POST':
 
+
         # parse json into dictionary
         data = json.loads(request.body)
 
@@ -116,9 +125,8 @@ def getStatistics(request):
 
         # get sentence so we know the letter frequency
         sentence = data.get('sentence')
-   
-        accuracy = 0
 
+        accuracy = 0
         # accuracy is the # of letters missed // of num letters in sentence
         numLettersMissed = sum(lettersMissed.values())
         numLetters = len(sentence) - sentence.count(' ')
@@ -149,7 +157,8 @@ def getStatistics(request):
             except Exception as e:
                 print('error', e)
 
-        
+    
         return JsonResponse({'success':True})
+
 
     return JsonResponse({'success':False})

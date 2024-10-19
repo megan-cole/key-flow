@@ -15,8 +15,20 @@ window.onload = function() {
             lettersMissed[letter] = 0;
         }
 
+        let puncCodes = [33,44,45,46,58,59,63];
+        // add punctuation missed to dictionary
+        for (let i = 33; i <= 63; i++) {
+            if(puncCodes.includes(i)){
+                const ch = String.fromCharCode(i);
+                console.log('ch ==', ch);
+                lettersMissed[ch] = 0;
+
+            }
+        }
+
         if(textDisplay) {
             textDisplay.destroy();
+
         }
         if(userInputDisplay) {
             userInputDisplay.destroy();
@@ -29,7 +41,6 @@ window.onload = function() {
         }
 
         textDisplay = scene.add.text(50, 100, currentSentence, { fontSize: '32px Arial', fill: '#ffffff', wordWrap: {width: 600, useAdvancedWrap: true} });  // Correct color to '#ffffff'
-
      
         userInputDisplay = scene.add.text(50, 200, curTyped, { fontSize: '32px Arial', fill: '#ffffff',wordWrap: {width: 600, useAdvancedWrap: true} });
         
@@ -50,6 +61,9 @@ window.onload = function() {
             }
         }
         scene.updateTime = updateTime;
+
+        // reset event listener for keys
+        scene.input.keyboard.off('keydown');
         
         //user input
         scene.input.keyboard.on('keydown', function(event) {
@@ -73,6 +87,7 @@ window.onload = function() {
             }
 
             userInputDisplay.setText(curTyped);
+
 
             // user has typed first line, then reset their text and move onto the next line
             if (curTyped === currentSentence && typedText != textToType) {
@@ -112,7 +127,7 @@ window.onload = function() {
         create() {
             this.newgamebutton = this.add.text(50, 400, 'New Game', { fill: '#0f0'})
             .setInteractive()
-            .on('pointerdown', () => getSen(difficulty).then(text => {
+            .on('pointerdown', () => getSen('easy').then(text => {
                 this.newSentence(text);
             }))
             .on('pointerover', () => this.hoverState())
@@ -168,18 +183,6 @@ window.onload = function() {
     }
 };
 
-/*
-function getSentences() {
-    return fetch('/generateSentences/')
-        // get the data from the django view and parse it in javascript
-        .then(response => response.json())
-        .then(data => {
-            // extract the sentence and return it
-            return data.text;
-            
-        });
-
-}*/
 
 // function to send the statistics from phaser js to django view
 // "getStatistics"
@@ -188,7 +191,7 @@ function passStatistics(wpm, lettersMissed, sentence) {
     fetch('/getStatistics/', {
         method: 'POST',
         headers: {
-            'Content-Type': 'applications/json'
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
             wpm: wpm,
@@ -228,7 +231,7 @@ function getDifficulty(game) {
         dropdown.forEach(item => {
             item.addEventListener('click', (e)=> {
                 e.preventDefault();
-                difficulty = e.currentTarget.value;
+                let difficulty = e.currentTarget.value;
                 dropdownButton.textContent = e.currentTarget.value;
                 selected = true;
 
