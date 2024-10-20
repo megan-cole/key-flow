@@ -70,14 +70,14 @@ window.onload = function() {
             
             if (key.length === 1) {  
                 startTyping();
-                typedText += key;
-                curTyped += key;
 
-                // if the user had been back spacing, but now they hit this key, they probably typed
-                // this key wrong
-                if (backspace === true) {
-                    lettersMissed[key]++;
+                const expectedChar = currentSentence[curTyped.length];
+                if(key == expectedChar){
+                    typedText += key;
+                    curTyped += key;
                     backspace = false;
+                }else {
+                    lettersMissed[expectedChar] = (lettersMissed[expectedChar] || 0) + 1;
                 }
             } else if (key === 'Backspace') {
                 typedText = typedText.slice(0, -1);  
