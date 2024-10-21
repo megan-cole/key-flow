@@ -38,14 +38,25 @@ window.onload = function() {
         if(scene.timeText) {
             scene.timeText.destroy();
         }
+        if (scene.currentCharBox){
+             scene.currentCharBox.destroy();
+        }
 
-        textDisplay = scene.add.text(50, 100, currentSentence, { fontSize: '32px Arial', fill: '#ffffff', wordWrap: {width: 600, useAdvancedWrap: true} });  // Correct color to '#ffffff'
+        textDisplay = scene.add.text(50, 100, currentSentence, { fontSize: '32px', fontFamily:'"Consolas", monospace', fill: '#ffffff', wordWrap: {width: 600, useAdvancedWrap: true} });  // Correct color to '#ffffff'
      
-        userInputDisplay = scene.add.text(50, 200, curTyped, { fontSize: '32px Arial', fill: '#ffffff',wordWrap: {width: 600, useAdvancedWrap: true} });
+        userInputDisplay = scene.add.text(50, 200, curTyped, { fontSize: '32px', fontFamily:'"Consolas",monospace', fill: '#ffffff',wordWrap: {width: 600, useAdvancedWrap: true} });    // added monospace so each character is equilength
         
         var timeTextStyle = {font: "32px Arial",  fill: '#99ffcc'};    // somethings are inevitable :)
         scene.timeText = scene.add.text(16,16, "Time Elapsed: ", timeTextStyle)
 
+        scene.currentCharBox = scene.add.rectangle(
+            textDisplay.x+8, 
+            textDisplay.y + 20, 
+            16, 
+            32, 
+            0x808080, 
+            0.2
+        );
         function startTyping() {
             if (startTime === 0) {
                 startTime = new Date().getTime();  // Start timer
@@ -63,7 +74,6 @@ window.onload = function() {
 
         // reset event listener for keys
         scene.input.keyboard.off('keydown');
-        
         //user input
         scene.input.keyboard.on('keydown', function(event) {
             const key = event.key;
@@ -76,17 +86,19 @@ window.onload = function() {
                     typedText += key;
                     curTyped += key;
                     backspace = false;
+                    scene.currentCharBox.x +=  20;
+                    
+                    
+                    //scene.currentCharBox.setFillStyle(0x808080);
+                    //scene.setAlpha(0.2);
                 }else {
                     lettersMissed[expectedChar] = (lettersMissed[expectedChar] || 0) + 1;
+                    scene.currentCharBox.setFillStyle(0xffee8c);
+                    scene.currentCharBox.setAlpha(0.2);
                 }
-            } else if (key === 'Backspace') {
-                typedText = typedText.slice(0, -1);  
-                curTyped = curTyped.slice(0,-1);
-                backspace = true;
+           
             }
-
             userInputDisplay.setText(curTyped);
-
 
             // user has typed first line, then reset their text and move onto the next line
             if (curTyped === currentSentence && typedText != textToType) {
@@ -109,7 +121,7 @@ window.onload = function() {
                 gameDone = scene.add.text(50, 300, `Well done! Time: ${elapsedTime.toFixed(2)}s. WPM: ${wpm}`, { fontSize: '32px Arial', fill: '#ff0000' });
                 typedText = '';  //resets
                 startTime = 0;
-                scene.updateTime = null;  
+                scene.updateTime = null; 
                 
                 
             }
@@ -121,6 +133,7 @@ window.onload = function() {
             super({ key: 'TypingScene' });
             this.timeText = null;
             this.updateTime = null;
+            this.currentCharBox = null;
         }
 
         create() {
