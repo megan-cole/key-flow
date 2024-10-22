@@ -1,4 +1,4 @@
-let textDisplay, userInputDisplay, gameDone;
+let textDisplay, textDisplay2, userInputDisplay, gameDone;
 window.onload = function() {
     function createTypingGame(scene, textToType) {
         let typedText = '';  
@@ -6,7 +6,8 @@ window.onload = function() {
         let lettersMissed = {}
         let backspace = false;   // track if the user is still backspacing
         let currentSentence = textToType.split(' ').slice(0,6).join(' ');    // get first 6 words
-        let wordIndex = 0;       // where the next line will start
+        let nextSentence = textToType.split(' ').slice(6,12).join(' ');
+        let wordIndex = 6;       // where the next line will start
         let curTyped = '';      // what the user has currently typed based on the line they're on
 
         // initialize letters missed dictionary to 0 for a-z
@@ -27,7 +28,9 @@ window.onload = function() {
 
         if(textDisplay) {
             textDisplay.destroy();
-
+        }
+        if(textDisplay2){
+            textDisplay2.destroy();
         }
         if(userInputDisplay) {
             userInputDisplay.destroy();
@@ -43,8 +46,9 @@ window.onload = function() {
         }
 
         textDisplay = scene.add.text(50, 100, currentSentence, { fontSize: '32px', fontFamily:'"Consolas", monospace', fill: '#ffffff', wordWrap: {width: 600, useAdvancedWrap: true} });  // Correct color to '#ffffff'
+        textDisplay2 = scene.add.text(50, 200, nextSentence, { fontSize: '32px', fontFamily:'"Consolas", monospace', fill: '#808080', wordWrap: {width: 600, useAdvancedWrap: true} });
      
-        userInputDisplay = scene.add.text(50, 200, curTyped, { fontSize: '32px', fontFamily:'"Consolas",monospace', fill: '#ffffff',wordWrap: {width: 600, useAdvancedWrap: true} });    // added monospace so each character is equilength
+        userInputDisplay = scene.add.text(50, 300, curTyped, { fontSize: '32px', fontFamily:'"Consolas",monospace', fill: '#ffffff',wordWrap: {width: 600, useAdvancedWrap: true} });    // added monospace so each character is equilength
         
         var timeTextStyle = {font: "32px Arial",  fill: '#99ffcc'};    // somethings are inevitable :)
         scene.timeText = scene.add.text(16,16, "Time Elapsed: ", timeTextStyle)
@@ -104,8 +108,10 @@ window.onload = function() {
             if (curTyped === currentSentence && typedText != textToType) {
                 userInputDisplay.setText('');
                 wordIndex += 6;                 // move to next 6 words
-                currentSentence = textToType.split(' ').slice(wordIndex,wordIndex+6).join(' ');
+                currentSentence = nextSentence //textToType.split(' ').slice(wordIndex,wordIndex+6).join(' ');
+                nextSentence = textToType.split(' ').slice(wordIndex,wordIndex+6).join(' ');
                 textDisplay.setText(currentSentence);
+                textDisplay2.setText(nextSentence);
                 curTyped = '';
                 typedText += ' ';
             }
@@ -118,7 +124,7 @@ window.onload = function() {
                  // pass these statistics to the function to send them back to django
                 passStatistics(wpm,lettersMissed,textToType);
 
-                gameDone = scene.add.text(50, 300, `Well done! Time: ${elapsedTime.toFixed(2)}s. WPM: ${wpm}`, { fontSize: '32px Arial', fill: '#ff0000' });
+                gameDone = scene.add.text(50, 350, `Well done! Time: ${elapsedTime.toFixed(2)}s. WPM: ${wpm}`, { fontSize: '32px Arial', fill: '#ff0000' });
                 typedText = '';  //resets
                 startTime = 0;
                 scene.updateTime = null; 
@@ -137,7 +143,7 @@ window.onload = function() {
         }
 
         create() {
-            this.newgamebutton = this.add.text(50, 400, 'New Game', { fill: '#0f0'})
+            this.newgamebutton = this.add.text(50, 450, 'New Game', { fill: '#0f0'})
             .setInteractive()
             .on('pointerdown', () => getSen('easy').then(text => {
                 this.newSentence(text);
@@ -185,14 +191,6 @@ window.onload = function() {
     const game = new Phaser.Game(config);  // initializing game
 
     getDifficulty(game);
-
-    class NewGameButton extends Phaser.Scene{
-        create(){
-            const newgamebutton = this.add.text(100, 100, 'New Game', { fill: '#0f0'})
-            .setInteractive()
-            .on('pointerdown', () => createTypingGame());
-        }
-    }
 };
 
 
