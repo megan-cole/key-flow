@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Accounts, Statistics
+from .models import Account, Statistics
 from .forms import UserRegistrationForm
 from django.contrib.auth.hashers import make_password
 from wonderwords import RandomWord, RandomSentence

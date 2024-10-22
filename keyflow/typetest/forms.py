@@ -5,12 +5,12 @@ from django.core.exceptions import ValidationError
 from django.forms.fields import EmailField 
 from django.forms import ModelForm 
 from django.forms.forms import Form 
-from .models import CustomUser
+from .models import Account
 
 class UserRegistrationForm(UserCreationForm):
     #form fields
     class Meta(UserCreationForm.Meta):
-            model = CustomUser
+            model = Account
             emailAddress = forms.EmailField(label="Email", max_length=64)
             firstName = forms.CharField(label="First Name", max_length=32)
             lastName = forms.CharField(label="Last Name", max_length=32) 

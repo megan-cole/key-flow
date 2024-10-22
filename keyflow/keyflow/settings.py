@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'typetest.apps.TypetestConfig',   #typetest/apps.py
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -107,7 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'typetest.CustomUser'
+AUTH_USER_MODEL = 'typetest.Account'
 
 # settings.py
 
