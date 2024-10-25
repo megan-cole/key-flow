@@ -57,14 +57,27 @@
         <div class="diff">
         <p>Welcome to the typing test game.</p>
         <p>Difficulty Level: </p>
-            <button class="btn btn-secondary btn-extra-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <div class="btn-group">
+            <button class="btn btn-secondary btn-extra-sm dropdown-toggle" type="button" id="difficultyMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Difficulty
             </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="dropdownMenuItems">
+            <div class="dropdown-menu" aria-labelledby="difficultyMenuButton" id="difficultyMenu">
                 <button type="button" class="dropdown-item" value="Easy" name="difficulty">Easy</button>
                 <button type="button" class="dropdown-item" value="Medium" name="difficulty">Medium</button>
                 <button type="button" class="dropdown-item" value="Hard" name="difficulty">Hard</button>
             </div>
+        </div>
+        <div class="btn-group">
+        <p>Test Length:  </p>
+            <button class="btn btn-secondary btn-extra-sm dropdown-toggle" type="button" id="timerMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Duration
+            </button>
+            <div class="dropdown-menu" aria-labelledby="timerMenuButton" id="timerMenu">
+                <button type="button" class="dropdown-item" value="30" name="timer">30s</button>
+                <button type="button" class="dropdown-item" value="60" name="timer">60s</button>
+                <button type="button" class="dropdown-item" value="90" name="timer">90s</button>
+            </div>
+        </div>
         </div>
         <br>
     
