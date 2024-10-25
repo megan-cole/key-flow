@@ -1,6 +1,6 @@
 let textDisplay, textDisplay2, userInputDisplay, gameDone;
 window.onload = function() {
-    function createTypingGame(scene, textToType) {
+    function createTypingGame(scene, textToType,timer) {
         let typedText = '';  
         let startTime = 0;
         let lettersMissed = {}
@@ -9,6 +9,9 @@ window.onload = function() {
         let nextSentence = textToType.split(' ').slice(6,12).join(' ');      //get next 6 words
         let wordIndex = 6;       // where the next line will start
         let curTyped = '';      // what the user has currently typed based on the line they're on
+        let numWords = 0;
+        let elapsedTime = 0;
+        timer = parseInt(timer);
 
         // initialize letters missed dictionary to 0 for a-z
         for (let i = 97; i <= 122; i++) {
@@ -91,7 +94,11 @@ window.onload = function() {
                     curTyped += key;
                     backspace = false;
                     scene.currentCharBox.x +=  20;
-                    
+
+                    // if key is a space, count this as one word done
+                    if (key == " ") {
+                        numWords++;
+                    }
                     
                     //scene.currentCharBox.setFillStyle(0x808080);
                     //scene.setAlpha(0.2);
@@ -100,6 +107,7 @@ window.onload = function() {
                     scene.currentCharBox.setFillStyle(0xffee8c);
                     scene.currentCharBox.setAlpha(0.2);
                 }
+
            
             }
             userInputDisplay.setText(curTyped);
@@ -114,12 +122,15 @@ window.onload = function() {
                 textDisplay2.setText(nextSentence);
                 curTyped = '';
                 typedText += ' ';
+                numWords++;
             }
 
-            // check if matches
-            if (typedText === textToType) {
+            // check if matches or timer has ran out
+            if (startTime > 0)
+                elapsedTime = (new Date().getTime() - startTime) / 1000;  // elapse time
+            if (typedText === textToType || elapsedTime >= timer) {
                 const elapsedTime = (new Date().getTime() - startTime) / 1000;  // elapse time
-                const wpm = Math.floor((textToType.length / 5) / (elapsedTime / 60));  // wpm
+                const wpm = Math.floor((numWords*60) / timer)
                 
                  // pass these statistics to the function to send them back to django
                 passStatistics(wpm,lettersMissed,textToType);
@@ -145,8 +156,20 @@ window.onload = function() {
         create() {
             this.newgamebutton = this.add.text(50, 450, 'New Game', { fill: '#0f0'})
             .setInteractive()
-            .on('pointerdown', () => getSen('easy').then(text => {
-                this.newSentence(text);
+            .on('pointerdown', () => getSen('easy','30').then(text => {
+                this.newSentence(text,'30');
+
+                // reset text on buttons
+                const dropdownButton = document.getElementById('difficultyMenuButton');
+                const timerButton = document.getElementById('timerMenuButton');
+                dropdownButton.textContent = 'Easy';
+                timerButton.textContent = '30s';
+
+                // reset difficulty and timer
+                difficulty = null;
+                timer = null;
+
+                
             }))
             .on('pointerover', () => this.hoverState())
             .on('pointerout', () => this.restState());
@@ -167,13 +190,13 @@ window.onload = function() {
           }
 
         
-        newSentence(text) {
+        newSentence(text,timer) {
             // asynchronously receive the sentence from the function that generates it from django
             let textToType = ''
 
                 if (text) {
                     textToType = text;
-                    createTypingGame(this, textToType);
+                    createTypingGame(this, textToType,timer);
                 }
                 
             };
@@ -212,14 +235,15 @@ function passStatistics(wpm, lettersMissed, sentence) {
 
 }
 
-function getSen(difficulty) {
+function getSen(difficulty,timer) {
     return fetch('/generateSentences/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            'difficulty': difficulty
+            'difficulty': difficulty,
+            'timer': timer
         })
     }) 
     // get the data from the django view and parse it in javascript
@@ -232,27 +256,51 @@ function getSen(difficulty) {
 
 }
 
+let difficulty = null;
+let timer = null;
 function getDifficulty(game) {
-        let selected = false;
+        
 
         // get difficulty level
-        const dropdown = document.querySelectorAll('.dropdown-item');
-        const dropdownButton = document.getElementById('dropdownMenuButton');
+        const dropdown = document.querySelectorAll('#difficultyMenu .dropdown-item');
+        const dropdownButton = document.getElementById('difficultyMenuButton');
         dropdown.forEach(item => {
             item.addEventListener('click', (e)=> {
                 e.preventDefault();
-                let difficulty = e.currentTarget.value;
+                difficulty = e.currentTarget.value;
                 dropdownButton.textContent = e.currentTarget.value;
-                selected = true;
-
 
                 const scene = game.scene.getScene('TypingScene');
-                getSen(difficulty).then(text => {
-                    scene.newSentence(text);
-                })
+                // if a value has been chosen for both difficulty and timer, send these values
+                if(difficulty && timer) {
+                    getSen(difficulty,timer).then(text => {
+                        scene.newSentence(text,timer);
+                    })
+                }
 
             })
         })
+
+        // get timer choice
+        const timerDropdown = document.querySelectorAll('#timerMenu .dropdown-item');
+        const timerButton = document.getElementById('timerMenuButton');
+        timerDropdown.forEach(item => {
+            item.addEventListener('click', (e)=> {
+                e.preventDefault();
+                timer = e.currentTarget.value;
+                timerButton.textContent = e.currentTarget.value + 's';
+
+                const scene = game.scene.getScene('TypingScene');
+                // if a value has been chosen for both difficulty and timer, send these values
+                if (difficulty && timer) {
+                    getSen(difficulty,timer).then(text => {
+                        scene.newSentence(text,timer);
+                    })
+                }  
+
+            })
+        })
+
     
 }
 

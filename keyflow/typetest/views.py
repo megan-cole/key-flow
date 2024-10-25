@@ -47,9 +47,10 @@ def generateSentences(request):
     if request.method == 'POST':
 
         difficulty = json.loads(request.body).get('difficulty','easy')
+        timer = json.loads(request.body).get('timer','30s')
 
     s = RandomSentence()
-    time = 5       # get this val passed in based on timer selected in game
+    time = int(timer)
 
     numWords = (time / 60.0) * 150
     numSentences = math.ceil(numWords / 4.0)
