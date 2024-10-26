@@ -13,6 +13,15 @@
             <p><strong>Email:</strong> {{ user.email }}</p>
             <p><strong>Date Joined:</strong> {{ user.date_joined|date:"F j, Y" }}</p>
         </div>
+        <div class="statistics">
+            <h2>Your Statistics</h2>
+            <p><strong>Average WPM: </strong>{{avgWPM}}</p>
+            <p><strong>Average Accuracy: </strong>{{accuracy}}%</p>
+            <p><strong>Top 5 Frequently Missed Letters: </strong></p>
+            {% for item in lettersMissed %}
+                <li>{{item}}</li>
+            {% endfor %}
+        </div>
 
         <div class="profile-actions">
             <form id="logout-form" method="post" action="{% url 'logout' %}">

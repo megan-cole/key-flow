@@ -16,7 +16,37 @@ def typetest(request):
     return render(request, 'typetest.html')
 
 def profile(request):
-    return render(request, 'profile.html')
+    
+    user = request.user
+
+    # get the list of all this user's statistics
+    userRecords = Statistics.objects.filter(username=user,gameMode='basic')
+    userRecords = userRecords.values()
+
+    wpm = []
+    accuracy = []
+    lettersMissed = {}
+
+    # go through all the records
+    for record in userRecords:
+        wpm.append(record['wpm'])
+        accuracy.append(record['accuracy'])
+        
+        for letter in record['lettersMissed']:
+            lettersMissed[letter] = record['lettersMissed'][letter] + lettersMissed.get(letter,0)
+
+    # sort lettersMissed to get top 5 missed letters
+    lettersMissed = dict(sorted(lettersMissed.items(),key=lambda x : x[1],reverse=True))
+    lettersMissed = dict(list(lettersMissed.items())[0:5])
+
+    # use this dictionary to store the data that I want to send back to the profile page
+    data = {}
+    data['avgWPM'] = int((sum(wpm) / len(wpm))) if wpm else 0
+    data['accuracy'] = int((sum(accuracy) / len(accuracy))) if accuracy else 0
+    data['lettersMissed'] = list(lettersMissed.keys())
+
+
+    return render(request, 'profile.html',data)
 
 def leaderboard(request):
     return render(request, 'leaderboard.html')
