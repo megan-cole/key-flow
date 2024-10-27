@@ -15,6 +15,9 @@ def index(request):
 def typetest(request):
     return render(request, 'typetest.html')
 
+def snowfall(request):
+    return render(request, 'snowfall.html')
+
 def profile(request):
     return render(request, 'profile.html')
 
@@ -35,6 +38,21 @@ def register_view(request):
                 
     form = UserRegistrationForm()
     return render(request, "register.html", {"form": form, "error": error})
+
+# function to use Wonderwords to generate a bank of random words
+@csrf_exempt
+def generateWordBank(request):
+    if request.method == 'POST':
+        r = RandomWord()
+        wordbank = []
+        #generate 50 random words
+        for _ in range(50):
+            wordbank.append(r.word())
+
+        words = ' '.join(random.sample(wordbank,k=50))
+
+        # return a JSON response that can be fetched by Phaser to get the words
+        return JsonResponse({'words': words})
 
 # function to use Wonderwords to generate sentences of random words
 @csrf_exempt

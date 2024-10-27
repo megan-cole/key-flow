@@ -154,7 +154,7 @@ window.onload = function() {
         }
 
         create() {
-            this.newgamebutton = this.add.text(50, 450, 'New Game', { fill: '#0f0'})
+            this.newgamebutton = this.add.text(50, 450, 'New Game', { fontFamily:'"Consolas"', fill: '#0f0'})
             .setInteractive()
             .on('pointerdown', () => getSen('easy','30').then(text => {
                 this.newSentence(text,'30');
@@ -187,7 +187,7 @@ window.onload = function() {
         }
         restState() {
             this.newgamebutton.setStyle({ fill: '#0f0' });
-          }
+        }
 
         
         newSentence(text,timer) {

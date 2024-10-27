@@ -13,8 +13,10 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('leaderboard/', views.leaderboard, name='leaderboard'),
     path('generateSentences/',views.generateSentences,name='generateSentences'),
+    path('generateWordBank/', views.generateWordBank, name='generateWordBank'),
     path('getStatistics/',views.getStatistics,name='getStatistics'),
     path('logout/', LogoutView.as_view(next_page='index'), name='logout'),
+    path('snowfall/', views.snowfall, name='snowfall'),
 ]
 
 if settings.DEBUG:
