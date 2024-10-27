@@ -7,7 +7,7 @@ window.onload = function(){
 
         //index tracker for wordbank
         var word = 0;
-        var wordbank = wordbank.split(' ').slice(0, 8);
+        var curwords = wordbank.split(' ').slice(0, 8);
 
         //place new word on screen every 2 seconds
         scene.time.addEvent({
@@ -15,7 +15,7 @@ window.onload = function(){
             callback: () =>{
                     //generate random x postion for word
                     let xpos = Math.floor(Math.random() * ((window.innerWidth - 100) - 100) + 100);
-                    scene.wordsOnScreen[word] = scene.add.text(xpos, 10, wordbank[word], { 
+                    scene.wordsOnScreen[word] = scene.add.text(xpos, 10, curwords[word], { 
                             fontSize: '24px', 
                             fontFamily:'"Consolas"', 
                             fill: '#00008b'});
