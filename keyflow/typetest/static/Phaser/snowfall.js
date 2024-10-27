@@ -18,7 +18,7 @@ window.onload = function(){
                     scene.wordsOnScreen[word] = scene.add.text(xpos, 10, wordbank[word], { 
                             fontSize: '24px', 
                             fontFamily:'"Consolas"', 
-                            fill: '#000000'});
+                            fill: '#00008b'});
                     ++word;
                     timespent += 2;
                 },
@@ -49,7 +49,7 @@ window.onload = function(){
         }
 
         restState() {
-            this.startgamebutton.setStyle({ fill: '##00008B' });
+            this.startgamebutton.setStyle({ fill: '#00008B' });
           
         }
 

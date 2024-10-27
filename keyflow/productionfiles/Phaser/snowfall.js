@@ -1,19 +1,24 @@
 let worddisplay;
 window.onload = function(){
     function createSnowFall(scene, wordbank){
+        //remove start game button
         scene.startgamebutton.destroy();
         var timespent = 0;
+
+        //index tracker for wordbank
         var word = 0;
         var wordbank = wordbank.split(' ').slice(0, 8);
 
+        //place new word on screen every 2 seconds
         scene.time.addEvent({
             delay: 2000,
             callback: () =>{
+                    //generate random x postion for word
                     let xpos = Math.floor(Math.random() * ((window.innerWidth - 100) - 100) + 100);
                     scene.wordsOnScreen[word] = scene.add.text(xpos, 10, wordbank[word], { 
                             fontSize: '24px', 
                             fontFamily:'"Consolas"', 
-                            fill: '#000000'});
+                            fill: '#00008b'});
                     ++word;
                     timespent += 2;
                 },
@@ -44,7 +49,7 @@ window.onload = function(){
         }
 
         restState() {
-            this.startgamebutton.setStyle({ fill: '##00008B' });
+            this.startgamebutton.setStyle({ fill: '#00008B' });
           
         }
 
@@ -60,14 +65,15 @@ window.onload = function(){
             word.y += speed;
         }
 
+        //continously move words down the screen
         update(){
             let speed = 1;
             if(this.wordsOnScreen[0])
                 for(let i = 0; i < this.wordsOnScreen.length; ++i){
-                    if(this.wordsOnScreen[i].length < 5)
+                    /*if(this.wordsOnScreen[i].length < 5)
                         speed = 0.5;
                     else if(this.wordsOnScreen[i].length > 8 )
-                        speed = 3;
+                        speed = 3;*/
                     this.moveword(this.wordsOnScreen[i], speed);
                 }
         }
@@ -86,6 +92,7 @@ window.onload = function(){
 };
 
 
+//retrieve words from python file
 function getWords() {
     return fetch('/generateWordBank/', {
         method: 'POST',
