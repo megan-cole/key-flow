@@ -47,20 +47,28 @@ window.onload = function() {
         if (scene.currentCharBox){
              scene.currentCharBox.destroy();
         }
-
-        textDisplay = scene.add.text(50, 100, currentSentence, { fontSize: '32px', fontFamily:'"Consolas", monospace', fill: '#ffffff', wordWrap: {width: 600, useAdvancedWrap: true} });  // Correct color to '#ffffff'
-        textDisplay2 = scene.add.text(50, 200, nextSentence, { fontSize: '32px', fontFamily:'"Consolas", monospace', fill: '#808080', wordWrap: {width: 600, useAdvancedWrap: true} });
+        textDisplay = scene.add.text(50, 100, currentSentence, { fontSize: '24px', fontFamily:'"Inconsolata", monospace', fill: '#ffffff'});  // Correct color to '#ffffff'
+        textDisplay2 = scene.add.text(50, 200, nextSentence, { fontSize: '24px', fontFamily:'"Inconsolata", monospace', fill: '#808080'});    //got rid of word wrapping
      
-        userInputDisplay = scene.add.text(50, 300, curTyped, { fontSize: '32px', fontFamily:'"Consolas",monospace', fill: '#ffffff',wordWrap: {width: 600, useAdvancedWrap: true} });    // added monospace so each character is equilength
-        
+        userInputDisplay = scene.add.text(50, 300, curTyped, { fontSize: '24px', fontFamily:'"Inconsolata",monospace', fill: '#ffffff'});    // added monospace so each character is equilength
+        let regularChar = scene.add.text(0, 0, "l", { fontSize: '24px', fontFamily: '"Inconsolata", monospace' });
+        console.log("Width of a regular character (L):", regularChar.width);
+
+    // Measure width of a space character
+        let spaceChar = scene.add.text(0, 0, " ", { fontSize: '24px', fontFamily: '"Consolas", monospace' });
+        console.log("Width of a space character:", spaceChar.width);
+
+// Clean up by removing the temporary text objects
+        regularChar.destroy();
+        spaceChar.destroy();
         var timeTextStyle = {font: "32px Arial",  fill: '#99ffcc'};    // somethings are inevitable :)
         scene.timeText = scene.add.text(16,16, "Time Elapsed: ", timeTextStyle)
 
         scene.currentCharBox = scene.add.rectangle(
             textDisplay.x+8, 
-            textDisplay.y + 20, 
-            16, 
-            32, 
+            textDisplay.y+12, 
+            14, 
+            28, 
             0x808080, 
             0.2
         );
@@ -78,7 +86,7 @@ window.onload = function() {
             }
         }
         scene.updateTime = updateTime;
-
+        
         // reset event listener for keys
         scene.input.keyboard.off('keydown');
         //user input
@@ -89,15 +97,20 @@ window.onload = function() {
                 startTyping();
 
                 const expectedChar = currentSentence[curTyped.length];
+                
                 if(key == expectedChar){
                     typedText += key;
                     curTyped += key;
                     backspace = false;
-                    scene.currentCharBox.x +=  20;
-
+                    scene.currentCharBox.x +=  14.25;
+                    
+                    
+                    
                     // if key is a space, count this as one word done
                     if (key == " ") {
                         numWords++;
+                        scene.currentCharBox.x += 1;
+                        
                     }
                     
                     //scene.currentCharBox.setFillStyle(0x808080);
@@ -107,6 +120,7 @@ window.onload = function() {
                     scene.currentCharBox.setFillStyle(0xffee8c);
                     scene.currentCharBox.setAlpha(0.2);
                 }
+            
 
            
             }
