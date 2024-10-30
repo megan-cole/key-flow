@@ -103,7 +103,7 @@ window.onload = function() {
                     curTyped += key;
                     backspace = false;
                     scene.currentCharBox.x +=  14.25;
-                    
+                    userInputDisplay.setText(curTyped);
                     
                     
                     // if key is a space, count this as one word done
@@ -112,19 +112,17 @@ window.onload = function() {
                         scene.currentCharBox.x += 1;
                         
                     }
+                    scene.currentCharBox.setFillStyle(0x808080, 0.2);
                     
-                    //scene.currentCharBox.setFillStyle(0x808080);
-                    //scene.setAlpha(0.2);
                 }else {
                     lettersMissed[expectedChar] = (lettersMissed[expectedChar] || 0) + 1;
-                    scene.currentCharBox.setFillStyle(0xffee8c);
-                    scene.currentCharBox.setAlpha(0.2);
+                    scene.currentCharBox.setFillStyle(0xffbf00, 0.5);
                 }
             
 
-           
+            
             }
-            userInputDisplay.setText(curTyped);
+            
 
             // user has typed first line, then reset their text and move onto the next line
             if (curTyped === currentSentence && typedText != textToType) {
@@ -137,6 +135,7 @@ window.onload = function() {
                 curTyped = '';
                 typedText += ' ';
                 numWords++;
+                scene.currentCharBox.setPosition(textDisplay.x + 8, textDisplay.y + 12);
             }
 
             // check if matches or timer has ran out
