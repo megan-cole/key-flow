@@ -218,8 +218,8 @@ window.onload = function() {
     // create phaser game
     const config = {
         type: Phaser.AUTO,
-        width: 800,
-        height: 600,
+        width: window.innerWidth,
+        height: window.innerHeight - 40,
         backgroundColor: '#142733',  // sorry it was hurting my eyes >_< its okay i guess ;(
         scene: TypingScene  
     };
