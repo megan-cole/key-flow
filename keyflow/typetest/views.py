@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Account, Statistics
+from .models import Account, Statistics, MinigameStatistics
 from .forms import UserRegistrationForm
 from django.contrib.auth.hashers import make_password
 from wonderwords import RandomWord, RandomSentence
@@ -8,6 +8,7 @@ import random
 import json
 import math
 from django.views.decorators.csrf import csrf_exempt
+from django.template.loader import render_to_string
 
 def index(request):
     return render(request, 'index.html')
@@ -51,8 +52,27 @@ def profile(request):
 
     return render(request, 'profile.html',data)
 
-def leaderboard(request):
-    return render(request, 'leaderboard.html')
+
+def leaderboard(request,minigame=''):
+
+    # parse json into dictionary
+    try:
+        statistics = []
+
+        if minigame != 'Snowfall' and minigame != '':
+            return redirect('leaderboard')
+        
+        if minigame == 'Snowfall':
+                
+            # get top 10 statistics from snowfall
+            statistics = list(MinigameStatistics.objects.all().order_by('-snowFallHighScore').values('username__username','snowFallHighScore')[:10])
+
+    except Exception as e:
+        print('error',e)
+    return render(request,'leaderboard.html',{'statistics':statistics,'minigame':minigame})
+
+
+
 
 def register_view(request):
     error =""
@@ -165,7 +185,6 @@ def getStatistics(request):
         # parse json into dictionary
         data = json.loads(request.body)
 
-        # this line might not be right, have to see if its getting user
         user = request.user
 
         # get data from game
