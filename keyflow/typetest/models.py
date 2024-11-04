@@ -76,3 +76,6 @@ class Statistics(models.Model):
     # letters missed is a dictionary that will contain (missed letters : frequency)
     lettersMissed = models.JSONField(default=dict,blank=True)  
     
+class MinigameStatistics(models.Model):
+    username = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+    snowFallHighScore = models.PositiveIntegerField()
