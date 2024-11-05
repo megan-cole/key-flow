@@ -7,6 +7,12 @@ window.onload = function(){
         //index tracker for wordbank
         var word = 0;
         var curwords = wordbank.split(' ').slice(0, 100);
+        scene.pointsText = scene.add.text(16,16,
+            'Points: 0', 
+            {fontSize: '32px', 
+            fontFamily:'"Consolas"', 
+            fill: '#FFFFFF'})
+        
 
         //place new word on screen every 2 seconds
         scene.time.addEvent({
@@ -32,6 +38,8 @@ window.onload = function(){
         create(){
             this.wordsOnScreen = [];
             this.timespent = 0;
+            this.points = 0;
+            this.missedWords = [];
             this.startgamebutton = this.add.text((window.innerWidth/2)-100, (window.innerHeight/2)-50, 
                 'Start Game', 
                 {fontSize: '36px', 
@@ -69,9 +77,40 @@ window.onload = function(){
                     
                 // remove word from wordsOnScreen
                 this.wordsOnScreen.splice(i,1);
-                console.log(word.text);
+
+                // add word to missedWords (idk if we even need this)
+                this.missedWords.push(word.text);
+
+                // calculate points lost for missing word
+                this.calcPoints(speed,'miss');
+                
             }
         }
+
+            calcPoints(speed,pointsChange) {
+    
+                // lose points
+                if (pointsChange === 'miss') {
+                    
+                    // lose half the amount of points you would get from typing it correctly
+                    
+                    this.points -= Math.floor((7*speed)/2);
+
+                    // only lose points if user has more points to not go negative
+                    this.points = Math.max(0,this.points);
+                        
+
+                }
+                // gain points based on speed b/c speed takes into acc word size and stage
+                else {
+
+                    // multiplier of 7 * speed for points
+                    this.points += Math.floor(7*speed);
+    
+                }
+                this.pointsText.setText('Points: ' + this.points);
+
+            }
 
         //continously move words down the screen
         update(){
