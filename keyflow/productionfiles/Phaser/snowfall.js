@@ -61,8 +61,16 @@ window.onload = function(){
             }
         }
 
-        moveword(word, speed){
+        moveword(word, speed, i){
             word.y += speed;
+
+            // word has hit the bottom, lose points
+            if (word.y >= window.innerHeight) {
+                    
+                // remove word from wordsOnScreen
+                this.wordsOnScreen.splice(i,1);
+                console.log(word.text);
+            }
         }
 
         //continously move words down the screen
@@ -93,7 +101,8 @@ window.onload = function(){
                     else
                         speed = 2.25;
                 }
-                this.moveword(this.wordsOnScreen[i], speed);
+                this.moveword(this.wordsOnScreen[i], speed, i);
+
             }
         }
         

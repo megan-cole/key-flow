@@ -32,6 +32,8 @@ window.onload = function(){
         create(){
             this.wordsOnScreen = [];
             this.timespent = 0;
+            this.points = 0;
+            this.missedWords = [];
             this.startgamebutton = this.add.text((window.innerWidth/2)-100, (window.innerHeight/2)-50, 
                 'Start Game', 
                 {fontSize: '36px', 
@@ -61,9 +63,21 @@ window.onload = function(){
             }
         }
 
-        moveword(word, speed){
+        moveword(word, speed, i){
             word.y += speed;
+
+            // word has hit the bottom, lose points
+            if (word.y >= window.innerHeight) {
+                    
+                // remove word from wordsOnScreen
+                this.wordsOnScreen.splice(i,1);
+
+                // add word to missedWords (idk if we even need this)
+                this.missedWords.push(word.text);
+                
+            }
         }
+
 
         //continously move words down the screen
         update(){
@@ -93,7 +107,8 @@ window.onload = function(){
                     else
                         speed = 2.25;
                 }
-                this.moveword(this.wordsOnScreen[i], speed);
+                this.moveword(this.wordsOnScreen[i], speed, i);
+
             }
         }
         
