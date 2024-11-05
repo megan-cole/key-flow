@@ -3,28 +3,24 @@ window.onload = function(){
     function createSnowFall(scene, wordbank){
         //remove start game button
         scene.startgamebutton.destroy();
-        var timespent = 0;
 
         //index tracker for wordbank
         var word = 0;
-        var curwords = wordbank.split(' ').slice(0, 8);
+        var curwords = wordbank.split(' ').slice(0, 100);
 
         //place new word on screen every 2 seconds
         scene.time.addEvent({
             delay: 2000,
             callback: () =>{
                     //generate random x postion for word
-                    let xpos = Math.floor(Math.random() * ((window.innerWidth - 100) - 100) + 100);
-                    worddisplay = scene.add.text(xpos, 10, curwords[word], { 
-                            fontSize: '24px', 
-                            fontFamily:'"Consolas"', 
-                            fill: '#00008b'});
-                    scene.wordsOnScreen.push(worddisplay);
-                    ++word;
-                    timespent += 2;
-                    /*if(word % 8 == 0){
-                        curwords = wordbank.split(' ').slice(word,word+8);
-                    }*/
+                        let xpos = Math.floor(Math.random() * ((window.innerWidth - 100) - 100) + 100);
+                        worddisplay = scene.add.text(xpos, 10, curwords[word], { 
+                                fontSize: '24px', 
+                                fontFamily:'"Consolas"', 
+                                fill: '#00008b'});
+                        scene.wordsOnScreen.push(worddisplay);
+                        ++word;
+                    scene.timespent += 2;
                 },
 
                 loop: true
@@ -35,7 +31,7 @@ window.onload = function(){
     class GameScene extends Phaser.Scene{
         create(){
             this.wordsOnScreen = [];
-
+            this.timespent = 0;
             this.startgamebutton = this.add.text((window.innerWidth/2)-100, (window.innerHeight/2)-50, 
                 'Start Game', 
                 {fontSize: '36px', 
@@ -73,12 +69,30 @@ window.onload = function(){
         update(){
             let speed = 1;
             for(let i = 0; i < this.wordsOnScreen.length; ++i){
-                if(this.wordsOnScreen[i].text.length < 5)
-                    speed = 1.75;
-                else if(this.wordsOnScreen[i].text.length <=7)
-                    speed = 1.25;   
-                else
-                    speed = .75;
+                if(this.timespent < 20){
+                    if(this.wordsOnScreen[i].text.length < 5)
+                        speed = 1.75;
+                    else if(this.wordsOnScreen[i].text.length <=7)
+                        speed = 1.25;   
+                    else
+                        speed = .75;
+                }
+                else if(this.timespent < 40){
+                    if(this.wordsOnScreen[i].text.length < 5)
+                        speed = 2.5;
+                    else if(this.wordsOnScreen[i].text.length <=7)
+                        speed = 2;   
+                    else
+                        speed = 1.5;
+                }
+                else{
+                    if(this.wordsOnScreen[i].text.length < 5)
+                        speed = 2.25;
+                    else if(this.wordsOnScreen[i].text.length <=7)
+                        speed = 2.27;   
+                    else
+                        speed = 2.25;
+                }
                 this.moveword(this.wordsOnScreen[i], speed);
             }
         }
