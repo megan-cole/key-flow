@@ -15,12 +15,16 @@ window.onload = function(){
             callback: () =>{
                     //generate random x postion for word
                     let xpos = Math.floor(Math.random() * ((window.innerWidth - 100) - 100) + 100);
-                    scene.wordsOnScreen[word] = scene.add.text(xpos, 10, curwords[word], { 
+                    worddisplay = scene.add.text(xpos, 10, curwords[word], { 
                             fontSize: '24px', 
                             fontFamily:'"Consolas"', 
                             fill: '#00008b'});
+                    scene.wordsOnScreen.push(worddisplay);
                     ++word;
                     timespent += 2;
+                    if(word % 8 == 0){
+                        curwords = wordbank.split(' ').slice(word,word+8);
+                    }
                 },
 
                 loop: true
@@ -68,14 +72,15 @@ window.onload = function(){
         //continously move words down the screen
         update(){
             let speed = 1;
-            if(this.wordsOnScreen[0])
-                for(let i = 0; i < this.wordsOnScreen.length; ++i){
-                    /*if(this.wordsOnScreen[i].length < 5)
-                        speed = 0.5;
-                    else if(this.wordsOnScreen[i].length > 8 )
-                        speed = 3;*/
-                    this.moveword(this.wordsOnScreen[i], speed);
-                }
+            for(let i = 0; i < this.wordsOnScreen.length; ++i){
+                if(this.wordsOnScreen[i].text.length < 5)
+                    speed = 1.75;
+                else if(this.wordsOnScreen[i].text.length <=7)
+                    speed = 1.25;   
+                else
+                    speed = .75;
+                this.moveword(this.wordsOnScreen[i], speed);
+            }
         }
         
     }

@@ -96,7 +96,7 @@ def generateWordBank(request):
         r = RandomWord()
         wordbank = []
         #generate 50 random words
-        for _ in range(50):
+        for _ in range(100):
             wordbank.append(r.word())
 
         words = ' '.join(random.sample(wordbank,k=50))
