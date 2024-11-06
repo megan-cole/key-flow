@@ -1,8 +1,10 @@
-let worddisplay;
+let worddisplay, userInputDisplay;
 window.onload = function(){
     function createSnowFall(scene, wordbank){
         //remove start game button
         scene.startgamebutton.destroy();
+        let typedWord = '';
+        let wordToType = '';
 
         //index tracker for wordbank
         var word = 0;
@@ -31,7 +33,52 @@ window.onload = function(){
 
                 loop: true
 
-            });       
+            });  
+            userInputDisplay = scene.add.text((window.innerWidth/2) - 50, 500, typedWord, { fontSize: '24px', fontFamily:'"Courier New",monospace', fill: '#0096FF'}); 
+            scene.input.keyboard.off('keydown');
+
+            scene.input.keyboard.on('keydown', function(event) {
+                const key = event.key;
+                let index = 0;
+                    if(typedWord.length == 0){
+                        let letter = 0;
+                        for(let i = 0; i < scene.wordsOnScreen.length; ++i){
+                            if(key == scene.wordsOnScreen[i].text[0]){
+                                letter = 1;
+                                index = i;
+                                break;
+                            }
+                        }
+                        if(letter){
+                            typedWord += key;
+                            scene.wordsOnScreen[index].setColor('#0096FF');
+                            userInputDisplay.setText(typedWord);
+                            wordToType = scene.wordsOnScreen[index].text;
+                        }
+                    }
+                    else if(wordToType != scene.wordsOnScreen[index].text){
+                        scene.add.text(100, 100, "bruh");
+                        typedWord = '';
+                        userInputDisplay.setText(typedWord);
+                    }
+                    else{
+                        
+                            const expectedChar = wordToType[typedWord.length];
+                            if(key === expectedChar){
+                                typedWord += key;
+                                userInputDisplay.setText(typedWord);
+                            }
+
+                            if(typedWord == wordToType){
+                                scene.wordsOnScreen[index].destroy();
+                                scene.wordsOnScreen.splice(index, 1);
+                                typedWord = '';
+                                scene.calcPoints(wordToType.length, '');
+                                userInputDisplay.setText(typedWord);
+                            }
+                }
+                
+            })
     }
 
     class GameScene extends Phaser.Scene{
@@ -149,8 +196,8 @@ window.onload = function(){
 
     const config = {
         type: Phaser.AUTO,
-        width: window.innerWidth,
-        height: window.innerHeight,
+        width: window.innerWidth-10,
+        height: window.innerHeight-10,
         backgroundColor: '#add8e6',
         scene: GameScene
     };
