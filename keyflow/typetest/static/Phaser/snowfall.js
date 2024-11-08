@@ -194,6 +194,10 @@ window.onload = function(){
         width: window.innerWidth-10,
         height: window.innerHeight-10,
         backgroundColor: '#add8e6',
+        scale: {
+            mode: Phaser.Scale.RESIZE,
+            autoCenter: Phaser.Scale.CENTER_BOTH
+        },
         scene: GameScene
     };
 

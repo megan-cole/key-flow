@@ -218,8 +218,13 @@ window.onload = function() {
         type: Phaser.AUTO,
         width: window.innerWidth,
         height: window.innerHeight - 40,
+        parent: 'game-container',
+        scale: {
+            mode: Phaser.Scale.RESIZE,
+            autoCenter: Phaser.Scale.CENTER_BOTH
+        },
         backgroundColor: '#142733',  // sorry it was hurting my eyes >_< its okay i guess ;(
-        scene: TypingScene  
+        scene: TypingScene,
     };
 
     const game = new Phaser.Game(config);  // initializing game
