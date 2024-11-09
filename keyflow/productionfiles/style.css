@@ -1,13 +1,15 @@
 *{
-  box-sizing: border-box;
+  box-sizing: border-box !important;
   margin: 0;
   padding: 0;
   font-family: 'Kumbh Sans', sans-serif;
-
-
 }
 
-.navbar {
+ul, ol, dl {
+  margin-bottom: 0 !important;
+}
+
+.navbarCustom {
   background: #131313;
   height: 80px;
   display: flex;
@@ -17,25 +19,27 @@
   position: sticky;
   top: 0;
   z-index: 999;
+  width: 100%;
+  overflow: hidden;
 
 }
 
 .navbar__container {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   height: 80px;
   z-index: 1;
   width: 100%;
-  max-width: 1300px;
-  margin-right: auto;
-  margin-left: auto;
-  padding-right: 50px;
-  padding-left: 50px;
+  margin: 0 auto;
+  padding: 0 10px;
+  box-sizing: border-box;
+  overflow: hidden;
 
 }
 
 #navbar__logo{
-  background-color: #9900CC;
+  background-color: RED;
   background-image: linear-gradient(to top, #9900CC 0%, #ffff 100%);
   background-size: 100%;
   -webkit-background-clip: text;
@@ -58,6 +62,12 @@
   align-items: center;
   list-style: none;
   text-align: center;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  margin-left: auto;
+  justify-content: flex-end;
+  
+
 }
 
 .navbar__item{
@@ -70,7 +80,7 @@
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  padding: 0 1rem;
+  padding: 0 0.5rem;
   height: 100%;
 }
 
@@ -78,18 +88,19 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 1rem;
-  width: 100%;
+  padding: 0 0.5rem;
+  width: auto;
+  margin-left: auto;
 }
 
-.button{
+.navbar__button{
   display: flex;
   justify-content: center;
   align-items: center;
   text-decoration: none;
   padding: 10px 20px;
   height: 100%;
-  width: 100%;
+  width: auto; 
   border: none;
   outline: none;
   border-radius: 4px;
@@ -97,7 +108,7 @@
   color: #ffff;
 }
 
-.button:hover {
+.navbar__button:hover {
   background: #FF99FF;
   transition: all 0.3s ease;
 }
@@ -106,5 +117,4 @@
   color:#9900CC;
   transition: all 0.3s ease;
 }
-
 

@@ -18,6 +18,7 @@ urlpatterns = [
     path('snowfall/', views.snowfall, name='snowfall'),
     path('leaderboard/<str:minigame>/',views.leaderboard,name='minigameLeaderboard'),
     path('leaderboard/', views.leaderboard, name='leaderboard'),
+    path('minigames/',views.minigames,name='minigames')
 ]
 
 if settings.DEBUG:

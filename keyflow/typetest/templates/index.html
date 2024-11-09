@@ -7,7 +7,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #CBCBCB;
+        }
 
+        .homeContainer {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .topBox {
+            display: flex;
+            height: 50vh;
+        }
+
+        .bottomBox {
+            height: 50vh;
+        }
+
+        .box {
+            flex: 1;
+        }
+
+        .stats {
+            text-align: center;
+        }
+
+        .friends {
+            text-align: center;
+        }
+        .battlepass {
+            text-align: center;
+            color: #9900CC;
+            text-decoration: underline;
+            margin-top: 10px;
+        }
+
+        .stats h2, .friends h2 {
+            margin-top: 35px;
+            margin-bottom: 50px;
+            color: #9900CC;
+            text-decoration: underline;
+        }
+
+        .stats p {
+            padding: 5px;
+        }
+
+        
+
+    </style>
     {% block head %}
    
     {% endblock %}
@@ -21,7 +72,27 @@
     {% endblock %}
 
     {% block content %}
-    <a href="/snowfall/">Snowfall</a>
+    <div class="homeContainer">
+        <div class="topBox">
+            <div class="box stats">
+                <h2>Recent Game Stats</h2>
+                <p><strong>Average WPM: </strong>{{avgWPM}}</p>
+                <p><strong>Average Accuracy: </strong>{{accuracy}}%</p>
+                <p><strong>Top 5 Frequently Missed Letters: </strong></p>
+                {% for item in lettersMissed %}
+                    {{item}}
+                {% endfor %}
+            </div>
+            <div class="box friends">
+                <h2>Friends</h2>
+            </div>
+        </div>
+        <div class="bottomBox">
+            <div class="battlepass">
+                <h2>Battlepass Progress</h2>
+            </div>
+        </div>
+    </div>
     {% endblock %}
 
     {% block scripts %}

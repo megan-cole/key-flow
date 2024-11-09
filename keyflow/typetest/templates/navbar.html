@@ -1,5 +1,5 @@
 
-<nav class="navbar">
+<nav class="navbarCustom">
     <div class="navbar__container">
         <a href="/" id="navbar__logo">KeyFlow</a>
         <div class="navbar__toggle" id="mobile-menu">
@@ -12,18 +12,21 @@
                 <a href="/" class="navbar__links">Home</a>
             </li>
             <li class="navbar__item">
+                <a href="/typetest/" class="navbar__links">TypeTest</a>
+            </li>
+            <li class="navbar__item">
                 <a href="/leaderboard/" class="navbar__links">Leaderboard</a>
             </li>
             <li class="navbar__item">
-                <a href="/typetest/" class="navbar__links">MiniGames</a>
+                <a href="/minigames/" class="navbar__links">MiniGames</a>
             </li>
             {% if user.is_authenticated %}
                 <li class="navbar__btn">
-                    <a href="/profile/" class="button">Profile</a>
+                    <a href="/profile/" class="navbar__button">Profile</a>
                 </li>
             {% else %}
                 <li class="navbar__btn">
-                    <a href="{% url 'login'%}" class="button">Log In</a>
+                    <a href="{% url 'login'%}" class="navbar__button">Log In</a>
                 </li>
             {% endif %}
         </ul>
