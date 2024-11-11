@@ -1,13 +1,84 @@
-{% extends "index.html" %}
+{% extends 'index.html' %}
 
-{% block navbar %}
-{% include  'navbar.html' %}
+{% load static %} 
+{% block head %}
+  <style>
+    .loginContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      min-height: 90vh;
+    }
+    .loginBox {
+      display: flex;
+      flex-direction: column;
+      width: 50vh;
+      height: 50vh;
+      border: 2px solid #a8a8a8;
+      background-color: #CBCBCB;
+      text-align: center;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .loginBox h2 {
+      margin-top: 10px;
+    }
+
+    .loginForm {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin: 0 auto;
+      margin-top: 15%;
+    }
+
+    .loginForm td {
+      padding: 5px;
+      display: block;
+    }
+
+    .loginForm input[type='submit'] {
+      margin-top: 15px;
+      background-color: #9900CC;
+      color: white;
+      border: none;
+      outline: none;
+      border-radius: 4px;
+      width: 90%;
+      height: 5vh;
+      font-size: 17px;
+    }
+
+    .loginForm input[type='text'], .loginForm input[type='password'] {
+      font-size: 20px;
+      border-radius: 4px;
+    }
+
+    .loginForm td label {
+      font-size: 18px;
+      text-align: left;
+      display: inline-block;
+      width: 100%;
+    }
+    footer {
+      margin-top: 5vh;
+    }
+    #error {
+      color: #EB5A4A;
+      text-align: center;
+    }
+
+  </style>
+
 {% endblock %}
 
 {% block content %}
 
   {% if form.errors %}
-    <p>Your username and password didn't match. Please try again.</p>
+    <p id="error">Your username and password didn't match. Please try again.</p>
   {% endif %}
 
   {% if next %}
@@ -19,24 +90,36 @@
     {% endif %}
   {% endif %}
 
-  <form method="post" action="{% url 'login' %}">
-    {% csrf_token %}
-    <table>
-      <tr>
-        <td>{{ form.username.label_tag }}</td>
-        <td>{{ form.username }}</td>
-      </tr>
-      <tr>
-        <td>{{ form.password.label_tag }}</td>
-        <td>{{ form.password }}</td>
-      </tr>
-    </table>
-    <input type="submit" value="Login" class="button">
-    <input type="hidden" name="next" value="{{ next }}">
-    
-  </form>
+  <div class="loginContainer">
+  
+    <div class="loginBox">
+      <h2>Login</h2>
+      
+      <div class="loginForm">
+        <form method="post" action="{% url 'login' %}">
+          {% csrf_token %}
+          <table>
+            <tr>
+              <td>{{ form.username.label_tag }}</td>
+              <td>{{ form.username }}</td>
+            </tr>
+            <tr>
+              <td>{{ form.password.label_tag }}</td>
+              <td>{{ form.password }}</td>
+            </tr>
+          </table>
+          <input type="submit" value="Sign in" class="button">
+          <input type="hidden" name="next" value="{{ next }}">
+          
+        </form>
+      </div>
+    </div>
 
-  <p>Don't have an account? <a href="{% url 'register' %}">Register here</a>.</p>
+    <p>Don't have an account? <a href="{% url 'register' %}">Sign Up</a></p>
+    <footer>
+      <p>KeyFlow &copy; 2024. All rights reserved.</p>
+  </footer>
+  </div>
 
 
   

@@ -1,7 +1,75 @@
 {% extends 'index.html' %}
+{% load static %} 
+{% block head %}
+  <style>
+    .registerContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      min-height: 90vh;
+    }
+    .registerBox {
+      display: flex;
+      flex-direction: column;
+      width: 70vh;
+      height: 70vh;
+      border: 2px solid #a8a8a8;
+      background-color: #CBCBCB;
+      text-align: center;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
 
-{% block navbar %}
-{% include  'navbar.html' %}
+    .registerBox h2 {
+      margin-top: 10px;
+    }
+
+    .registerForm {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin: 0 auto;
+      margin-top: 7%;
+    }
+    .registerForm input[type='text'], .registerForm input[type='password'], .registerForm input[type='email'] {
+      font-size: 20px;
+      border-radius: 4px;
+    }
+    .registerForm input[type='checkbox'] {
+        display: inline-block;
+        margin-right: 50px;
+    }
+    .registerForm label {
+      font-size: 18px;
+      text-align: left;
+      display: inline-block;
+      width: 30%;
+      padding: 10px;
+      margin-right: 10px;
+    }
+    .registerForm input[type='submit'] {
+      margin-top: 15px;
+      background-color: #9900CC;
+      color: white;
+      border: none;
+      outline: none;
+      border-radius: 4px;
+      width: 90%;
+      height: 5vh;
+      font-size: 17px;
+    }
+    footer {
+      margin-top: 5vh;
+    }
+    .helptext {
+        display: none;
+    }
+
+
+  </style>
+
 {% endblock %}
     
 {% block content %}
@@ -9,12 +77,21 @@
     {% if error != "" %}
         {{error}}
     {%endif%}
-    <form action="/register/" method = "post">
-        {% csrf_token %}
-        {{ form }}
-        <input type = "submit" value="Sign Up" />
-    </form>
-
-    <p>Already have an account? <a href="{% url 'login' %}">Log in here</a>.</p>
+    <div class="registerContainer">
+        <div class="registerBox">
+            <h2>Register</h2>
+            <div class="registerForm">
+                <form action="/register/" method = "post">
+                    {% csrf_token %}
+                    {{ form }}
+                    <input type = "submit" value="Sign Up" />
+                </form>
+            </div>
+        </div>
+        <p>Already have an account? <a href="{% url 'login' %}">Sign in</a></p>
+        <footer>
+            <p>KeyFlow &copy; 2024. All rights reserved.</p>
+        </footer>
+    </div>
 </body>
 {% endblock %}
