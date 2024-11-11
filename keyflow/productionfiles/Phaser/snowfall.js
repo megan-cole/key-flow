@@ -271,7 +271,6 @@ window.onload = function(){
         type: Phaser.AUTO,
         width: window.innerWidth,
         height: window.innerHeight,
-        x: 100,
         backgroundColor: '#add8e6',
         scale: {
             mode: Phaser.Scale.RESIZE,

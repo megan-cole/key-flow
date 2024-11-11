@@ -1,6 +1,5 @@
-<div class="header">
-    {% extends 'index.html' %}
-</div>
+{% extends 'index.html' %}
+
 {% load static %}
 
 {% block head %}
@@ -20,8 +19,9 @@
 {% block content %}
 <body>
     <div id="game-container"></div>
-    {% endblock %}
+    
 </body>
+{% endblock %}
 {% block scripts %}
      <!-- Include Phaser.js -->
      <script src="{% static 'Phaser/phaser.min.js' %}"></script>
