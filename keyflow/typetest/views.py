@@ -128,11 +128,17 @@ def generateWordBank(request):
     if request.method == 'POST':
         r = RandomWord()
         wordbank = []
-        #generate 50 random words
-        for _ in range(100):
-            wordbank.append(r.word())
+        #generate 100 random words
 
-        words = ' '.join(random.sample(wordbank,k=50))
+        while len(wordbank) < 36:
+            for _ in range(100):
+                wordbank.append(r.word())
+
+            for word in wordbank:
+                if len(word) > 10:
+                    wordbank.remove(word)
+                    
+        words = ' '.join(random.sample(wordbank,k=len(wordbank)))
 
         # return a JSON response that can be fetched by Phaser to get the words
         return JsonResponse({'words': words})
@@ -157,8 +163,6 @@ def generateSentences(request):
     numSentences = math.ceil(numWords / 4.0)
     if difficulty.lower() == 'easy':
         sentences = [s.bare_bone_with_adjective() for _ in range(numSentences)]
-
-        # for easy, no capitalization or punctuation?
 
         # remove capitalization and punctuation
         for i in range(len(sentences)):

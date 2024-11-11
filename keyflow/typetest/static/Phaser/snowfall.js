@@ -1,10 +1,12 @@
-let worddisplay, userInputDisplay;
+let worddisplay, userInputDisplay, gameTimer, index, typedWord, wordToType;
 window.onload = function(){
     function createSnowFall(scene, wordbank){
         //remove start game button
         scene.startgamebutton.destroy();
-        let typedWord = '';
-        let wordToType = '';
+        typedWord = '';
+        wordToType = '';
+        let gameGo = true;
+        let accuracy = 0;
 
         //index tracker for wordbank
         var word = 0;
@@ -17,8 +19,8 @@ window.onload = function(){
         
 
         //place new word on screen every 2 seconds
-        scene.time.addEvent({
-            delay: 2000,
+        gameTimer = scene.time.addEvent({
+            delay: 1700,
             callback: () =>{
                     //generate random x postion for word
                         let xpos = Math.floor(Math.random() * ((window.innerWidth - 100) - 100) + 100);
@@ -26,20 +28,51 @@ window.onload = function(){
                                 fontSize: '24px', 
                                 fontFamily:'"Consolas"', 
                                 fill: '#00008b'});
-                        scene.wordsOnScreen.push(worddisplay);
                         ++word;
-                    scene.timespent += 2;
+                        scene.wordsOnScreen.push(worddisplay);
+                        scene.timespent += 1.7
+
+                        if(word >= 36){
+                            scene.gameUpdate = false;
+                            gameGo = false;
+                            for(let i = 0; i < scene.wordsOnScreen.length; ++i){
+                                scene.wordsOnScreen[i].destroy();
+                            }
+                            if(userInputDisplay)
+                                userInputDisplay.destroy();
+                            scene.pointsText.destroy();
+                            scene.add.text((window.innerWidth/2)-100, (window.innerHeight/2)-70, 
+                            'Game Over',
+                            {fontSize: '36px', 
+                            fontFamily:'"Consolas"', 
+                            fill: '#00008B'});
+
+                            scene.add.text((window.innerWidth/2)-100, (window.innerHeight/2)-10,
+                            `Score: ${scene.points}`,
+                            {fontSize: '24px', 
+                            fontFamily:'"Consolas"', 
+                            fill: '#0096FF'});
+
+                            accuracy = (scene.wordsCorrect / 35) * 100;
+                            scene.add.text((window.innerWidth/2)-100, (window.innerHeight/2)+20,
+                            `Score: ${accuracy.toFixed(0)}%`,
+                            {fontSize: '24px', 
+                            fontFamily:'"Consolas"', 
+                            fill: '#0096FF'});
+                        }
                 },
 
-                loop: true
+                repeat: 36
 
-            });  
-            userInputDisplay = scene.add.text((window.innerWidth/2) - 50, 500, typedWord, { fontSize: '24px', fontFamily:'"Courier New",monospace', fill: '#0096FF'}); 
+            }); 
+            
+            userInputDisplay = scene.add.text((window.innerWidth/2) - 50, 400, typedWord, { fontSize: '24px', fontFamily:'"Courier New",monospace', fill: '#0096FF'}); 
             scene.input.keyboard.off('keydown');
 
             scene.input.keyboard.on('keydown', function(event) {
+                if(!gameGo) 
+                    return;
                 const key = event.key;
-                let index = 0;
                     if(typedWord.length == 0){
                         let letter = 0;
                         for(let i = 0; i < scene.wordsOnScreen.length; ++i){
@@ -65,6 +98,13 @@ window.onload = function(){
                             }
 
                             if(typedWord == wordToType){
+                                ++scene.wordsCorrect;
+                                for(let i = 0; i < scene.wordsOnScreen.length; ++i){
+                                    if(wordToType == scene.wordsOnScreen[i].text){
+                                        index = i;
+                                        break;
+                                    }
+                                }
                                 scene.wordsOnScreen[index].destroy();
                                 scene.wordsOnScreen.splice(index, 1);
                                 typedWord = '';
@@ -78,10 +118,12 @@ window.onload = function(){
 
     class GameScene extends Phaser.Scene{
         create(){
+            this.gameUpdate = true;
             this.wordsOnScreen = [];
             this.timespent = 0;
             this.points = 0;
             this.missedWords = [];
+            this.wordsCorrect = 0;
             this.startgamebutton = this.add.text((window.innerWidth/2)-100, (window.innerHeight/2)-50, 
                 'Start Game', 
                 {fontSize: '36px', 
@@ -116,7 +158,12 @@ window.onload = function(){
 
             // word has hit the bottom, lose points
             if (word.y >= window.innerHeight) {
-                    
+                
+                if(word.text === wordToType){
+                    typedWord = '';
+                    userInputDisplay.setText(typedWord);
+                }
+
                 // remove word from wordsOnScreen
                 this.wordsOnScreen.splice(i,1);
 
@@ -131,17 +178,39 @@ window.onload = function(){
 
             calcPoints(speed,pointsChange) {
     
+                if(this.timespent < 20){
+                    if(speed < 5)
+                        speed = 1.75;
+                    else if(speed <=7)
+                        speed = 1.25;   
+                    else
+                        speed = .75;
+                }
+                else if(this.timespent < 40){
+                    if(speed < 5)
+                        speed = 2.5;
+                    else if(speed <=7)
+                        speed = 2;   
+                    else
+                        speed = 1.5;
+                }
+                else{
+                    if(speed < 5)
+                        speed = 2.25;
+                    else if(speed <=7)
+                        speed = 2.27;   
+                    else
+                        speed = 2.25;
+                }
                 // lose points
                 if (pointsChange === 'miss') {
-                    
+                    this.flashPoints();
                     // lose half the amount of points you would get from typing it correctly
-                    
                     this.points -= Math.floor((7*speed)/2);
 
                     // only lose points if user has more points to not go negative
                     this.points = Math.max(0,this.points);
                         
-
                 }
                 // gain points based on speed b/c speed takes into acc word size and stage
                 else {
@@ -154,45 +223,55 @@ window.onload = function(){
 
             }
 
+            flashPoints(){
+                this.pointsText.setColor('#ff0000');
+
+                this.time.delayedCall(150, () => { this.pointsText.setColor('#ffffff')});
+            }
+
         //continously move words down the screen
         update(){
-            let speed = 1;
-            for(let i = 0; i < this.wordsOnScreen.length; ++i){
-                if(this.timespent < 20){
-                    if(this.wordsOnScreen[i].text.length < 5)
-                        speed = 1.75;
-                    else if(this.wordsOnScreen[i].text.length <=7)
-                        speed = 1.25;   
-                    else
-                        speed = .75;
-                }
-                else if(this.timespent < 40){
-                    if(this.wordsOnScreen[i].text.length < 5)
-                        speed = 2.5;
-                    else if(this.wordsOnScreen[i].text.length <=7)
-                        speed = 2;   
-                    else
-                        speed = 1.5;
-                }
-                else{
-                    if(this.wordsOnScreen[i].text.length < 5)
-                        speed = 2.25;
-                    else if(this.wordsOnScreen[i].text.length <=7)
-                        speed = 2.27;   
-                    else
-                        speed = 2.25;
-                }
-                this.moveword(this.wordsOnScreen[i], speed, i);
+            if(this.gameUpdate == true){
+                let speed = 1;
+                for(let i = 0; i < this.wordsOnScreen.length; ++i){
+                    if(this.timespent < 20){
+                        if(this.wordsOnScreen[i].text.length < 5)
+                            speed = 1.75;
+                        else if(this.wordsOnScreen[i].text.length <=7)
+                            speed = 1.25;   
+                        else
+                            speed = .75;
+                    }
+                    else if(this.timespent < 40){
+                        if(this.wordsOnScreen[i].text.length < 5)
+                            speed = 2.5;
+                        else if(this.wordsOnScreen[i].text.length <=7)
+                            speed = 2;   
+                        else
+                            speed = 1.5;
+                    }
+                    else{
+                        if(this.wordsOnScreen[i].text.length < 5)
+                            speed = 2.25;
+                        else if(this.wordsOnScreen[i].text.length <=7)
+                            speed = 2.27;   
+                        else
+                            speed = 2.25;
+                    }
+                    this.moveword(this.wordsOnScreen[i], speed, i);
 
+                }
             }
+            
         }
         
     }
 
     const config = {
         type: Phaser.AUTO,
-        width: window.innerWidth-10,
-        height: window.innerHeight-10,
+        width: window.innerWidth,
+        height: window.innerHeight,
+        x: 100,
         backgroundColor: '#add8e6',
         scale: {
             mode: Phaser.Scale.RESIZE,
