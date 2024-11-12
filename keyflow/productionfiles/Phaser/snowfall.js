@@ -1,4 +1,4 @@
-let worddisplay, userInputDisplay, gameTimer, index, typedWord, wordToType;
+let worddisplay, userInputDisplay, gameTimer, index, typedWord, wordToType, timer;
 window.onload = function(){
     function createSnowFall(scene, wordbank){
         //remove start game button
@@ -15,12 +15,65 @@ window.onload = function(){
             'Points: 0', 
             {fontSize: '32px', 
             fontFamily:'"Consolas"', 
-            fill: '#FFFFFF'})
+            fill: '#FFFFFF'});
         
+        let delayVal = 1700;
+        timer = 60;
+        timeDisplay = scene.add.text(16,46,
+            `${timer}`, 
+            {fontSize: '32px', 
+            fontFamily:'"Consolas"', 
+            fill: '#FFFFFF'});
 
-        //place new word on screen every 2 seconds
         gameTimer = scene.time.addEvent({
-            delay: 1700,
+            delay: 1000,
+            callback: () =>{
+                --timer;
+                timeDisplay.setText(`${timer}`);
+
+                if(timer == 20)
+                    delayVal = 2000;
+
+                if(timer == 40)
+                    delayVal = 2300;
+
+                if(timer <= 0){
+                    timeDisplay.destroy();
+                    scene.gameUpdate = false;
+                    gameGo = false;
+                    for(let i = 0; i < scene.wordsOnScreen.length; ++i){
+                        scene.wordsOnScreen[i].destroy();
+                    }
+                    if(userInputDisplay)
+                        userInputDisplay.destroy();
+                    scene.pointsText.destroy();
+                    scene.add.text((window.innerWidth/2)-100, (window.innerHeight/2)-70, 
+                    'Game Over',
+                    {fontSize: '36px', 
+                    fontFamily:'"Consolas"', 
+                    fill: '#00008B'});
+
+                    scene.add.text((window.innerWidth/2)-100, (window.innerHeight/2)-10,
+                    `Score: ${scene.points}`,
+                    {fontSize: '24px', 
+                    fontFamily:'"Consolas"', 
+                    fill: '#0096FF'});
+
+                    accuracy = (scene.wordsCorrect / 35) * 100;
+                    scene.add.text((window.innerWidth/2)-100, (window.innerHeight/2)+20,
+                    `Accuracy: ${accuracy.toFixed(0)}%`,
+                    {fontSize: '24px', 
+                    fontFamily:'"Consolas"', 
+                    fill: '#0096FF'});
+                }
+            },
+
+            repeat: 60
+        });
+                 
+        //place new word on screen every 2 seconds
+        scene.time.addEvent({
+            delay: delayVal,
             callback: () =>{
                     //generate random x postion for word
                         let xpos = Math.floor(Math.random() * ((window.innerWidth - 100) - 100) + 100);
@@ -30,39 +83,9 @@ window.onload = function(){
                                 fill: '#00008b'});
                         ++word;
                         scene.wordsOnScreen.push(worddisplay);
-                        scene.timespent += 1.7
-
-                        if(word >= 36){
-                            scene.gameUpdate = false;
-                            gameGo = false;
-                            for(let i = 0; i < scene.wordsOnScreen.length; ++i){
-                                scene.wordsOnScreen[i].destroy();
-                            }
-                            if(userInputDisplay)
-                                userInputDisplay.destroy();
-                            scene.pointsText.destroy();
-                            scene.add.text((window.innerWidth/2)-100, (window.innerHeight/2)-70, 
-                            'Game Over',
-                            {fontSize: '36px', 
-                            fontFamily:'"Consolas"', 
-                            fill: '#00008B'});
-
-                            scene.add.text((window.innerWidth/2)-100, (window.innerHeight/2)-10,
-                            `Score: ${scene.points}`,
-                            {fontSize: '24px', 
-                            fontFamily:'"Consolas"', 
-                            fill: '#0096FF'});
-
-                            accuracy = (scene.wordsCorrect / 35) * 100;
-                            scene.add.text((window.innerWidth/2)-100, (window.innerHeight/2)+20,
-                            `Score: ${accuracy.toFixed(0)}%`,
-                            {fontSize: '24px', 
-                            fontFamily:'"Consolas"', 
-                            fill: '#0096FF'});
-                        }
                 },
 
-                repeat: 36
+                loop: true
 
             }); 
             
@@ -120,7 +143,6 @@ window.onload = function(){
         create(){
             this.gameUpdate = true;
             this.wordsOnScreen = [];
-            this.timespent = 0;
             this.points = 0;
             this.missedWords = [];
             this.wordsCorrect = 0;
@@ -178,7 +200,7 @@ window.onload = function(){
 
             calcPoints(speed,pointsChange) {
     
-                if(this.timespent < 20){
+                if(timer > 40){
                     if(speed < 5)
                         speed = 1.75;
                     else if(speed <=7)
@@ -186,7 +208,7 @@ window.onload = function(){
                     else
                         speed = .75;
                 }
-                else if(this.timespent < 40){
+                else if(timer > 20){
                     if(speed < 5)
                         speed = 2.5;
                     else if(speed <=7)
@@ -234,7 +256,7 @@ window.onload = function(){
             if(this.gameUpdate == true){
                 let speed = 1;
                 for(let i = 0; i < this.wordsOnScreen.length; ++i){
-                    if(this.timespent < 20){
+                    if(timer > 40){
                         if(this.wordsOnScreen[i].text.length < 5)
                             speed = 1.75;
                         else if(this.wordsOnScreen[i].text.length <=7)
@@ -242,7 +264,7 @@ window.onload = function(){
                         else
                             speed = .75;
                     }
-                    else if(this.timespent < 40){
+                    else if(timer > 20){
                         if(this.wordsOnScreen[i].text.length < 5)
                             speed = 2.5;
                         else if(this.wordsOnScreen[i].text.length <=7)
