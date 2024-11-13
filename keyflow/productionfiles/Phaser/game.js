@@ -11,6 +11,7 @@ window.onload = function() {
         let curTyped = '';      // what the user has currently typed based on the line they're on
         let numWords = 0;
         let elapsedTime = 0;
+        let flag = false
         timer = parseInt(timer);
 
         // initialize letters missed dictionary to 0 for a-z
@@ -76,7 +77,23 @@ window.onload = function() {
                 const currentTime = new Date().getTime();
                 const elapsedTime = (currentTime - startTime) / 1000;
                 scene.timeText.setText("Time Elapsed: " + elapsedTime.toFixed(2) + " seconds");
+                if (elapsedTime >= timer & !flag) {
+                    const elapsedTime = (new Date().getTime() - startTime) / 1000;  // elapse time
+                    const wpm = Math.floor((numWords*60) / timer)
+                    
+                     // pass these statistics to the function to send them back to django
+                    passStatistics(wpm,lettersMissed,textToType);
+    
+                    gameDone = scene.add.text(50, 350, `Well done! Time: ${elapsedTime.toFixed(2)}s. WPM: ${wpm}`, { fontSize: '32px Arial', fill: '#ff0000' });
+                    typedText = '';  //resets
+                    startTime = 0;
+                    scene.updateTime = null;
+                    flag = true
+                    
+                    
+                }
             }
+
         }
         scene.updateTime = updateTime;
         let xPosition = textDisplay.x + 8;
@@ -86,7 +103,7 @@ window.onload = function() {
         scene.input.keyboard.on('keydown', function(event) {
             const key = event.key;
             
-            if (key.length === 1) {  
+            if (key.length === 1 && !flag) {  
                 startTyping();
 
                 const expectedChar = currentSentence[curTyped.length];
@@ -122,7 +139,7 @@ window.onload = function() {
             
 
             // user has typed first line, then reset their text and move onto the next line
-            if (curTyped === currentSentence && typedText != textToType) {
+            if (curTyped === currentSentence && typedText != textToType && !flag) {
                 userInputDisplay.setText('');
                 wordIndex += 6;                 // move to next 6 words
                 currentSentence = nextSentence  //get next sentence
@@ -136,23 +153,6 @@ window.onload = function() {
                 xPosition = textDisplay.x + 8
             }
 
-            // check if matches or timer has ran out
-            if (startTime > 0)
-                elapsedTime = (new Date().getTime() - startTime) / 1000;  // elapse time
-            if (typedText === textToType || elapsedTime >= timer) {
-                const elapsedTime = (new Date().getTime() - startTime) / 1000;  // elapse time
-                const wpm = Math.floor((numWords*60) / timer)
-                
-                 // pass these statistics to the function to send them back to django
-                passStatistics(wpm,lettersMissed,textToType);
-
-                gameDone = scene.add.text(50, 350, `Well done! Time: ${elapsedTime.toFixed(2)}s. WPM: ${wpm}`, { fontSize: '32px Arial', fill: '#ff0000' });
-                typedText = '';  //resets
-                startTime = 0;
-                scene.updateTime = null; 
-                
-                
-            }
         });
     }
 
@@ -179,6 +179,7 @@ window.onload = function() {
                 // reset difficulty and timer
                 difficulty = null;
                 timer = null;
+                flag = false
 
                 
             }))
