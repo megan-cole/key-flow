@@ -1,4 +1,126 @@
+{% block head %}
+<style>
+    *{
+    box-sizing: border-box !important;
+    margin: 0;
+    padding: 0;
+    font-family: 'Kumbh Sans', sans-serif;
+    }
 
+    ul, ol, dl {
+    margin-bottom: 0 !important;
+    }
+
+    .navbarCustom {
+        background: #131313;
+        height: 80px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.2rem;
+        position: static;
+        top: 0;
+        z-index: 999;
+        width: 100%;
+        overflow: hidden;
+    
+    }
+    
+    .navbar__container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 80px;
+        z-index: 1;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0 10px;
+        box-sizing: border-box;
+        overflow: hidden;
+    
+    }
+    
+    #navbar__logo{
+        background-color: RED;
+        background-image: linear-gradient(to top, #9900CC 0%, #ffff 100%);
+        background-size: 100%;
+        -webkit-background-clip: text;
+        -moz-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        -moz-text-fill-color:transparent;
+        display:flex;
+        align-items:center;
+        cursor:pointer;
+        text-decoration: none;
+        font-size: 2rem;
+    }
+    
+    .fa-gem{
+        margin-right: 0.5rem;
+    
+    }
+    .navbar__menu{
+        display: flex;
+        align-items: center;
+        list-style: none;
+        text-align: center;
+        flex-wrap: nowrap;
+        overflow: hidden;
+        margin-left: auto;
+        justify-content: flex-end;
+        
+    
+    }
+    
+    .navbar__item{
+        height:80px;
+    }
+    
+    .navbar__links{
+        color: #fff;
+        display:flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        padding: 0 0.5rem;
+        height: 100%;
+    }
+    
+    .navbar__btn{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 0.5rem;
+        width: auto;
+        margin-left: auto;
+    }
+    
+    .navbar__button{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-decoration: none;
+        padding: 10px 20px;
+        height: 100%;
+        width: auto; 
+        border: none;
+        outline: none;
+        border-radius: 4px;
+        background: #9900CC;
+        color: #ffff;
+    }
+    
+    .navbar__button:hover {
+        background: #FF99FF;
+        transition: all 0.3s ease;
+    }
+    
+    .navbar__links:hover {
+        color:#9900CC;
+        transition: all 0.3s ease;
+    }
+</style>
+{% endblock %}
 <nav class="navbarCustom">
     <div class="navbar__container">
         <a href="/" id="navbar__logo">KeyFlow</a>
