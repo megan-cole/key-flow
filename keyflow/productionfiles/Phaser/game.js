@@ -241,7 +241,8 @@ function passStatistics(wpm, lettersMissed, sentence) {
     fetch('/getStatistics/', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
         },
         body: JSON.stringify({
             wpm: wpm,
@@ -256,7 +257,8 @@ function getSen(difficulty,timer) {
     return fetch('/generateSentences/', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken   // send in csrf token
         },
         body: JSON.stringify({
             'difficulty': difficulty,

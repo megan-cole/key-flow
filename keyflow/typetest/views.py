@@ -123,7 +123,6 @@ def register_view(request):
     return render(request, "register.html", {"form": form, "error": error})
 
 # function to use Wonderwords to generate a bank of random words
-@csrf_exempt
 def generateWordBank(request):
     if request.method == 'POST':
         r = RandomWord()
@@ -144,7 +143,6 @@ def generateWordBank(request):
         return JsonResponse({'words': words})
 
 # function to use Wonderwords to generate sentences of random words
-@csrf_exempt
 def generateSentences(request):
 
     # other option, instead of just generating random words, generate a bunch of sentences
@@ -212,7 +210,6 @@ def generateSentences(request):
     
 # function to retrieve the statistics from game.js that should be passed
 # whenever a game has ended
-@csrf_exempt
 def getStatistics(request):
 
 

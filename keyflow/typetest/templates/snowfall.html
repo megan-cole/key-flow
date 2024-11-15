@@ -23,6 +23,9 @@
 </body>
 {% endblock %}
 {% block scripts %}
+    <script>
+        var csrfToken = "{{ csrf_token }}"
+    </script>
      <!-- Include Phaser.js -->
      <script src="{% static 'Phaser/phaser.min.js' %}"></script>
      <!-- Include your game logic script -->

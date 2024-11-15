@@ -310,7 +310,8 @@ function getWords() {
     return fetch('/generateWordBank/', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
         },
     }) 
     // get the data from the django view and parse it in javascript
