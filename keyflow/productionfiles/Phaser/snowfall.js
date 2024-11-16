@@ -3,21 +3,23 @@ window.onload = function(){
     function createSnowFall(scene, wordbank){
         //remove start game button
         scene.startgamebutton.destroy();
+        scene.difficultybutton.destroy();
         typedWord = '';
         wordToType = '';
         let gameGo = true;
         let accuracy = 0;
+        let difficultyDelays = new Array([1700, 18000, 1900], [1300, 1100, 900], [1000, 700, 500])
 
         //index tracker for wordbank
         var word = 0;
-        var curwords = wordbank.split(' ').slice(0, 100);
+        var curwords = wordbank;
         scene.pointsText = scene.add.text(16,16,
             'Points: 0', 
             {fontSize: '32px', 
             fontFamily:'"Consolas"', 
             fill: '#FFFFFF'});
         
-        let delayVal = 1700;
+        let delayVal = difficultyDelays[scene.difficulty][0];
         timer = 60;
         timeDisplay = scene.add.text(16,46,
             `${timer}`, 
@@ -32,10 +34,10 @@ window.onload = function(){
                 timeDisplay.setText(`${timer}`);
 
                 if(timer == 20)
-                    delayVal = 2000;
+                    delayVal = difficultyDelays[scene.difficulty][1];
 
                 if(timer == 40)
-                    delayVal = 2300;
+                    delayVal = difficultyDelays[scene.difficulty][2];
 
                 if(timer <= 0){
                     timeDisplay.destroy();
@@ -59,30 +61,36 @@ window.onload = function(){
                     fontFamily:'"Consolas"', 
                     fill: '#0096FF'});
 
-                    accuracy = (scene.wordsCorrect / 35) * 100;
+                    accuracy = (scene.wordsCorrect / word) * 100;
                     scene.add.text((window.innerWidth/2)-100, (window.innerHeight/2)+20,
                     `Accuracy: ${accuracy.toFixed(0)}%`,
                     {fontSize: '24px', 
                     fontFamily:'"Consolas"', 
                     fill: '#0096FF'});
+
+                    //scene.newgamebutton.visible = true;
                 }
+                
             },
 
             repeat: 60
         });
                  
-        //place new word on screen every 2 seconds
+        //place new word on screen
         scene.time.addEvent({
             delay: delayVal,
             callback: () =>{
+                    if(timer > 0){
                     //generate random x postion for word
-                        let xpos = Math.floor(Math.random() * ((window.innerWidth - 100) - 100) + 100);
-                        worddisplay = scene.add.text(xpos, 10, curwords[word], { 
-                                fontSize: '24px', 
-                                fontFamily:'"Consolas"', 
-                                fill: '#00008b'});
-                        ++word;
-                        scene.wordsOnScreen.push(worddisplay);
+                    let xpos = Math.floor(Math.random() * ((window.innerWidth - 150) - 100) + 100);   
+                    worddisplay = scene.add.text(xpos, 10, curwords[word], { 
+                            fontSize: '24px', 
+                            fontFamily:'"Consolas"', 
+                            fill: '#00008b'});
+                    ++word;
+                    scene.wordsOnScreen.push(worddisplay);
+                    }
+                    
                 },
 
                 loop: true
@@ -141,29 +149,96 @@ window.onload = function(){
 
     class GameScene extends Phaser.Scene{
         create(){
+            this.difficulty = 0;
+            this.difficultyText = new Array("Normal", "Hard", "Crazy");
             this.gameUpdate = true;
             this.wordsOnScreen = [];
             this.points = 0;
             this.missedWords = [];
             this.wordsCorrect = 0;
+            this.startdisplay();
+
+            /*this.newgamebutton = this.add.text((window.innerWidth/2)-100, (window.innerHeight/2)+50,
+                    "New Game",
+                    {fontSize: '24px', 
+                    fontFamily:'"Consolas"', 
+                    fill: '#00008B'})
+                    .setInteractive()
+                    .on('pointerdown', () => getWords().then(words => { this.newbank(words)}))
+                    .on('pointerover', () => this.hoverState(this.newgamebutton))
+                    .on('pointerout', () => this.restState(this.newgamebutton));
+            this.newgamebutton.visible = false*/
+            
+        }
+
+        startdisplay(){
+            if(this.normalbutton){
+                this.normalbutton.destroy();
+                this.hardbutton.destroy();
+                this.crazybutton.destroy();
+            }
             this.startgamebutton = this.add.text((window.innerWidth/2)-100, (window.innerHeight/2)-50, 
                 'Start Game', 
                 {fontSize: '36px', 
                 fontFamily:'"Consolas"', 
                 fill: '#00008B'})
-
             .setInteractive()
             .on('pointerdown', () => getWords().then(words => { this.newbank(words)}))
-            .on('pointerover', () => this.hoverState())
-            .on('pointerout', () => this.restState());
+            .on('pointerover', () => this.hoverState(this.startgamebutton))
+            .on('pointerout', () => this.restState(this.startgamebutton));
+
+            this.difficultybutton = this.add.text((window.innerWidth/2)-100, (window.innerHeight/2), 
+                `Difficulty: ${this.difficultyText[this.difficulty]}`, 
+                {fontSize: '24px', 
+                fontFamily:'"Consolas"', 
+                fill: '#00008B'})
+            .setInteractive()
+            .on('pointerdown', () => this.getDifficulty())
+            .on('pointerover', () => this.hoverState(this.difficultybutton))
+            .on('pointerout', () => this.restState(this.difficultybutton));
         }
 
-        hoverState(){
-            this.startgamebutton.setStyle({ fill: '#ffffff'});
+        getDifficulty(){
+            this.difficultybutton.destroy();
+            this.startgamebutton.destroy();
+            this.normalbutton = this.add.text((window.innerWidth/2)-125, (window.innerHeight/2), 
+                'Normal', 
+                {fontSize: '24px', 
+                fontFamily:'"Consolas"', 
+                fill: '#00008B'})
+            .setInteractive()
+            .on('pointerdown', () => { this.difficulty = 0; this.startdisplay(); })
+            .on('pointerover', () => this.hoverState(this.normalbutton))
+            .on('pointerout', () => this.restState(this.normalbutton));
+
+            this.hardbutton = this.add.text((window.innerWidth/2)-20, (window.innerHeight/2), 
+                'Hard', 
+                {fontSize: '24px', 
+                fontFamily:'"Consolas"', 
+                fill: '#00008B'})
+            .setInteractive()
+            .on('pointerdown', () => { this.difficulty = 1; this.startdisplay(); })
+            .on('pointerover', () => this.hoverState(this.hardbutton))
+            .on('pointerout', () => this.restState(this.hardbutton));
+
+            this.crazybutton = this.add.text((window.innerWidth/2)+60, (window.innerHeight/2), 
+                'Crazy', 
+                {fontSize: '24px', 
+                fontFamily:'"Consolas"', 
+                fill: '#00008B'})
+            .setInteractive()
+            .on('pointerdown', () => { this.difficulty = 2; this.startdisplay(); })
+            .on('pointerover', () => this.hoverState(this.crazybutton))
+            .on('pointerout', () => this.restState(this.crazybutton));
+        }
+        
+
+        hoverState(button){
+            button.setStyle({ fill: '#ffffff'});
         }
 
-        restState() {
-            this.startgamebutton.setStyle({ fill: '#00008B' });
+        restState(button) {
+            button.setStyle({ fill: '#00008B' });
           
         }
 

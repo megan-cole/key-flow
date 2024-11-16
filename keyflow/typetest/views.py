@@ -130,18 +130,19 @@ def generateWordBank(request):
         wordbank = []
         #generate 100 random words
 
-        while len(wordbank) < 36:
+        loop = True
+        while loop:
             for _ in range(100):
                 wordbank.append(r.word())
 
             for word in wordbank:
-                if len(word) > 10:
+                if len(word) > 10 or "-" in word:
                     wordbank.remove(word)
-                    
-        words = ' '.join(random.sample(wordbank,k=len(wordbank)))
+            if len(wordbank) >= 45:
+                loop = False
 
         # return a JSON response that can be fetched by Phaser to get the words
-        return JsonResponse({'words': words})
+        return JsonResponse({'words': wordbank})
 
 # function to use Wonderwords to generate sentences of random words
 @csrf_exempt
