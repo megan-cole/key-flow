@@ -52,6 +52,9 @@ def snowfall(request):
 def minigames(request):
     return render(request, 'minigames.html')
 
+def obstacles(request):
+    return render(request, 'obstacle.html')
+
 def profile(request):
     
     user = request.user
