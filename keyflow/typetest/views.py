@@ -134,12 +134,15 @@ def generateWordBank(request):
             for _ in range(100):
                 wordbank.append(r.word())
 
+            print(wordbank)
             for word in wordbank:
-                if len(word) > 10 or "-" in word:
+                if len(word) > 10 or "-" in word or " " in word:
+                    print(word)
                     wordbank.remove(word)
             if len(wordbank) >= 45:
                 loop = False
 
+        print(wordbank)
         # return a JSON response that can be fetched by Phaser to get the words
         return JsonResponse({'words': wordbank})
 
@@ -259,6 +262,43 @@ def getStatistics(request):
                 )
             except Exception as e:
                 print('error', e)
+
+    
+        return JsonResponse({'success':True})
+
+
+    return JsonResponse({'success':False})
+
+def getStatisticsSnowFall(request):
+
+
+    if request.method == 'POST':
+
+        # parse json into dictionary
+        data = json.loads(request.body)
+
+        user = request.user
+
+        # get data from game
+        score = data.get('score')
+
+        # if user is an anonymous user (not logged in) don't save their stats
+        if request.user.is_authenticated:
+            userRecord = MinigameStatistics.objects.get(username=user)
+            if not userRecord:
+                # store data in database for user
+                try:
+                    MinigameStatistics.objects.create(
+                        snowFallHighScore = score
+                    )
+                except Exception as e:
+                    print('error', e)
+            elif score > userRecords.snowFallHighScore:
+                try:
+                    userRecord.snowFallHighScore = score
+                    userRecord.save()
+                except Exception as e:
+                    print('error', e)
 
     
         return JsonResponse({'success':True})
