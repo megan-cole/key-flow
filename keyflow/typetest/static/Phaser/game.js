@@ -191,6 +191,20 @@ window.onload = function() {
             .on('pointerout', () => this.restState());
             this.newgamebutton.visible = false;
 
+            this.personalizedButton = this.add
+            .text(500, 400, 'Personalized Practice', { fontFamily: '"Consolas"', fill: '#0f0' })
+            .setInteractive()
+            .on('pointerdown', () => {
+                getpSen('30').then((text) => {
+                    this.newSentence(text, '30');
+                    resetUI();
+                });
+            })
+            .on('pointerover', () => this.personalizedHoverState())
+            .on('pointerout', () => this.personalizedRestState());
+
+            this.personalizedButton.visible = true;
+
         }
         update(){
             if(this.updateTime)
@@ -204,6 +218,12 @@ window.onload = function() {
         }
         restState() {
             this.newgamebutton.setStyle({ fill: '#0f0' });
+        }
+        personalizedHoverState(){
+            this.personalizedButton.setStyle({fill: '#ff0'})
+        }
+        personalizedRestState() {
+            this.personalizedButton.setStyle({ fill: '#0f0' });
         }
 
         
@@ -256,6 +276,24 @@ function passStatistics(wpm, lettersMissed, sentence) {
         })
     })
 
+}
+
+function getpSen(timer) {
+    return fetch('/personalizedSentences/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+        },
+        body: JSON.stringify({
+            difficulty: 'personalized',
+            timer: timer,
+        }),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            return data.text; // Return the personalized sentences
+        });
 }
 
 function getSen(difficulty,timer) {

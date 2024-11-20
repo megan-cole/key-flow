@@ -213,7 +213,52 @@ def generateSentences(request):
             
     # return a JSON response that can be fetched by Phaser to get the words
     return JsonResponse({'text':text})
-    
+
+def personalizedSentences(request):
+    if request.method == 'POST':
+        user = request.user
+
+        # must be authorized user
+        if not user.is_authenticated:
+            return JsonResponse({'text': 'You must be logged in to generate personalized sentences.'})
+
+        # retrieve most missed
+        userRecords = Statistics.objects.filter(username=user, gameMode='basic')
+        lettersMissed = {}
+
+        for record in userRecords:
+            for letter in record['lettersMissed']:
+                lettersMissed[letter] = record['lettersMissed'][letter] + lettersMissed.get(letter, 0)
+
+        # sort for top 5
+        lettersMissed = dict(sorted(lettersMissed.items(), key=lambda x: x[1], reverse=True))
+        mostMissedLetters = list(lettersMissed.keys())[:5]
+
+        # Generate words that mostly contain the most missed letters
+        r = RandomWord()
+        wordbank = []
+
+        for _ in range(100):  # Generate a pool of 100 random words
+            word = r.word().lower()
+            if any(letter in word for letter in mostMissedLetters):  # Prioritize words with missed letters
+                wordbank.append(word)
+
+        #create at least 45
+        wordbank = [word for word in wordbank if len(word) <= 10 and "-" not in word and " " not in word]
+        while len(wordbank) < 45:
+            word = r.word().lower()
+            if any(letter in word for letter in mostMissedLetters) and len(word) <= 10 and "-" not in word:
+                wordbank.append(word)
+
+        # Generate sentences using these words
+        sentences = []
+        for _ in range(10):  # Create 10 sentences
+            sentence = ' '.join(random.choices(wordbank, k=random.randint(5, 10)))
+            sentences.append(sentence)
+
+        # Return sentences in JSON format
+        return JsonResponse({'text': ' '.join(sentences)}) 
+           
 # function to retrieve the statistics from game.js that should be passed
 # whenever a game has ended
 def getStatistics(request):
