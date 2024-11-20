@@ -6,14 +6,16 @@ window.onload = function() {
         let lettersMissed = {}
         let backspace = false;   // track if the user is still backspacing
         let currentSentence = textToType.split(' ').slice(0,6).join(' ');    // get first 6 words
+        currentSentence += ' ';
         let nextSentence = textToType.split(' ').slice(6,12).join(' ');      //get next 6 words
+        nextSentence += ' ';
         let wordIndex = 6;       // where the next line will start
         let curTyped = '';      // what the user has currently typed based on the line they're on
         let numWords = 0;
         let elapsedTime = 0;
         let flag = false
         timer = parseInt(timer);
-
+        scene.newgamebutton.visible = false;
         // initialize letters missed dictionary to 0 for a-z
         for (let i = 97; i <= 122; i++) {
             const letter = String.fromCharCode(i);
@@ -89,6 +91,7 @@ window.onload = function() {
                     startTime = 0;
                     scene.updateTime = null;
                     flag = true
+                    scene.newgamebutton.visible = true;
                     
                     
                 }
@@ -144,6 +147,7 @@ window.onload = function() {
                 wordIndex += 6;                 // move to next 6 words
                 currentSentence = nextSentence  //get next sentence
                 nextSentence = textToType.split(' ').slice(wordIndex,wordIndex+6).join(' '); //get next next sentence
+                nextSentence += ' ';
                 textDisplay.setText(currentSentence);
                 textDisplay2.setText(nextSentence);
                 curTyped = '';
@@ -165,7 +169,7 @@ window.onload = function() {
         }
 
         create() {
-            this.newgamebutton = this.add.text(50, 450, 'New Game', { fontFamily:'"Consolas"', fill: '#0f0'})
+            this.newgamebutton = this.add.text(50, 400, 'New Game', { fontFamily:'"Consolas"', fill: '#0f0'})
             .setInteractive()
             .on('pointerdown', () => getSen('easy','30').then(text => {
                 this.newSentence(text,'30');
@@ -185,6 +189,7 @@ window.onload = function() {
             }))
             .on('pointerover', () => this.hoverState())
             .on('pointerout', () => this.restState());
+            this.newgamebutton.visible = false;
 
         }
         update(){
