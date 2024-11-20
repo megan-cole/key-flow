@@ -135,8 +135,7 @@ def generateWordBank(request):
         loop = True
         while loop:
             for _ in range(100):
-                wordbank.append(r.word())
-
+                wordbank.append(r.word().lower())
             print(wordbank)
             for word in wordbank:
                 if len(word) > 10 or "-" in word or " " in word:
