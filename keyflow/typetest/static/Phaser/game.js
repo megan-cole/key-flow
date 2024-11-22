@@ -171,18 +171,8 @@ window.onload = function() {
         create() {
             this.newgamebutton = this.add.text(50, 400, 'New Game', { fontFamily:'"Consolas"', fill: '#0f0'})
             .setInteractive()
-            .on('pointerdown', () => getSen('easy','30').then(text => {
-                this.newSentence(text,'30');
-
-                // reset text on buttons
-                const dropdownButton = document.getElementById('difficultyMenuButton');
-                const timerButton = document.getElementById('timerMenuButton');
-                dropdownButton.textContent = 'Easy';
-                timerButton.textContent = '30s';
-
-                // reset difficulty and timer
-                difficulty = null;
-                timer = null;
+            .on('pointerdown', () => getSen(difficulty,timer).then(text => {
+                this.newSentence(text,timer);
                 flag = false
 
                 

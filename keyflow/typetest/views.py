@@ -136,15 +136,15 @@ def generateWordBank(request):
         while loop:
             for _ in range(100):
                 wordbank.append(r.word().lower())
-            print(wordbank)
+            #print(wordbank)
             for word in wordbank:
                 if len(word) > 10 or "-" in word or " " in word:
-                    print(word)
+                    #print(word)
                     wordbank.remove(word)
             if len(wordbank) >= 45:
                 loop = False
 
-        print(wordbank)
+        #print(wordbank)
         # return a JSON response that can be fetched by Phaser to get the words
         return JsonResponse({'words': wordbank})
 

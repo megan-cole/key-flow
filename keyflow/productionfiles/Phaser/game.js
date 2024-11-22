@@ -169,20 +169,22 @@ window.onload = function() {
         }
 
         create() {
+            this.difficultyStr = "Easy";
+            this.durationStr = "30s";
             this.newgamebutton = this.add.text(50, 400, 'New Game', { fontFamily:'"Consolas"', fill: '#0f0'})
             .setInteractive()
-            .on('pointerdown', () => getSen('easy','30').then(text => {
-                this.newSentence(text,'30');
+            .on('pointerdown', () => getSen(difficulty,timer).then(text => {
+                this.newSentence(text,timer);
 
                 // reset text on buttons
-                const dropdownButton = document.getElementById('difficultyMenuButton');
+                /*const dropdownButton = document.getElementById('difficultyMenuButton');
                 const timerButton = document.getElementById('timerMenuButton');
-                dropdownButton.textContent = 'Easy';
-                timerButton.textContent = '30s';
+                dropdownButton.textContent = this.difficultyStr;
+                timerButton.textContent = this.durationStr;*/
 
                 // reset difficulty and timer
-                difficulty = null;
-                timer = null;
+                //difficulty = null;
+                //timer = null;
                 flag = false
 
                 
