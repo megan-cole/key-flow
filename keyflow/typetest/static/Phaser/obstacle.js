@@ -154,7 +154,7 @@ window.onload = function() {
                 fontFamily:'"Consolas"', 
                 fill: '#89c3d6'})
             .setInteractive()
-            .on('pointerdown', () => getWords().then(words => { this.newbank(words)}))
+            .on('pointerdown', () => getWords().then(words => { this.newbank(words,true)}))
             .on('pointerover', () => this.hoverState(this.startgamebutton))
             .on('pointerout', () => this.restState(this.startgamebutton));
         }
@@ -168,11 +168,14 @@ window.onload = function() {
           
         }
 
-        newbank(words){
+        newbank(words,firstRound){
             if(words){
                 this.wordbank = words;
                 this.curwords = this.wordbank;
-                createObstacle(this);
+
+                if (firstRound==true) {
+                    createObstacle(this);
+                }
             }
         }
 
@@ -309,6 +312,12 @@ window.onload = function() {
 
             let currentRound = [];
             this.adjustSize = true;
+
+            // ran out of words
+            if (this.word >= 90) {
+                getWords().then(words => { this.newbank(words,false)})
+                this.word = 0;
+            }
 
             // first round
             if (this.prevCorrectPosition === -1) {
