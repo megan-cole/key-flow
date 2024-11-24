@@ -2,6 +2,8 @@ let worddisplay, gameTimer, index, wordToType, timer;
 window.onload = function() {
     function createObstacle(scene) {
 
+        console.log('create obstacle');
+
         scene.startgamebutton.destroy();
         scene.startTime = scene.time.now;
         wordToType = '';
@@ -32,7 +34,7 @@ window.onload = function() {
         scene.input.keyboard.off('keydown');
 
         scene.input.keyboard.on('keydown', function(event) {
-            if (scene.curwords) {
+            if (scene.gameOver == false && scene.curwords) {
                 const key = event.key;
 
                 if (key == 'Backspace') {
@@ -108,6 +110,12 @@ window.onload = function() {
 
     class GameScene extends Phaser.Scene{
         create(){
+            this.startdisplay();
+            this.newGame();
+        }
+
+        newGame() {
+
             this.difficulty = 0;
             this.difficultyText = new Array("Normal", "Hard", "Crazy");
             this.gameUpdate = true;
@@ -116,7 +124,8 @@ window.onload = function() {
             this.points = 0;
             this.missedWords = [];
             this.typedCorrectly = false;
-            this.startdisplay();
+            this.timeText = null;
+
             this.changedOnce = false;
             this.lives = 3;
             this.lifeLost = false;
@@ -133,10 +142,8 @@ window.onload = function() {
             this.word = 0;
             this.wordbank = '';
             this.curwords = '';
-            
 
             this.scale.on('resize',this.centerButton,this);
-            
         }
 
         // recenter buttons when screen is resized
@@ -157,6 +164,41 @@ window.onload = function() {
             .on('pointerdown', () => getWords().then(words => { this.newbank(words,true)}))
             .on('pointerover', () => this.hoverState(this.startgamebutton))
             .on('pointerout', () => this.restState(this.startgamebutton));
+
+            this.newgamebutton = this.add.text((window.innerWidth/2), (window.innerHeight/2)+60,
+                    "New Game",
+                    {fontSize: '36px', 
+                    fontFamily:'"Consolas"', 
+                    fill: '#89c3d6'})
+                    .setInteractive()
+                    .on('pointerdown', () => {
+                        this.gameOverText.setVisible(false);
+                        this.survivedTimeText.setVisible();
+                        this.newGame();
+                        getWords().then(words => this.newbank(words,true));
+                        this.newgamebutton.visible = false;
+                        
+                    })
+                    .on('pointerover', () => this.hoverState(this.newgamebutton))
+                    .on('pointerout', () => this.restState(this.newgamebutton));
+            this.newgamebutton.visible = false;
+            this.newgamebutton.setOrigin(0.5);
+
+            this.gameOverText = this.add.text((window.innerWidth/2), (window.innerHeight/2)-50, 
+                        'Game Over :(',
+                        {fontSize: '36px', 
+                        fontFamily:'"Consolas"', 
+                        fill: '#b51926'});
+            this.gameOverText.setOrigin(0.5);
+            this.gameOverText.setVisible(false);
+
+            this.survivedTimeText = this.add.text((window.innerWidth/2), (window.innerHeight/2)+10, 
+                '',
+                {fontSize: '36px', 
+                fontFamily:'"Consolas"', 
+                fill: '#499c4c'});
+            this.survivedTimeText.setOrigin(0.5);
+            this.survivedTimeText.setVisible(false);
         }
 
         hoverState(button){
@@ -184,9 +226,11 @@ window.onload = function() {
 
             if(this.gameUpdate == true) {
 
+
                 const elapsedTime = (this.time.now - this.startTime) / 1000;
-                if (this.timeText)
+                if (this.timeText) {
                     this.timeText.setText("Time: " + elapsedTime.toFixed(2) + " seconds");
+                }
 
                 // move words
                 for(let i = 0; i < this.roundsOnScreen.length; i++) {
@@ -288,20 +332,13 @@ window.onload = function() {
             this.roundsOnScreen = [];
             this.time.removeAllEvents();
 
-            const gameOverText = this.add.text((window.innerWidth/2), (window.innerHeight/2)-50, 
-                        'Game Over :(',
-                        {fontSize: '36px', 
-                        fontFamily:'"Consolas"', 
-                        fill: '#b51926'});
-            gameOverText.setOrigin(0.5);
+            this.gameOverText.setVisible(true);
 
             const elapsedTime = (this.time.now - this.startTime) / 1000;
-            const survivedTimeText = this.add.text((window.innerWidth/2), (window.innerHeight/2)+10, 
-                `You Survived: ${elapsedTime.toFixed(2)} seconds`,
-                {fontSize: '36px', 
-                fontFamily:'"Consolas"', 
-                fill: '#499c4c'});
-            survivedTimeText.setOrigin(0.5);
+            this.survivedTimeText.setText(`You Survived: ${elapsedTime.toFixed(2)} seconds`);
+            this.survivedTimeText.setVisible(true);
+
+            this.newgamebutton.visible = true;
 
         }
 
