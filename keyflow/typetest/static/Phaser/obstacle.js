@@ -275,7 +275,7 @@ window.onload = function() {
                 moveSpeed += 1.7;
             }
             // no one should get this far
-            else {
+            else if (elapsedTime >= 120) {
                 moveSpeed += 2.2;
             }
 
@@ -347,6 +347,7 @@ window.onload = function() {
 
             const elapsedTime = (this.time.now - this.startTime) / 1000;
             this.survivedTimeText.setText(`You Survived: ${elapsedTime.toFixed(2)} seconds`);
+            passStatistics(Math.round(elapsedTime));
             this.survivedTimeText.setVisible(true);
 
             this.newgamebutton.visible = true;
@@ -495,4 +496,17 @@ function getWords() {
         
     })
 
+}
+
+function passStatistics(time){
+    fetch('/getStatisticsObstacle/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+            time: time
+        })
+    })
 }

@@ -146,7 +146,7 @@ window.onload = function() {
             this.wordbank = '';
             this.curwords = '';
 
-            // no fullscreen allowed
+            // no fullscreen allowed :D
             this.input.keyboard.on('keydown-SPACE', function(event) {
                 event.preventDefault();
             });
@@ -271,8 +271,12 @@ window.onload = function() {
             else if (elapsedTime >= 45 && elapsedTime < 60) {
                 moveSpeed += 0.9;
             }
-            else if (elapsedTime >= 60) {
+            else if (elapsedTime >= 60 && elapsedTime < 120) {
                 moveSpeed += 1.7;
+            }
+            // no one should get this far
+            else if (elapsedTime >= 120) {
+                moveSpeed += 2.2;
             }
 
             // move left word down and to the right
@@ -343,6 +347,7 @@ window.onload = function() {
 
             const elapsedTime = (this.time.now - this.startTime) / 1000;
             this.survivedTimeText.setText(`You Survived: ${elapsedTime.toFixed(2)} seconds`);
+            passStatistics(Math.round(elapsedTime));
             this.survivedTimeText.setVisible(true);
 
             this.newgamebutton.visible = true;
@@ -491,4 +496,17 @@ function getWords() {
         
     })
 
+}
+
+function passStatistics(time){
+    fetch('/getStatisticsObstacle/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+            time: time
+        })
+    })
 }

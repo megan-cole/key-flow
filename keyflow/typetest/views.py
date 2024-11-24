@@ -95,13 +95,15 @@ def leaderboard(request,minigame='Minigame'):
     try:
         statistics = []
 
-        if minigame != 'Snowfall' and minigame != 'Minigame':
+        if minigame != 'Snowfall' and minigame != 'Minigame' and minigame != 'Obstacle':
             return redirect('leaderboard')
         
         if minigame == 'Snowfall':
                 
             # get top 10 statistics from snowfall
-            statistics = list(MinigameStatistics.objects.all().order_by('-snowFallHighScore').values('username__username','snowFallHighScore')[:10])
+            statistics = list(MinigameStatistics.objects.filter(snowFallHighScore__gt=0).order_by('-snowFallHighScore').values('username__username','snowFallHighScore')[:10])
+        elif minigame == 'Obstacle':
+            statistics = list(MinigameStatistics.objects.filter(obstacleBestTime__gt=0).order_by('-obstacleBestTime').values('username__username','obstacleBestTime')[:10])
 
     except Exception as e:
         print('error',e)
@@ -286,18 +288,61 @@ def getStatisticsSnowFall(request):
 
         # if user is an anonymous user (not logged in) don't save their stats
         if request.user.is_authenticated:
-            userRecord = MinigameStatistics.objects.get(username=user)
+            userRecord = MinigameStatistics.objects.filter(username=user)
             if not userRecord:
                 # store data in database for user
                 try:
                     MinigameStatistics.objects.create(
-                        snowFallHighScore = score
+                        username = user,
+                        snowFallHighScore = score,
+                        obstacleBestTime = 0
                     )
                 except Exception as e:
                     print('error', e)
-            elif score > userRecords.snowFallHighScore:
+            elif userRecord and score > userRecord.first().snowFallHighScore:
+                userRecord = userRecord.first()
                 try:
                     userRecord.snowFallHighScore = score
+                    userRecord.save()
+                except Exception as e:
+                    print('error', e)
+
+    
+        return JsonResponse({'success':True})
+
+
+    return JsonResponse({'success':False})
+
+def getStatisticsObstacle(request):
+
+    if request.method == 'POST':
+
+        # parse json into dictionary
+        data = json.loads(request.body)
+
+        user = request.user
+
+        # get data from game
+        time = data.get('time')
+
+        # if user is an anonymous user (not logged in) don't save their stats
+        if request.user.is_authenticated:
+            userRecord = MinigameStatistics.objects.filter(username=user)
+            if not userRecord:
+                # store data in database for user
+                try:
+                    MinigameStatistics.objects.create(
+                        username=user,
+                        snowFallHighScore = 0,
+                        obstacleBestTime = time
+
+                    )
+                except Exception as e:
+                    print('error', e)
+            elif time> userRecord.first().obstacleBestTime:
+                userRecord = userRecord.first()
+                try:
+                    userRecord.obstacleBestTime = time
                     userRecord.save()
                 except Exception as e:
                     print('error', e)

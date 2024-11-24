@@ -59,6 +59,7 @@
                     </button>
                     <div class="dropdown-menu" aria-labelledby="gameMenuButton" id="gameMenu">
                         <button type="button" class="dropdown-item" value="Snowfall" name="snowfall">Snowfall</button>
+                        <button type="button" class="dropdown-item" value="Obstacle" name="obstacle">Obstacles</button>
                     </div>
                 </div>
                 <script>
@@ -97,7 +98,12 @@
                         <tr>
                             <td>{{forloop.counter}}</td>
                             <td>{{stat.username__username}}</td>
-                            <td>{{stat.snowFallHighScore}}</td>
+                            {% if minigame == 'Snowfall' %}
+                                <td>{{stat.snowFallHighScore}}</td>
+                            {% endif %}
+                            {% if minigame == 'Obstacle' %}
+                                <td>{{stat.obstacleBestTime}}s</td>
+                            {% endif %}
                         </tr>
                         {% endfor %}
                     </tbody>

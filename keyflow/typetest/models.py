@@ -79,3 +79,4 @@ class Statistics(models.Model):
 class MinigameStatistics(models.Model):
     username = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
     snowFallHighScore = models.PositiveIntegerField()
+    obstacleBestTime = models.PositiveIntegerField()
