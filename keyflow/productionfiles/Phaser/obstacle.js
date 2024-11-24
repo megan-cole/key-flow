@@ -2,7 +2,6 @@ let worddisplay, gameTimer, index, wordToType, timer;
 window.onload = function() {
     function createObstacle(scene) {
 
-        console.log('create obstacle');
 
         scene.startgamebutton.destroy();
         scene.startTime = scene.time.now;
@@ -14,11 +13,12 @@ window.onload = function() {
                 fill: '#b51926'}
         );
 
-        scene.penguinText = scene.add.text((window.innerWidth/2)-75, (window.innerHeight/2)+175, 'Penguin',
-            { fontSize: '26px', 
+        scene.penguinText = scene.add.text((window.innerWidth/2)-50, (window.innerHeight/2)+175, 'Penguin',
+            { fontSize: `${26+window.innerHeight*0.008}px`, 
                 fontFamily:'"Consolas"', 
                 fill: '#858483'}
         );
+        scene.penguinText.setOrigin(0.5);
 
         scene.timeText = scene.add.text(0,5, 'Time: ', 
             { fontSize: '26px', 
@@ -52,17 +52,18 @@ window.onload = function() {
                     // word from this round was typed correctly, so mark as correct
                     scene.typedCorrectly = true;
 
+                    const positionOffset = Math.round(window.innerWidth*0.1);
                     // move penguin to correct side
                     if (scene.correctPosition === 0) {
-                        scene.penguinText.setPosition((window.innerWidth/2)-265, (window.innerHeight/2)+175);
+                        scene.penguinText.setPosition((window.innerWidth/2)-200-positionOffset, (window.innerHeight/2)+175);
 
                     }
                     else if (scene.correctPosition === 1) {
-                        scene.penguinText.setPosition((window.innerWidth/2)-100, (window.innerHeight/2)+175);
+                        scene.penguinText.setPosition((window.innerWidth/2)-50, (window.innerHeight/2)+175);
 
                     }
                     else if (scene.correctPosition === 2) {
-                        scene.penguinText.setPosition((window.innerWidth/2)+100, (window.innerHeight/2)+175);
+                        scene.penguinText.setPosition((window.innerWidth/2)+75+positionOffset, (window.innerHeight/2)+175);
                     }
 
                     // destroy the round
@@ -95,11 +96,13 @@ window.onload = function() {
         function centerText() {
 
             if(scene.leftText) {
-                scene.leftText.setPosition((window.innerWidth/2)-265,32);
-                scene.rightText.setPosition((window.innerWidth/2)+100, 32);
+
+                const positionOffset = Math.round(window.innerWidth*0.1);
+                scene.leftText.setPosition((window.innerWidth/2)-200+positionOffset,32);
+                scene.rightText.setPosition((window.innerWidth/2)+60+positionOffset, 32);
                 scene.middleText.setPosition((window.innerWidth/2)-100, 32);
                 scene.livesText.setPosition(5,5);
-                scene.penguinText.setPosition((window.innerWidth/2)-75, (window.innerHeight/2)+175);
+                scene.penguinText.setPosition((window.innerWidth/2)-50, (window.innerHeight/2)+175);
                 scene.timeText.setPosition(window.innerWidth-5,5);
             }
         };
@@ -143,6 +146,10 @@ window.onload = function() {
             this.wordbank = '';
             this.curwords = '';
 
+            // no fullscreen allowed
+            this.input.keyboard.on('keydown-SPACE', function(event) {
+                event.preventDefault();
+            });
             this.scale.on('resize',this.centerButton,this);
         }
 
@@ -373,9 +380,13 @@ window.onload = function() {
                 this.correctPosition = Math.floor(Math.random() * 2);
             }
 
+            // make starting font size depend on screen size
+            const fontSize = Math.round(14 + 0.01*window.innerWidth);
+            const positionOffset = Math.round(window.innerWidth*0.1);
+
             // left corner
-            this.leftText = this.add.text((window.innerWidth/2)-265,32, this.curwords[this.word], {
-                fontSize: '16px', 
+            this.leftText = this.add.text((window.innerWidth/2)-200-positionOffset,32, this.curwords[this.word], {
+                fontSize: `${fontSize}px`, 
                 fontFamily:'"Consolas"', 
                 fill: '#00008b'
             });
@@ -392,8 +403,8 @@ window.onload = function() {
 
 
             // right corner
-            this.rightText = this.add.text((window.innerWidth/2)+125,32,this.curwords[this.word], {
-                fontSize: '16px', 
+            this.rightText = this.add.text((window.innerWidth/2)+60+positionOffset,32,this.curwords[this.word], {
+                fontSize: `${fontSize}px`, 
                 fontFamily:'"Consolas"', 
                 fill: '#00008b'
             });
@@ -412,7 +423,7 @@ window.onload = function() {
 
             // middle
             this.middleText = this.add.text((window.innerWidth/2)-75, 32, this.curwords[this.word], {
-                fontSize: '16px', 
+                fontSize: `${fontSize}px`, 
                 fontFamily:'"Consolas"', 
                 fill: '#00008b'
             });
