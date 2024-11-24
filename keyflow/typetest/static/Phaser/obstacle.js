@@ -10,20 +10,34 @@ window.onload = function() {
         scene.livesText = scene.add.text(5,5, `Lives: ${scene.lives}`,
             {fontSize: '26px', 
                 fontFamily:'"Consolas"', 
-                fill: '#b51926'}
+                fill: '#b51926',
+                stroke: '#FFFFFF',
+                strokeThickness: 4,
+                shadow: {
+                    offsetX: 2,
+                    offsetY: 2,
+                    blur: 4,
+                    color: '#FFFFFF',
+                    fill: true}}
         );
 
-        scene.penguinText = scene.add.text((window.innerWidth/2)-50, (window.innerHeight/2)+175, 'Penguin',
-            { fontSize: `${26+window.innerHeight*0.008}px`, 
-                fontFamily:'"Consolas"', 
-                fill: '#858483'}
-        );
-        scene.penguinText.setOrigin(0.5);
+        scene.penguinImage = scene.add.image((window.innerWidth/2)-50, (window.innerHeight/2)+175,'defaultPenguin');
+        scene.penguinImage.setScale(0.3);
+        scene.penguinImage.setOrigin(0.5);
 
         scene.timeText = scene.add.text(0,5, 'Time: ', 
             { fontSize: '26px', 
             fontFamily:'"Consolas"', 
-            fill: '#858483'});
+            fill: '#FFFFFF',
+            stroke: '#000000',
+            strokeThickness: 4,
+            shadow: {
+                offsetX: 2,
+                offsetY: 2,
+                blur: 4,
+                color: '#000000',
+                fill: true
+            }});
         scene.timeText.setOrigin(1,0);
         scene.timeText.setPosition(window.innerWidth-5,5);
 
@@ -55,15 +69,15 @@ window.onload = function() {
                     const positionOffset = Math.round(window.innerWidth*0.1);
                     // move penguin to correct side
                     if (scene.correctPosition === 0) {
-                        scene.penguinText.setPosition((window.innerWidth/2)-200-positionOffset, (window.innerHeight/2)+175);
+                        scene.penguinImage.setPosition((window.innerWidth/2)-200-positionOffset, (window.innerHeight/2)+175);
 
                     }
                     else if (scene.correctPosition === 1) {
-                        scene.penguinText.setPosition((window.innerWidth/2)-50, (window.innerHeight/2)+175);
+                        scene.penguinImage.setPosition((window.innerWidth/2)-50, (window.innerHeight/2)+175);
 
                     }
                     else if (scene.correctPosition === 2) {
-                        scene.penguinText.setPosition((window.innerWidth/2)+75+positionOffset, (window.innerHeight/2)+175);
+                        scene.penguinImage.setPosition((window.innerWidth/2)+75+positionOffset, (window.innerHeight/2)+175);
                     }
 
                     // destroy the round
@@ -102,8 +116,28 @@ window.onload = function() {
                 scene.rightText.setPosition((window.innerWidth/2)+60+positionOffset, 32);
                 scene.middleText.setPosition((window.innerWidth/2)-100, 32);
                 scene.livesText.setPosition(5,5);
-                scene.penguinText.setPosition((window.innerWidth/2)-50, (window.innerHeight/2)+175);
+                scene.penguinImage.setPosition((window.innerWidth/2)-50, (window.innerHeight/2)+175);
                 scene.timeText.setPosition(window.innerWidth-5,5);
+
+                if(scene.leftImage) {
+                    scene.leftImage.setPosition(scene.leftText.x - (scene.leftText.width / 2)+60,scene.leftText.y + scene.leftText.height / 2)
+                    scene.leftImage.setScale((scene.leftText.height / scene.leftImage.height) * 2.0);
+                }
+                if (scene.rightImage) {
+                    scene.rightImage.setPosition(scene.rightText.x + (scene.rightText.width / 2),scene.rightText.y + scene.rightText.height / 2);
+                    scene.rightImage.setScale((scene.rightText.height / scene.rightImage.height)*2.0);
+
+                }
+                if (scene.middleImage) {
+                    scene.middleImage.setPosition(scene.middleText.x + (scene.middleText.width / 2), scene.middleText.y + scene.middleText.height / 2);
+                    scene.middleImage.setScale((scene.middleText.height / scene.middleImage.height)*2.0);
+                }
+
+                scene.newgamebutton.setPosition((window.innerWidth/2), (window.innerHeight/2)+60)
+                scene.gameOverText.setPosition((window.innerWidth/2), (window.innerHeight/2)-50)
+                scene.survivedTimeText.setPosition((window.innerWidth/2), (window.innerHeight/2)+10)
+
+                scene.userInputDisplay.setPosition(window.innerWidth/2-75, 5)
             }
         };
 
@@ -112,15 +146,28 @@ window.onload = function() {
     }
 
     class GameScene extends Phaser.Scene{
+        
+        preload() {
+            // load background image
+            this.load.image('background','/static/Phaser/images/obstacleBG.jpg');
+            this.load.image('defaultPenguin','/static/Phaser/images/penguinDefault.png');
+            this.load.image('stone','/static/Phaser/images/stone.png');
+            this.load.image('bush','/static/Phaser/images/bush.png');
+            this.load.image('log','/static/Phaser/images/log.png');
+        }
+        
         create(){
+            this.bg = this.add.image(0, 0, 'background').setOrigin(0,0);
+            this.bg.setScale(window.innerWidth / this.bg.width, window.innerHeight / this.bg.height);
+            this.bg.setDepth(-1);   // behind everything
             this.startdisplay();
             this.newGame();
+            
         }
+
 
         newGame() {
 
-            this.difficulty = 0;
-            this.difficultyText = new Array("Normal", "Hard", "Crazy");
             this.gameUpdate = true;
             this.gameOver = false;
             this.roundsOnScreen = [];
@@ -140,6 +187,8 @@ window.onload = function() {
             this.adjustSize = true;
             this.typedWord = '';
 
+            // add obstacle images
+            this.obstacles = ['stone','bush','log'];
 
             // index tracker for word bank
             this.word = 0;
@@ -153,10 +202,11 @@ window.onload = function() {
             this.scale.on('resize',this.centerButton,this);
         }
 
-        // recenter buttons when screen is resized
+        // recenter buttons and background when screen is resized
         centerButton() {
 
             this.startgamebutton.setPosition((window.innerWidth/2)-100,(window.innerHeight/2)-50);
+            this.bg.setScale(window.innerWidth / this.bg.width, window.innerHeight / this.bg.height);
 
         }
 
@@ -281,36 +331,61 @@ window.onload = function() {
 
             // move left word down and to the right
             words[0].y += moveSpeed;
+            if (this.leftImage)
+                this.leftImage.y += moveSpeed;
             const leftX = words[1].x - words[0].width - words[1].width / 3;
-            if (words[0].x < leftX && this.adjustSize == true) 
+            if (words[0].x < leftX && this.adjustSize == true) {
                 words[0].x += 0.1;
+
+                if (this.leftImage)
+                    this.leftImage.x += 0.1;
+            }
             else 
                 this.adjustSize = false;
             
 
             // move middle word down
             words[1].y += moveSpeed;
+            if (this.middleImage)
+                this.middleImage.y += moveSpeed;
             
             // move right word down and to the left
             words[2].y += moveSpeed;
+            if (this.rightImage)
+                this.rightImage.y += moveSpeed;
             const rightX = words[1].x + words[2].width + words[1].width / 3;
-            if (words[2].x > rightX && this.adjustSize == true) 
+            if (words[2].x > rightX && this.adjustSize == true) {
                 words[2].x -= 0.1;
+
+                if (this.rightImage)
+                    this.rightImage.x -= 0.1;
+            }
             else
                 this.adjustSize = false;
 
             // change font sizes only if the words haven't reached overlap
             if (this.adjustSize == true) {
+
                 words[0].setStyle({fontSize:`${newSize}px`});
                 words[0].fontSize = newSize;
+                if (this.leftImage)
+                    this.leftImage.setScale((words[0].height / this.leftImage.height)*2.0);
+
                 words[1].setStyle({fontSize:`${newSize}px`});
                 words[1].fontSize = newSize;
+                if (this.middleImage)
+                    this.middleImage.setScale((words[1].height / this.middleImage.height)*2.0);
+
                 words[2].setStyle({fontSize:`${newSize}px`});
                 words[2].fontSize = newSize;
+                if (this.rightImage)
+                    this.rightImage.setScale((words[2].height / this.rightImage.height)*2.0);
             }
 
             // word has hit the penguin
-            if (words[0].y + words[0].height >= this.penguinText.y) {
+            if (words[0].y + words[0].height >= this.penguinImage.y - (this.penguinImage.height / 5)) {
+                console.log('word', words[0].y + words[0].height);
+                console.log('pneguibn',this.penguinImage.y - (this.penguinImage.height / 4));
 
                 this.lives--;
 
@@ -339,9 +414,10 @@ window.onload = function() {
             }
             this.timeText.destroy();
             this.userInputDisplay.destroy();
-            this.penguinText.destroy();
+            this.penguinImage.destroy();
             this.roundsOnScreen = [];
             this.time.removeAllEvents();
+            this.clearObstacles();
 
             this.gameOverText.setVisible(true);
 
@@ -388,6 +464,8 @@ window.onload = function() {
             // make starting font size depend on screen size
             const fontSize = Math.round(14 + 0.01*window.innerWidth);
             const positionOffset = Math.round(window.innerWidth*0.1);
+            const numObstacles = this.obstacles.length;
+            let obstacleIndex = 0;
 
             // left corner
             this.leftText = this.add.text((window.innerWidth/2)-200-positionOffset,32, this.curwords[this.word], {
@@ -397,14 +475,20 @@ window.onload = function() {
             });
             this.word++;
             currentRound[0] = this.leftText;
+            this.leftText.setDepth(1);
             // store the leftText and if it is an obstacle or not
             if (this.correctPosition === 0) {
                 this.leftText.setStyle({fill:'#3a9937'});
             }
             else {
+                // if it is an obstacle, randomly pick an obstacle
+                obstacleIndex = Math.floor(Math.random()*numObstacles);
+                this.leftImage = this.add.image(this.leftText.x - (this.leftText.width / 2)+60,this.leftText.y + this.leftText.height / 2,this.obstacles[obstacleIndex])
+                this.leftImage.setScale((this.leftText.height / this.leftImage.height)*2.0);
                 this.leftText.setStyle({fill:'#ccbe3f'});
             }
             this.leftText.fontSize = 16;
+            this.leftText.setStroke('#FFFFFF',4);
 
 
             // right corner
@@ -413,8 +497,7 @@ window.onload = function() {
                 fontFamily:'"Consolas"', 
                 fill: '#00008b'
             });
-            //this.rightText.setOrigin(1,0);
-           // this.rightText.setPosition((window.innerWidth/2)-25,32);
+            this.rightText.setDepth(1);
             this.word++;
             currentRound[2] = this.rightText;
             // store the rightText and if it is an obstacle or not
@@ -422,9 +505,13 @@ window.onload = function() {
                 this.rightText.setStyle({fill:'#3a9937'});
             }
             else {
+                obstacleIndex = Math.floor(Math.random()*numObstacles);
+                this.rightImage = this.add.image(this.rightText.x + (this.rightText.width / 2),this.rightText.y + this.rightText.height / 2,this.obstacles[obstacleIndex]);
+                this.rightImage.setScale((this.rightText.height / this.rightImage.height) * 2.0);
                 this.rightText.setStyle({fill:'#ccbe3f'});
             }
             this.rightText.fontSize = 16;
+            this.rightText.setStroke('#FFFFFF',4);
 
             // middle
             this.middleText = this.add.text((window.innerWidth/2)-75, 32, this.curwords[this.word], {
@@ -433,15 +520,20 @@ window.onload = function() {
                 fill: '#00008b'
             });
             this.word++;
+            this.middleText.setDepth(1);
             currentRound[1] = this.middleText;
             // store the middleText and if it is an obstacle or not
             if (this.correctPosition === 1) {
                 this.middleText.setStyle({fill:'#3a9937'});
             }
             else {
+                obstacleIndex = Math.floor(Math.random()*numObstacles);
+                this.middleImage = this.add.image(this.middleText.x + (this.middleText.width / 2), this.middleText.y + this.middleText.height / 2,this.obstacles[obstacleIndex]);
+                this.middleImage.setScale((this.middleText.height / this.middleImage.height) * 2.0);
                 this.middleText.setStyle({fill:'#ccbe3f'});
             }
             this.middleText.fontSize = 16;
+            this.middleText.setStroke('#FFFFFF',4);
 
             this.prevCorrectPosition = this.correctPosition;
             this.roundsOnScreen.push(currentRound);
@@ -452,6 +544,9 @@ window.onload = function() {
             this.roundsOnScreen[0][0].destroy();
             this.roundsOnScreen[0][1].destroy();
             this.roundsOnScreen[0][2].destroy();
+
+            this.clearObstacles();
+            
             this.roundsOnScreen = [];
             this.lifeLost = true;
             this.livesText.setText(`Lives: ${this.lives}`);
@@ -459,6 +554,15 @@ window.onload = function() {
             this.userInputDisplay.setText(this.typedWord);
 
             this.newRound();
+        }
+        
+        clearObstacles() {
+            if (this.leftImage)
+                this.leftImage.destroy();
+            if (this.rightImage)
+                this.rightImage.destroy();
+            if (this.middleImage)
+                this.middleImage.destroy();
         }
 
     }
