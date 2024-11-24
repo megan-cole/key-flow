@@ -1,10 +1,9 @@
-let worddisplay, gameTimer, index, typedWord, wordToType, timer;
+let worddisplay, gameTimer, index, wordToType, timer;
 window.onload = function() {
     function createObstacle(scene) {
 
         scene.startgamebutton.destroy();
         scene.startTime = scene.time.now;
-        typedWord = '';
         wordToType = '';
         
         scene.livesText = scene.add.text(5,5, `Lives: ${scene.lives}`,
@@ -29,7 +28,7 @@ window.onload = function() {
         scene.newRound();
 
 
-        scene.userInputDisplay = scene.add.text((window.innerWidth/2)-75, 5, typedWord, { fontSize: '24px', fontFamily:'"Courier New",monospace', fill: '#0096FF'}); 
+        scene.userInputDisplay = scene.add.text((window.innerWidth/2)-75, 5, '', { fontSize: '24px', fontFamily:'"Courier New",monospace', fill: '#0096FF'}); 
         scene.input.keyboard.off('keydown');
 
         scene.input.keyboard.on('keydown', function(event) {
@@ -37,65 +36,45 @@ window.onload = function() {
                 const key = event.key;
 
                 if (key == 'Backspace') {
-                    typedWord = typedWord.slice(0,-1);
-                    scene.userInputDisplay.setText(typedWord);
+                    scene.typedWord = scene.typedWord.slice(0,-1);
+                    scene.userInputDisplay.setText(scene.typedWord);
                 } else if (key.length === 1){
-                    typedWord += key;
-                    scene.userInputDisplay.setText(typedWord);
+                    scene.typedWord += key;
+                    scene.userInputDisplay.setText(scene.typedWord);
                 }
                                         
 
                 // typed word must match the correct (green) word
-                if(typedWord == scene.roundsOnScreen[0][scene.correctPosition].text){
+                if(scene.typedWord == scene.roundsOnScreen[0][scene.correctPosition].text){
                     
                     // word from this round was typed correctly, so mark as correct
                     scene.typedCorrectly = true;
 
                     // move penguin to correct side
                     if (scene.correctPosition === 0) {
-                        scene.penguinText.setOrigin(0,0);
-                        scene.penguinText.setPosition(5, (window.innerHeight/2)+175);
+                        scene.penguinText.setPosition((window.innerWidth/2)-265, (window.innerHeight/2)+175);
 
                     }
                     else if (scene.correctPosition === 1) {
-                        scene.penguinText.setOrigin(0,0);
-                        scene.penguinText.setPosition((window.innerWidth/2)-75, (window.innerHeight/2)+175);
+                        scene.penguinText.setPosition((window.innerWidth/2)-100, (window.innerHeight/2)+175);
 
                     }
                     else if (scene.correctPosition === 2) {
-                        scene.penguinText.setOrigin(1,0);
-                        scene.penguinText.setPosition(window.innerWidth-5, (window.innerHeight/2)+175);
+                        scene.penguinText.setPosition((window.innerWidth/2)+100, (window.innerHeight/2)+175);
                     }
 
                     // destroy the round
-                    scene.roundsOnScreen[0][0].destroy();
-                    scene.roundsOnScreen[0][1].destroy();
-                    scene.roundsOnScreen[0][2].destroy();
-                    scene.roundsOnScreen = [];
-                    typedWord = '';
-                    scene.userInputDisplay.setText(typedWord);
-
-                    scene.newRound();
+                    scene.clearRound();
                 }
                 // typed wrong word
-                else if (typedWord == scene.roundsOnScreen[0][0].text || typedWord == scene.roundsOnScreen[0][1].text || typedWord == scene.roundsOnScreen[0][2].text) {
+                else if (scene.typedWord == scene.roundsOnScreen[0][0].text || scene.typedWord == scene.roundsOnScreen[0][1].text || scene.typedWord == scene.roundsOnScreen[0][2].text) {
                     scene.lives--;
 
                     if(scene.lives===0) {
-                        console.log('lives 0, typing');
                         scene.clearGame();
                     }
                     else {
-                        scene.roundsOnScreen[0][0].destroy();
-                        scene.roundsOnScreen[0][1].destroy();
-                        scene.roundsOnScreen[0][2].destroy();
-                        scene.roundsOnScreen = [];
-                        scene.lifeLost = true;
-                        scene.livesText.setText(`Lives: ${scene.lives}`);
-                        typedWord = '';
-                        scene.userInputDisplay.setText(typedWord);
-
-                        scene.newRound();
+                        scene.clearRound();
                     }
 
                 }
@@ -114,9 +93,9 @@ window.onload = function() {
         function centerText() {
 
             if(scene.leftText) {
-                scene.leftText.setPosition(5,(window.innerHeight/2)*0.6);
-                scene.rightText.setPosition(window.innerWidth-5, (window.innerHeight/2)*0.6);
-                scene.middleText.setPosition((window.innerWidth/2)-75, (window.innerHeight/2)*0.6);
+                scene.leftText.setPosition((window.innerWidth/2)-265,32);
+                scene.rightText.setPosition((window.innerWidth/2)+100, 32);
+                scene.middleText.setPosition((window.innerWidth/2)-100, 32);
                 scene.livesText.setPosition(5,5);
                 scene.penguinText.setPosition((window.innerWidth/2)-75, (window.innerHeight/2)+175);
                 scene.timeText.setPosition(window.innerWidth-5,5);
@@ -145,6 +124,9 @@ window.onload = function() {
 
             this.prevCorrectPosition = -1;
             this.correctPosition = 0;
+
+            this.adjustSize = true;
+            this.typedWord = '';
 
 
             // index tracker for word bank
@@ -205,7 +187,7 @@ window.onload = function() {
 
                 // move words
                 for(let i = 0; i < this.roundsOnScreen.length; i++) {
-                    this.moveWords(this.roundsOnScreen[i],i);
+                    this.moveWords(this.roundsOnScreen[i]);
                 }
 
             }
@@ -213,7 +195,7 @@ window.onload = function() {
         }
 
         // move words and increase size as they go down
-        moveWords(words,i) {
+        moveWords(words) {
 
             if (this.gameOver)
                 return;
@@ -227,37 +209,47 @@ window.onload = function() {
             // increase speed every 15s based on the timer
             const elapsedTime = (this.time.now - this.startTime) / 1000;
             if (elapsedTime >= 15 && elapsedTime < 30) {
-                moveSpeed += 0.3;
-            }
-            else if (elapsedTime >= 30 && elapsedTime < 45) {
                 moveSpeed += 0.5;
             }
-            else if (elapsedTime >= 45) {
+            else if (elapsedTime >= 30 && elapsedTime < 45) {
                 moveSpeed += 0.7;
+            }
+            else if (elapsedTime >= 45 && elapsedTime < 60) {
+                moveSpeed += 0.9;
+            }
+            else if (elapsedTime >= 60) {
+                moveSpeed += 1.7;
             }
 
             // move left word down and to the right
             words[0].y += moveSpeed;
-
-            if (words[0].x < (window.innerWidth/2)-100)
+            const leftX = words[1].x - words[0].width - words[1].width / 3;
+            if (words[0].x < leftX && this.adjustSize == true) 
                 words[0].x += 0.1;
-
-            words[0].setStyle({fontSize:`${newSize}px`});
-            words[0].fontSize = newSize;
+            else 
+                this.adjustSize = false;
+            
 
             // move middle word down
             words[1].y += moveSpeed;
-            words[1].setStyle({fontSize:`${newSize}px`});
-            words[1].fontSize = newSize;
             
             // move right word down and to the left
             words[2].y += moveSpeed;
-
-            if (words[2].x > (window.innerWidth/2)-100)
+            const rightX = words[1].x + words[2].width + words[1].width / 3;
+            if (words[2].x > rightX && this.adjustSize == true) 
                 words[2].x -= 0.1;
+            else
+                this.adjustSize = false;
 
-            words[2].setStyle({fontSize:`${newSize}px`});
-            words[2].fontSize = newSize;
+            // change font sizes only if the words haven't reached overlap
+            if (this.adjustSize == true) {
+                words[0].setStyle({fontSize:`${newSize}px`});
+                words[0].fontSize = newSize;
+                words[1].setStyle({fontSize:`${newSize}px`});
+                words[1].fontSize = newSize;
+                words[2].setStyle({fontSize:`${newSize}px`});
+                words[2].fontSize = newSize;
+            }
 
             // word has hit the penguin
             if (words[0].y + words[0].height >= this.penguinText.y) {
@@ -268,16 +260,7 @@ window.onload = function() {
                     this.clearGame();
                 }
                 else {
-
-                    this.roundsOnScreen[i][0].destroy();
-                    this.roundsOnScreen[i][1].destroy();
-                    this.roundsOnScreen[i][2].destroy();
-                    this.roundsOnScreen.splice(i,1);
-                    this.lifeLost = true;
-                    this.livesText.setText(`Lives: ${this.lives}`);
-      
-                    this.newRound();
-                
+                    this.clearRound();
                 }
                 
             }
@@ -288,7 +271,6 @@ window.onload = function() {
         }
 
         clearGame() {
-            console.log('clearGame');
             this.gameUpdate = false;
             this.gameOver = true;
             for(let i = 0; i < this.roundsOnScreen.length; i++) {
@@ -297,6 +279,7 @@ window.onload = function() {
                     this.livesText.destroy();
                 }
             }
+            this.timeText.destroy();
             this.userInputDisplay.destroy();
             this.penguinText.destroy();
             this.roundsOnScreen = [];
@@ -325,6 +308,7 @@ window.onload = function() {
                 return;
 
             let currentRound = [];
+            this.adjustSize = true;
 
             // first round
             if (this.prevCorrectPosition === -1) {
@@ -344,8 +328,8 @@ window.onload = function() {
             }
 
             // left corner
-            this.leftText = this.add.text(5,(window.innerHeight/2)*0.6, this.curwords[this.word], {
-                fontSize: '24px', 
+            this.leftText = this.add.text((window.innerWidth/2)-265,32, this.curwords[this.word], {
+                fontSize: '16px', 
                 fontFamily:'"Consolas"', 
                 fill: '#00008b'
             });
@@ -358,17 +342,17 @@ window.onload = function() {
             else {
                 this.leftText.setStyle({fill:'#ccbe3f'});
             }
-            this.leftText.fontSize = 24;
+            this.leftText.fontSize = 16;
 
 
             // right corner
-            this.rightText = this.add.text(0,(window.innerHeight/2)*0.6,this.curwords[this.word], {
-                fontSize: '24px', 
+            this.rightText = this.add.text((window.innerWidth/2)+125,32,this.curwords[this.word], {
+                fontSize: '16px', 
                 fontFamily:'"Consolas"', 
                 fill: '#00008b'
             });
-            this.rightText.setOrigin(1,0);
-            this.rightText.setPosition(window.innerWidth-5,(window.innerHeight/2)*0.6);
+            //this.rightText.setOrigin(1,0);
+           // this.rightText.setPosition((window.innerWidth/2)-25,32);
             this.word++;
             currentRound[2] = this.rightText;
             // store the rightText and if it is an obstacle or not
@@ -378,11 +362,11 @@ window.onload = function() {
             else {
                 this.rightText.setStyle({fill:'#ccbe3f'});
             }
-            this.rightText.fontSize = 24;
+            this.rightText.fontSize = 16;
 
             // middle
-            this.middleText = this.add.text((window.innerWidth/2)-75, (window.innerHeight/2)*0.6, this.curwords[this.word], {
-                fontSize: '24px', 
+            this.middleText = this.add.text((window.innerWidth/2)-75, 32, this.curwords[this.word], {
+                fontSize: '16px', 
                 fontFamily:'"Consolas"', 
                 fill: '#00008b'
             });
@@ -395,10 +379,24 @@ window.onload = function() {
             else {
                 this.middleText.setStyle({fill:'#ccbe3f'});
             }
-            this.middleText.fontSize = 24;
+            this.middleText.fontSize = 16;
 
             this.prevCorrectPosition = this.correctPosition;
             this.roundsOnScreen.push(currentRound);
+        }
+
+        clearRound() {
+
+            this.roundsOnScreen[0][0].destroy();
+            this.roundsOnScreen[0][1].destroy();
+            this.roundsOnScreen[0][2].destroy();
+            this.roundsOnScreen = [];
+            this.lifeLost = true;
+            this.livesText.setText(`Lives: ${this.lives}`);
+            this.typedWord = '';
+            this.userInputDisplay.setText(this.typedWord);
+
+            this.newRound();
         }
 
     }
