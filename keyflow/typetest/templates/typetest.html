@@ -48,6 +48,14 @@
             margin-top: 17px;
             background-color: #9900CC !important;
         }
+        .custom-control {
+            margin-left: 20px; 
+            display: flex;
+            align-items: center; 
+        }
+        .custom-control-label {
+            margin-left: 10px; /* Adjust spacing between the switch and label */
+        }
     </style>
 {% endblock %}
 {% block content %}
@@ -59,9 +67,9 @@
                     Difficulty
                 </button>
                 <div class="dropdown-menu" aria-labelledby="difficultyMenuButton" id="difficultyMenu">
-                    <button type="button" class="dropdown-item" value="Easy" name="difficulty">Easy</button>
-                    <button type="button" class="dropdown-item" value="Medium" name="difficulty">Medium</button>
+                    <button type="button" class="dropdown-item" value="Normal" name="difficulty">Normal</button>
                     <button type="button" class="dropdown-item" value="Hard" name="difficulty">Hard</button>
+                    <button type="button" class="dropdown-item" value="Crazy" name="difficulty">Crazy</button>
                 </div>
             </div>
             <div class="btn-group">
@@ -74,7 +82,14 @@
                         <button type="button" class="dropdown-item" value="90" name="timer">90s</button>
                     </div>
             </div>
+            <div class="custom-control custom-switch" id="personalizedSwitch">
+                <input type="checkbox" class="custom-control-input" id="personalizedPractice">
+                <label class="custom-control-label" for="personalizedPractice" style="margin-top: 10px;">
+                    Personalized Practice
+                </label>
+            </div>
         </div>
+
     </div> 
     <div id="game-container"></div>
 {% endblock %}

@@ -20,7 +20,9 @@ urlpatterns = [
     path('leaderboard/<str:minigame>/',views.leaderboard,name='minigameLeaderboard'),
     path('leaderboard/', views.leaderboard, name='leaderboard'),
     path('minigames/',views.minigames,name='minigames'),
-    path('obstacles/',views.obstacles,name='obstacles')
+    path('obstacles/',views.obstacles,name='obstacles'),
+    path('personalizedSentences/',views.personalizedSentences,name='personalizedSentences')
+
 ]
 
 if settings.DEBUG:

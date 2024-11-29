@@ -171,13 +171,13 @@ window.onload = function() {
         create() {
             this.newgamebutton = this.add.text(50, 400, 'New Game', { fontFamily:'"Consolas"', fill: '#0f0'})
             .setInteractive()
-            .on('pointerdown', () => getSen('easy','30').then(text => {
+            .on('pointerdown', () => getSen('normal','30').then(text => {
                 this.newSentence(text,'30');
 
                 // reset text on buttons
                 const dropdownButton = document.getElementById('difficultyMenuButton');
                 const timerButton = document.getElementById('timerMenuButton');
-                dropdownButton.textContent = 'Easy';
+                dropdownButton.textContent = 'Normal';
                 timerButton.textContent = '30s';
 
                 // reset difficulty and timer
@@ -190,20 +190,6 @@ window.onload = function() {
             .on('pointerover', () => this.hoverState())
             .on('pointerout', () => this.restState());
             this.newgamebutton.visible = false;
-
-            this.personalizedButton = this.add
-            .text(500, 400, 'Personalized Practice', { fontFamily: '"Consolas"', fill: '#0f0' })
-            .setInteractive()
-            .on('pointerdown', () => {
-                getpSen('30').then((text) => {
-                    this.newSentence(text, '30');
-                    resetUI();
-                });
-            })
-            .on('pointerover', () => this.personalizedHoverState())
-            .on('pointerout', () => this.personalizedRestState());
-
-            this.personalizedButton.visible = true;
 
         }
         update(){
@@ -218,12 +204,6 @@ window.onload = function() {
         }
         restState() {
             this.newgamebutton.setStyle({ fill: '#0f0' });
-        }
-        personalizedHoverState(){
-            this.personalizedButton.setStyle({fill: '#ff0'})
-        }
-        personalizedRestState() {
-            this.personalizedButton.setStyle({ fill: '#0f0' });
         }
 
         
@@ -254,7 +234,57 @@ window.onload = function() {
     };
 
     const game = new Phaser.Game(config);  // initializing game
-
+    document.addEventListener('DOMContentLoaded', () => {
+        const personalizedSwitch = document.getElementById('personalizedPractice');
+        if (personalizedSwitch) {
+            personalizedSwitch.addEventListener('change', async function () {
+                const isPersonalized = this.checked;
+                const label = document.querySelector('.custom-control-label');
+                label.textContent = `Personalized Practice: ${isPersonalized ? 'ON' : 'OFF'}`;
+                console.log(`Personalized Practice ${isPersonalized ? 'Enabled' : 'Disabled'}`);
+    
+                const scene = game.scene.getScene('TypingScene');
+                if (!scene) {
+                    console.error("TypingScene not found.");
+                    return;
+                }
+    
+                if (isPersonalized) {
+                    console.log("Fetching personalized sentences...");
+                    const effectiveTimer = timer || '60'; // Default to 60 seconds if timer is not set
+                    try {
+                        const text = await getpSen(effectiveTimer);
+                        if (text) {
+                            scene.newSentence(text, effectiveTimer);
+                        } else {
+                            console.error("No personalized sentences returned.");
+                        }
+                    } catch (error) {
+                        console.error("Error fetching personalized sentences:", error);
+                    }
+                } else {
+                    console.log("Reverting to standard sentences...");
+                    if (difficulty && timer) {
+                        try {
+                            const text = await getSen(difficulty, timer);
+                            if (text) {
+                                scene.newSentence(text, timer);
+                            } else {
+                                console.error("No standard sentences returned.");
+                            }
+                        } catch (error) {
+                            console.error("Error fetching standard sentences:", error);
+                        }
+                    } else {
+                        console.log("Waiting for difficulty and timer to be set.");
+                    }
+                }
+            });
+        } else {
+            console.error("Personalized practice switch not found in the DOM.");
+        }
+    });
+    
     getDifficulty(game);
 };
 
@@ -289,10 +319,19 @@ function getpSen(timer) {
             difficulty: 'personalized',
             timer: timer,
         }),
-    })
-        .then((response) => response.json())
+    }) 
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch personalized sentences');
+            }
+            return response.json();
+        })
         .then((data) => {
-            return data.text; // Return the personalized sentences
+            return data.text;
+        })
+        .catch((error) => {
+            console.error("Error fetching personalized sentences:", error);
+            return '';
         });
 }
 
@@ -317,6 +356,7 @@ function getSen(difficulty,timer) {
     })
 
 }
+
 
 let difficulty = null;
 let timer = null;
@@ -361,8 +401,5 @@ function getDifficulty(game) {
                 }  
 
             })
-        })
-
-    
+        }) 
 }
-
