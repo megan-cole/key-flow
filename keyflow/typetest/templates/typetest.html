@@ -53,8 +53,18 @@
             display: flex;
             align-items: center; 
         }
-        .custom-control-label {
-            margin-left: 10px; /* Adjust spacing between the switch and label */
+        #personalizedPractice {
+        transition: background-color 0.3s ease, color 0.3s ease;
+        font-size: 1rem;
+        padding: 5px 10px;
+        }
+        .btn-success {
+        background-color: #28a745;
+        color: white;
+        }
+        .btn-secondary {
+        background-color: #6c757d;
+        color: white;
         }
     </style>
 {% endblock %}
@@ -82,11 +92,10 @@
                         <button type="button" class="dropdown-item" value="90" name="timer">90s</button>
                     </div>
             </div>
-            <div class="custom-control custom-switch" id="personalizedSwitch">
-                <input type="checkbox" class="custom-control-input" id="personalizedPractice">
-                <label class="custom-control-label" for="personalizedPractice" style="margin-top: 10px;">
-                    Personalized Practice
-                </label>
+            <div id="personalizedSwitch">
+                <button id="personalizedPractice" class="btn btn-secondary" style="margin-left: 20px" tabindex="-1">
+                    Personalized Practice: OFF
+                </button>
             </div>
         </div>
 

@@ -1,4 +1,5 @@
 let textDisplay, textDisplay2, userInputDisplay, gameDone;
+let isPersonalizedActive = false;
 window.onload = function() {
     function createTypingGame(scene, textToType,timer) {
         let typedText = '';  
@@ -234,59 +235,53 @@ window.onload = function() {
     };
 
     const game = new Phaser.Game(config);  // initializing game
-    document.addEventListener('DOMContentLoaded', () => {
-        const personalizedSwitch = document.getElementById('personalizedPractice');
-        if (personalizedSwitch) {
-            personalizedSwitch.addEventListener('change', async function () {
-                const isPersonalized = this.checked;
-                const label = document.querySelector('.custom-control-label');
-                label.textContent = `Personalized Practice: ${isPersonalized ? 'ON' : 'OFF'}`;
-                console.log(`Personalized Practice ${isPersonalized ? 'Enabled' : 'Disabled'}`);
-    
-                const scene = game.scene.getScene('TypingScene');
-                if (!scene) {
-                    console.error("TypingScene not found.");
-                    return;
-                }
-    
-                if (isPersonalized) {
-                    console.log("Fetching personalized sentences...");
-                    const effectiveTimer = timer || '60'; // Default to 60 seconds if timer is not set
-                    try {
-                        const text = await getpSen(effectiveTimer);
-                        if (text) {
-                            scene.newSentence(text, effectiveTimer);
-                        } else {
-                            console.error("No personalized sentences returned.");
-                        }
-                    } catch (error) {
-                        console.error("Error fetching personalized sentences:", error);
-                    }
-                } else {
-                    console.log("Reverting to standard sentences...");
-                    if (difficulty && timer) {
-                        try {
-                            const text = await getSen(difficulty, timer);
-                            if (text) {
-                                scene.newSentence(text, timer);
-                            } else {
-                                console.error("No standard sentences returned.");
-                            }
-                        } catch (error) {
-                            console.error("Error fetching standard sentences:", error);
-                        }
-                    } else {
-                        console.log("Waiting for difficulty and timer to be set.");
-                    }
-                }
-            });
-        } else {
-            console.error("Personalized practice switch not found in the DOM.");
-        }
-    });
     
     getDifficulty(game);
 };
+document.addEventListener('DOMContentLoaded', () => {
+    const personalizedButton = document.getElementById('personalizedPractice');
+
+    if (personalizedButton) {
+        let isActive = false; // Tracks button state
+        let isSpacebarPressed = false; // Tracks spacebar activation
+
+        // Prevent spacebar from activating the button
+        personalizedButton.addEventListener('keydown', function (event) {
+            if (event.code === 'Space' || event.key === ' ') {
+                event.preventDefault(); // Prevent spacebar's default behavior
+                isSpacebarPressed = true; // Mark spacebar as pressed
+                console.log("Spacebar press prevented.");
+            }
+        });
+
+        // Reset flag on keyup
+        personalizedButton.addEventListener('keyup', function (event) {
+            if (event.code === 'Space' || event.key === ' ') {
+                isSpacebarPressed = false; // Reset flag
+            }
+        });
+
+        // Add click listener for toggling state
+        personalizedButton.addEventListener('click', function () {
+            if (isSpacebarPressed) {
+                console.log("Click event ignored due to spacebar press.");
+                return; // Skip toggling if the spacebar triggered the click
+            }
+
+            // Toggle state
+            isActive = !isActive;
+
+            // Update button appearance and text
+            this.textContent = `Personalized Practice: ${isActive ? "ON" : "OFF"}`;
+            this.classList.toggle('btn-success', isActive);
+            this.classList.toggle('btn-secondary', !isActive);
+
+            console.log(`Personalized Practice is now: ${isActive ? "ON" : "OFF"}`);
+        });
+    } else {
+        console.error("Personalized Practice button not found in the DOM.");
+    }
+});
 
 
 // function to send the statistics from phaser js to django view
