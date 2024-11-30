@@ -243,31 +243,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (personalizedButton) {
         let isActive = false; // Tracks button state
-        let isSpacebarPressed = false; // Tracks spacebar activation
 
-        // Prevent spacebar from activating the button
-        personalizedButton.addEventListener('keydown', function (event) {
-            if (event.code === 'Space' || event.key === ' ') {
-                event.preventDefault(); // Prevent spacebar's default behavior
-                isSpacebarPressed = true; // Mark spacebar as pressed
-                console.log("Spacebar press prevented.");
+        // Add a global keydown listener for the spacebar
+        document.addEventListener('keydown', function (event) {
+            const isSpacebar = event.code === 'Space' || event.key === ' ';
+
+            // Prevent spacebar activation only if the button is focused
+            if (isSpacebar && document.activeElement === personalizedButton) {
+                event.preventDefault();
+                console.log("Spacebar press prevented on button.");
             }
         });
 
-        // Reset flag on keyup
-        personalizedButton.addEventListener('keyup', function (event) {
-            if (event.code === 'Space' || event.key === ' ') {
-                isSpacebarPressed = false; // Reset flag
-            }
-        });
-
-        // Add click listener for toggling state
-        personalizedButton.addEventListener('click', function () {
-            if (isSpacebarPressed) {
-                console.log("Click event ignored due to spacebar press.");
-                return; // Skip toggling if the spacebar triggered the click
-            }
-
+        // Add a click listener to toggle button state
+        personalizedButton.addEventListener('click', async function () {
             // Toggle state
             isActive = !isActive;
 
@@ -277,12 +266,20 @@ document.addEventListener('DOMContentLoaded', () => {
             this.classList.toggle('btn-secondary', !isActive);
 
             console.log(`Personalized Practice is now: ${isActive ? "ON" : "OFF"}`);
+
+        
+
+            if (isActive) {
+                isPersonalizedActive = true
+            }
+            else{
+                isPersonalizedActive = false
+            }
         });
     } else {
         console.error("Personalized Practice button not found in the DOM.");
     }
 });
-
 
 // function to send the statistics from phaser js to django view
 // "getStatistics"
@@ -357,7 +354,6 @@ let difficulty = null;
 let timer = null;
 function getDifficulty(game) {
         
-
         // get difficulty level
         const dropdown = document.querySelectorAll('#difficultyMenu .dropdown-item');
         const dropdownButton = document.getElementById('difficultyMenuButton');
