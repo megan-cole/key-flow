@@ -353,44 +353,60 @@ function getSen(difficulty,timer) {
 let difficulty = null;
 let timer = null;
 function getDifficulty(game) {
-        
-        // get difficulty level
-        const dropdown = document.querySelectorAll('#difficultyMenu .dropdown-item');
-        const dropdownButton = document.getElementById('difficultyMenuButton');
-        dropdown.forEach(item => {
-            item.addEventListener('click', (e)=> {
-                e.preventDefault();
-                difficulty = e.currentTarget.value;
-                dropdownButton.textContent = e.currentTarget.value;
+    const dropdown = document.querySelectorAll('#difficultyMenu .dropdown-item');
+    const dropdownButton = document.getElementById('difficultyMenuButton');
+    const timerDropdown = document.querySelectorAll('#timerMenu .dropdown-item');
+    const timerButton = document.getElementById('timerMenuButton');
+    
+    // Event listener for difficulty selection
+    dropdown.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            difficulty = e.currentTarget.value;
+            dropdownButton.textContent = e.currentTarget.value;
 
-                const scene = game.scene.getScene('TypingScene');
-                // if a value has been chosen for both difficulty and timer, send these values
-                if(difficulty && timer) {
-                    getSen(difficulty,timer).then(text => {
-                        scene.newSentence(text,timer);
-                    })
-                }
+            const scene = game.scene.getScene('TypingScene');
 
-            })
-        })
-
-        // get timer choice
-        const timerDropdown = document.querySelectorAll('#timerMenu .dropdown-item');
-        const timerButton = document.getElementById('timerMenuButton');
-        timerDropdown.forEach(item => {
-            item.addEventListener('click', (e)=> {
-                e.preventDefault();
-                timer = e.currentTarget.value;
-                timerButton.textContent = e.currentTarget.value + 's';
-
-                const scene = game.scene.getScene('TypingScene');
-                // if a value has been chosen for both difficulty and timer, send these values
+            // Check if personalized practice is active
+            if (isPersonalizedActive) {
+                console.log("Personalized Practice is active.");
+                getpSen(timer || '60').then(text => {
+                    scene.newSentence(text, timer || '60');
+                }).catch(error => console.error("Error fetching personalized sentences:", error));
+            } else {
+                // If both difficulty and timer are chosen, fetch sentences
                 if (difficulty && timer) {
-                    getSen(difficulty,timer).then(text => {
-                        scene.newSentence(text,timer);
-                    })
-                }  
+                    getSen(difficulty, timer).then(text => {
+                        scene.newSentence(text, timer);
+                    }).catch(error => console.error("Error fetching sentences:", error));
+                }
+            }
+        });
+    });
 
-            })
-        }) 
+    // Event listener for timer selection
+    timerDropdown.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            timer = e.currentTarget.value;
+            timerButton.textContent = e.currentTarget.value + 's';
+
+            const scene = game.scene.getScene('TypingScene');
+
+            // Check if personalized practice is active
+            if (isPersonalizedActive) {
+                console.log("Personalized Practice is active.");
+                getpSen(timer || '60').then(text => {
+                    scene.newSentence(text, timer || '60');
+                }).catch(error => console.error("Error fetching personalized sentences:", error));
+            } else {
+                // If both difficulty and timer are chosen, fetch sentences
+                if (difficulty && timer) {
+                    getSen(difficulty, timer).then(text => {
+                        scene.newSentence(text, timer);
+                    }).catch(error => console.error("Error fetching sentences:", error));
+                }
+            }
+        });
+    });
 }
