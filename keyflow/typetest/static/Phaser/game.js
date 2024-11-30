@@ -180,11 +180,17 @@ window.onload = function() {
                 const timerButton = document.getElementById('timerMenuButton');
                 dropdownButton.textContent = 'Normal';
                 timerButton.textContent = '30s';
+                //added personalized practice related reset
+                const personalizedButton = document.getElementById('personalizedPractice');
+                personalizedButton.textContent = `Personalized Practice: OFF`;
+                personalizedButton.classList.toggle('btn-secondary');
+                isPersonalizedActive = false;
+
 
                 // reset difficulty and timer
                 difficulty = null;
                 timer = null;
-                flag = false
+                
 
                 
             }))
@@ -377,6 +383,7 @@ function getDifficulty(game) {
                     }).catch(error => console.error("Error fetching sentences:", error));
                 }
             }
+            this.blur()
         });
     });
 
@@ -403,6 +410,7 @@ function getDifficulty(game) {
                     }).catch(error => console.error("Error fetching sentences:", error));
                 }
             }
+            this.blur()
         });
     });
     if (personalizedButton) {
