@@ -1,34 +1,40 @@
-let worddisplay, userInputDisplay, gameTimer, index, typedWord, wordToType, timer,
+let worddisplay, snowflakedisplay, userInputDisplay, gameTimer, index, typedWord, wordToType, timer,
     gameovermsg, showscore, showaccuracy;
 window.onload = function(){
     function createSnowFall(scene, wordbank){
+        //remove game over text if restarted game
         if(gameovermsg){
                 gameovermsg.destroy();
                 showscore.destroy();
                 showaccuracy.destroy();
                 scene.newgamebutton.visible = false;
         }
-        //remove start game button
+        //remove start game and difficulty buttons
         if(scene.startgamebutton)
             scene.startgamebutton.destroy();
         if(scene.difficultybutton)
             scene.difficultybutton.destroy();
+
+        //initialize variables
         typedWord = '';
         wordToType = '';
         let gameGo = true;
         let accuracy = 0;
         let difficultyDelays = new Array([1700, 18000, 1900], [1300, 1100, 900], [800, 500, 300])
-        let hexCodes = new Array("#FF0000", "#FFA500", "#FFFF00", "#00FF00", "#0000FF", "#800080");
+        let hexCodes = new Array("#FF0000", "#FFA500", "#FFFF00", "#00FF00", "#10277f", "#800080");
 
         //index tracker for wordbank
         var word = 0;
         var curwords = wordbank;
+
+        //add initial points text
         scene.pointsText = scene.add.text(16,16,
             'Points: 0', 
             {fontSize: '32px', 
             fontFamily:'"Consolas"', 
             fill: '#FFFFFF'});
         
+        //initialize timer
         let delayVal = difficultyDelays[scene.difficulty][0];
         timer = 60;
         timeDisplay = scene.add.text(16,46,
@@ -37,18 +43,21 @@ window.onload = function(){
             fontFamily:'"Consolas"', 
             fill: '#FFFFFF'});
 
+        //timer for game
         gameTimer = scene.time.addEvent({
             delay: 1000,
             callback: () =>{
                 --timer;
                 timeDisplay.setText(`${timer}`);
 
+                //change rate at which words drops as timer decreases
                 if(timer == 20)
                     delayVal = difficultyDelays[scene.difficulty][1];
 
                 if(timer == 40)
                     delayVal = difficultyDelays[scene.difficulty][2];
 
+                //code to execute when game ends
                 if(timer <= 0){
                     timeDisplay.visible = false;
                     wordTimer.remove();
@@ -94,15 +103,18 @@ window.onload = function(){
             callback: () =>{
                     if(timer > 0){
                     //generate random x postion for word
-                    let xpos = Math.floor(Math.random() * ((window.innerWidth - 150) - 100) + 100);   
+                    let xpos = Math.floor(Math.random() * ((window.innerWidth - 150) - 100) + 100); 
+                    snowflakedisplay = scene.add.image(xpos, 15, 'snowflake');
+                    scene.flakes.push(snowflakedisplay);
                     if(scene.difficulty < 2){  
-                        worddisplay = scene.add.text(xpos, 10, curwords[word], { 
+                        worddisplay = scene.add.text(xpos - (curwords[word].length*24)/4, 6, curwords[word], { 
                                 fontSize: '24px', 
                                 fontFamily:'"Consolas"', 
-                                fill: '#00008b'});
+                                fill: '#000000'});
                     }
+                    //make words different colors for 'crazy' mode
                     else{
-                    worddisplay = scene.add.text(xpos, 10, curwords[word], { 
+                    worddisplay = scene.add.text(xpos - (curwords[word].length*24)/4, 6, curwords[word], { 
                             fontSize: '24px', 
                             fontFamily:'"Consolas"', 
                             fill: hexCodes[word % 6]});
@@ -117,7 +129,7 @@ window.onload = function(){
 
             }); 
             
-            userInputDisplay = scene.add.text((window.innerWidth/2) - 50, 400, typedWord, { fontSize: '24px', fontFamily:'"Courier New",monospace', fill: '#0096FF'}); 
+            userInputDisplay = scene.add.text(300, 400, typedWord, { fontSize: '24px', fontFamily:'"Courier New",monospace', fill: '#000000'}); 
             scene.input.keyboard.off('keydown');
 
             scene.input.keyboard.on('keydown', function(event) {
@@ -135,7 +147,7 @@ window.onload = function(){
                         }
                         if(letter){
                             typedWord += key;
-                            scene.wordsOnScreen[index].setColor('#0096FF');
+                            scene.wordsOnScreen[index].setColor('#0000FF');
                             userInputDisplay.setText(typedWord);
                             wordToType = scene.wordsOnScreen[index].text;
                         }
@@ -157,7 +169,9 @@ window.onload = function(){
                                     }
                                 }
                                 scene.wordsOnScreen[index].destroy();
+                                scene.flakes[index].destroy();
                                 scene.wordsOnScreen.splice(index, 1);
+                                scene.flakes.splice(index, 1);
                                 typedWord = '';
                                 scene.calcPoints(wordToType.length, '');
                                 userInputDisplay.setText(typedWord);
@@ -168,7 +182,14 @@ window.onload = function(){
     }
 
     class GameScene extends Phaser.Scene{
+        preload(){
+            this.load.image('background', '/static/images/snowfall.png');
+            this.load.image('snowflake', '/static/images/snowflake.png');
+        }
         create(){
+            this.bg = this.add.image(0, 0, 'background').setOrigin(0, 0);
+            this.bg.setScale(window.innerWidth / this.bg.width, window.innerHeight / this.bg.height);
+            this.bg.setDepth(-1);
             this.difficulty = 0;
             this.difficultyText = new Array("Normal", "Hard", "Crazy");
             this.newgame();
@@ -177,6 +198,7 @@ window.onload = function(){
 
         newgame(){
             this.gameUpdate = true;
+            this.flakes = [];
             this.wordsOnScreen = [];
             this.points = 0;
             this.missedWords = [];
@@ -277,8 +299,9 @@ window.onload = function(){
             }
         }
 
-        moveword(word, speed, i){
+        moveword(word, snowflake, speed, i){
             word.y += speed;
+            snowflake.y += speed;
 
             // word has hit the bottom, lose points
             if (word.y >= window.innerHeight) {
@@ -287,9 +310,11 @@ window.onload = function(){
                     typedWord = '';
                     userInputDisplay.setText(typedWord);
                 }
-
+                this.flakes[i].destroy();
                 // remove word from wordsOnScreen
                 this.wordsOnScreen.splice(i,1);
+
+                this.flakes.splice(i,1);
 
                 // add word to missedWords (idk if we even need this)
                 this.missedWords.push(word.text);
@@ -382,7 +407,7 @@ window.onload = function(){
                         else
                             speed = 2.25;
                     }
-                    this.moveword(this.wordsOnScreen[i], speed, i);
+                    this.moveword(this.wordsOnScreen[i], this.flakes[i], speed, i);
 
                 }
             }
@@ -395,7 +420,6 @@ window.onload = function(){
         type: Phaser.AUTO,
         width: window.innerWidth,
         height: window.innerHeight,
-        backgroundColor: '#add8e6',
         scale: {
             mode: Phaser.Scale.RESIZE,
             autoCenter: Phaser.Scale.CENTER_BOTH
