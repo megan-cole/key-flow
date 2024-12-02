@@ -21,7 +21,8 @@ urlpatterns = [
     path('leaderboard/', views.leaderboard, name='leaderboard'),
     path('minigames/',views.minigames,name='minigames'),
     path('obstacles/',views.obstacles,name='obstacles'),
-    path('getStatisticsObstacle/',views.getStatisticsObstacle,name='getStatisticsObstacle')
+    path('getStatisticsObstacle/',views.getStatisticsObstacle,name='getStatisticsObstacle'),
+    path('personalizedSentences/',views.personalizedSentences,name='personalizedSentences')
 ]
 
 if settings.DEBUG:

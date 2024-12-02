@@ -48,6 +48,24 @@
             margin-top: 17px;
             background-color: #9900CC !important;
         }
+        .custom-control {
+            margin-left: 20px; 
+            display: flex;
+            align-items: center; 
+        }
+        #personalizedPractice {
+        transition: background-color 0.3s ease, color 0.3s ease;
+        font-size: 1rem;
+        padding: 5px 10px;
+        }
+        #personalizedPractice.btn-success {
+        background-color: #28a745 !important;
+        color: white !important;
+        }
+        #personalizedPractice.btn-secondary {
+        background-color: #6c757d !important;
+        color: white !important;
+        }
     </style>
 {% endblock %}
 {% block content %}
@@ -59,9 +77,9 @@
                     Difficulty
                 </button>
                 <div class="dropdown-menu" aria-labelledby="difficultyMenuButton" id="difficultyMenu">
-                    <button type="button" class="dropdown-item" value="Easy" name="difficulty">Easy</button>
-                    <button type="button" class="dropdown-item" value="Medium" name="difficulty">Medium</button>
+                    <button type="button" class="dropdown-item" value="Normal" name="difficulty">Normal</button>
                     <button type="button" class="dropdown-item" value="Hard" name="difficulty">Hard</button>
+                    <button type="button" class="dropdown-item" value="Crazy" name="difficulty">Crazy</button>
                 </div>
             </div>
             <div class="btn-group">
@@ -74,7 +92,13 @@
                         <button type="button" class="dropdown-item" value="90" name="timer">90s</button>
                     </div>
             </div>
+            <div id="personalizedSwitch">
+                <button id="personalizedPractice" class="btn btn-secondary" style="margin-left: 20px" tabindex="-1">
+                    Personalized Practice: OFF
+                </button>
+            </div>
         </div>
+
     </div> 
     <div id="game-container"></div>
 {% endblock %}

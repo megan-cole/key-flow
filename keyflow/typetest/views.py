@@ -9,6 +9,7 @@ import json
 import math
 from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
+import logging
 
 def index(request):
     data = {}
@@ -159,7 +160,7 @@ def generateSentences(request):
     # for medium difficulty level, use sentence
     if request.method == 'POST':
 
-        difficulty = json.loads(request.body).get('difficulty','easy')
+        difficulty = json.loads(request.body).get('difficulty','normal')
         timer = json.loads(request.body).get('timer','30s')
 
     s = RandomSentence()
@@ -167,7 +168,7 @@ def generateSentences(request):
 
     numWords = (time / 60.0) * 150
     numSentences = math.ceil(numWords / 4.0)
-    if difficulty.lower() == 'easy':
+    if difficulty.lower() == 'normal':
         sentences = [s.bare_bone_with_adjective() for _ in range(numSentences)]
 
         # remove capitalization and punctuation
@@ -175,10 +176,10 @@ def generateSentences(request):
             sentences[i] = sentences[i][:-1].lower()
             
         text = ' '.join(random.sample(sentences,k=numSentences))
-    elif difficulty.lower() == 'medium':
+    elif difficulty.lower() == 'hard':
         sentences = [s.sentence() for _ in range(numSentences)]
         text = ' '.join(random.sample(sentences,k=numSentences))
-    elif difficulty.lower() == 'hard':
+    elif difficulty.lower() == 'crazy':
         
         
         sentences = [s.sentence() for _ in range(numSentences)]
@@ -215,7 +216,69 @@ def generateSentences(request):
             
     # return a JSON response that can be fetched by Phaser to get the words
     return JsonResponse({'text':text})
-    
+
+logger = logging.getLogger(__name__)
+
+def personalizedSentences(request):
+    logger.info("Received request at /personalizedSentences/")
+    if request.method == 'POST':
+        logger.info("Request method is POST.")
+        user = request.user
+
+        # Check if user is authenticated
+        if not user.is_authenticated:
+            logger.warning("Unauthorized access attempt.")
+            return JsonResponse({'text': 'You must be logged in to generate personalized sentences.'})
+
+        # Retrieve most missed letters
+        userRecords = Statistics.objects.filter(username=user, gameMode='basic')
+        logger.info(f"Retrieved {userRecords.count()} records for user: {user}.")
+
+        lettersMissed = {}
+        for record in userRecords:
+            logger.debug(f"Processing record: {record}")
+            for letter in record.lettersMissed:  # Assuming `lettersMissed` is a dictionary field
+                lettersMissed[letter] = record.lettersMissed[letter] + lettersMissed.get(letter, 0)
+
+        # Sort and get top 5 most missed letters
+        lettersMissed = dict(sorted(lettersMissed.items(), key=lambda x: x[1], reverse=True))
+        mostMissedLetters = list(lettersMissed.keys())[:5]
+        logger.info(f"Top missed letters: {mostMissedLetters}")
+
+        # Generate words that mostly contain the most missed letters
+        r = RandomWord()
+        wordbank = []
+        for _ in range(100):  # Generate a pool of 100 random words
+            word = r.word().lower()
+            if any(letter in word for letter in mostMissedLetters):
+                wordbank.append(word)
+
+        logger.info(f"Initial word bank size: {len(wordbank)}")
+
+        # Ensure at least 45 valid words in the word bank
+        wordbank = [word for word in wordbank if len(word) <= 10 and "-" not in word and " " not in word]
+        logger.info(f"Filtered word bank size: {len(wordbank)}")
+        while len(wordbank) < 45:
+            word = r.word().lower()
+            if any(letter in word for letter in mostMissedLetters) and len(word) <= 10 and "-" not in word:
+                wordbank.append(word)
+
+        logger.info(f"Final word bank size: {len(wordbank)}")
+
+        # Generate sentences using these words
+        sentences = []
+        for _ in range(10):  # Create 10 sentences
+            sentence = ' '.join(random.choices(wordbank, k=random.randint(5, 10)))
+            sentences.append(sentence)
+
+        logger.info(f"Generated sentences: {sentences}")
+
+        # Return sentences in JSON format
+        return JsonResponse({'text': ' '.join(sentences)})
+
+    logger.error("Request method is not POST.")
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+           
 # function to retrieve the statistics from game.js that should be passed
 # whenever a game has ended
 def getStatistics(request):

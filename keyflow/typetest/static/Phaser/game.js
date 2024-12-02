@@ -1,4 +1,5 @@
 let textDisplay, textDisplay2, userInputDisplay, gameDone;
+let isPersonalizedActive = false;
 window.onload = function() {
     function createTypingGame(scene, textToType,timer) {
         let typedText = '';  
@@ -173,7 +174,17 @@ window.onload = function() {
             .setInteractive()
             .on('pointerdown', () => getSen(difficulty,timer).then(text => {
                 this.newSentence(text,timer);
-                flag = false
+
+
+                 //added personalized practice related reset
+                 const personalizedButton = document.getElementById('personalizedPractice');
+                 personalizedButton.textContent = `Personalized Practice: OFF`;
+                 personalizedButton.classList.toggle('btn-secondary');
+                 isPersonalizedActive = false;
+
+                // reset difficulty and timer
+
+            
 
                 
             }))
@@ -224,10 +235,52 @@ window.onload = function() {
     };
 
     const game = new Phaser.Game(config);  // initializing game
-
+    
     getDifficulty(game);
 };
+document.addEventListener('DOMContentLoaded', () => {
+    const personalizedButton = document.getElementById('personalizedPractice');
 
+    if (personalizedButton) {
+        let isActive = false; // Tracks button state
+
+        // Add a global keydown listener for the spacebar
+        personalizedButton.addEventListener('keydown', function (event) {
+            const isSpacebar = event.code === 'Space' || event.key === ' ';
+
+            // Prevent spacebar activation only if the button is focused
+            if (isSpacebar && document.activeElement === personalizedButton) {
+                event.preventDefault();
+                console.log("Spacebar press prevented on button.");
+            }
+        });
+
+        // Add a click listener to toggle button state
+        personalizedButton.addEventListener('click', async function () {
+            // Toggle state
+            isActive = !isActive;
+
+            // Update button appearance and text
+            this.textContent = `Personalized Practice: ${isActive ? "ON" : "OFF"}`;
+            this.classList.toggle('btn-success', isActive);
+            this.classList.toggle('btn-secondary', !isActive);
+            this.blur();
+
+            console.log(`Personalized Practice is now: ${isActive ? "ON" : "OFF"}`);
+
+        
+
+            if (isActive) {
+                isPersonalizedActive = true
+            }
+            else{
+                isPersonalizedActive = false
+            }
+        });
+    } else {
+        console.error("Personalized Practice button not found in the DOM.");
+    }
+});
 
 // function to send the statistics from phaser js to django view
 // "getStatistics"
@@ -246,6 +299,33 @@ function passStatistics(wpm, lettersMissed, sentence) {
         })
     })
 
+}
+
+function getpSen(timer) {
+    return fetch('/personalizedSentences/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+        },
+        body: JSON.stringify({
+            difficulty: 'personalized',
+            timer: timer,
+        }),
+    }) 
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch personalized sentences');
+            }
+            return response.json();
+        })
+        .then((data) => {
+            return data.text;
+        })
+        .catch((error) => {
+            console.error("Error fetching personalized sentences:", error);
+            return '';
+        });
 }
 
 function getSen(difficulty,timer) {
@@ -270,51 +350,85 @@ function getSen(difficulty,timer) {
 
 }
 
+
 let difficulty = null;
 let timer = null;
 function getDifficulty(game) {
-        
-
-        // get difficulty level
-        const dropdown = document.querySelectorAll('#difficultyMenu .dropdown-item');
-        const dropdownButton = document.getElementById('difficultyMenuButton');
-        dropdown.forEach(item => {
-            item.addEventListener('click', (e)=> {
-                e.preventDefault();
-                difficulty = e.currentTarget.value;
-                dropdownButton.textContent = e.currentTarget.value;
-
-                const scene = game.scene.getScene('TypingScene');
-                // if a value has been chosen for both difficulty and timer, send these values
-                if(difficulty && timer) {
-                    getSen(difficulty,timer).then(text => {
-                        scene.newSentence(text,timer);
-                    })
-                }
-
-            })
-        })
-
-        // get timer choice
-        const timerDropdown = document.querySelectorAll('#timerMenu .dropdown-item');
-        const timerButton = document.getElementById('timerMenuButton');
-        timerDropdown.forEach(item => {
-            item.addEventListener('click', (e)=> {
-                e.preventDefault();
-                timer = e.currentTarget.value;
-                timerButton.textContent = e.currentTarget.value + 's';
-
-                const scene = game.scene.getScene('TypingScene');
-                // if a value has been chosen for both difficulty and timer, send these values
-                if (difficulty && timer) {
-                    getSen(difficulty,timer).then(text => {
-                        scene.newSentence(text,timer);
-                    })
-                }  
-
-            })
-        })
-
+    const dropdown = document.querySelectorAll('#difficultyMenu .dropdown-item');
+    const dropdownButton = document.getElementById('difficultyMenuButton');
+    const timerDropdown = document.querySelectorAll('#timerMenu .dropdown-item');
+    const timerButton = document.getElementById('timerMenuButton');
+    const personalizedButton = document.getElementById('personalizedPractice');
     
-}
+    // Event listener for difficulty selection
+    dropdown.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            difficulty = e.currentTarget.value;
+            dropdownButton.textContent = e.currentTarget.value;
 
+            const scene = game.scene.getScene('TypingScene');
+
+            // Check if personalized practice is active if it is do nothing else 
+            if (!isPersonalizedActive) {
+                if (difficulty && timer) {
+                    getSen(difficulty, timer).then(text => {
+                        scene.newSentence(text, timer);
+                    }).catch(error => console.error("Error fetching sentences:", error));
+                }
+            }
+            this.blur()
+        });
+    });
+
+    // Event listener for timer selection
+    timerDropdown.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            timer = e.currentTarget.value;
+            timerButton.textContent = e.currentTarget.value + 's';
+
+            const scene = game.scene.getScene('TypingScene');
+
+            // Check if personalized practice is active
+            if (isPersonalizedActive) {
+                console.log("Personalized Practice is active.");
+                getpSen(timer || '60').then(text => {
+                    scene.newSentence(text, timer || '60');
+                }).catch(error => console.error("Error fetching personalized sentences:", error));
+            } else {
+                // If both difficulty and timer are chosen, fetch sentences
+                if (difficulty && timer) {
+                    getSen(difficulty, timer).then(text => {
+                        scene.newSentence(text, timer);
+                    }).catch(error => console.error("Error fetching sentences:", error));
+                }
+            }
+            this.blur()
+        });
+    });
+    if (personalizedButton) {
+        personalizedButton.addEventListener('click', () => {
+
+            const scene = game.scene.getScene('TypingScene');
+
+            // Trigger logic based on the new flag state
+            if (isPersonalizedActive) {
+                console.log("Personalized Practice activated. Fetching sentences...");
+                getpSen(timer || '60').then(text => {
+                    scene.newSentence(text, timer || '60');
+                }).catch(error => console.error("Error fetching personalized sentences:", error));
+            } else {
+                //if deactivated, see if difficulty and timer are selected and restart sentences
+                if (difficulty && timer) {
+                    getSen(difficulty, timer).then(text => {
+                        scene.newSentence(text, timer);
+                    }).catch(error => console.error("Error fetching sentences:", error));
+                }
+                console.log("Personalized Practice deactivated. Awaiting user input...");
+            }
+        });
+    } else {
+        console.error("Personalized Practice button not found in the DOM.");
+    }
+}
