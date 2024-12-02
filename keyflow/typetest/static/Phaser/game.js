@@ -172,22 +172,19 @@ window.onload = function() {
         create() {
             this.newgamebutton = this.add.text(50, 400, 'New Game', { fontFamily:'"Consolas"', fill: '#0f0'})
             .setInteractive()
-            .on('pointerdown', () => getSen(difficulty,timer).then(text => {
-                this.newSentence(text,timer);
-
-
-                 //added personalized practice related reset
-                 const personalizedButton = document.getElementById('personalizedPractice');
-                 personalizedButton.textContent = `Personalized Practice: OFF`;
-                 personalizedButton.classList.toggle('btn-secondary');
-                 isPersonalizedActive = false;
-
-                // reset difficulty and timer
-
-            
-
+            .on('pointerdown', () => {
+                if (isPersonalizedActive) {
                 
-            }))
+                    getpSen(timer||'60').then(text => {
+                        this.newSentence(text, timer||'60');
+                    });
+                } else {
+
+                    getSen(difficulty, timer).then(text => {
+                        this.newSentence(text, timer);
+                    });
+                }
+            })
             .on('pointerover', () => this.hoverState())
             .on('pointerout', () => this.restState());
             this.newgamebutton.visible = false;

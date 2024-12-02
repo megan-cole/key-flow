@@ -170,26 +170,21 @@ window.onload = function() {
         }
 
         create() {
-            this.difficultyStr = "Easy";
-            this.durationStr = "30s";
             this.newgamebutton = this.add.text(50, 400, 'New Game', { fontFamily:'"Consolas"', fill: '#0f0'})
             .setInteractive()
-            .on('pointerdown', () => getSen('easy','30').then(text => {
-                this.newSentence(text,'30');
-
-                // reset text on buttons
-                /*const dropdownButton = document.getElementById('difficultyMenuButton');
-                const timerButton = document.getElementById('timerMenuButton');
-                dropdownButton.textContent = 'Easy';
-                timerButton.textContent = '30s';
-
-                // reset difficulty and timer
-                difficulty = null;
-                timer = null;
-                flag = false
-
+            .on('pointerdown', () => {
+                if (isPersonalizedActive) {
                 
-            }))
+                    getpSen(timer||'60').then(text => {
+                        this.newSentence(text, timer||'60');
+                    });
+                } else {
+
+                    getSen(difficulty, timer).then(text => {
+                        this.newSentence(text, timer);
+                    });
+                }
+            })
             .on('pointerover', () => this.hoverState())
             .on('pointerout', () => this.restState());
             this.newgamebutton.visible = false;
