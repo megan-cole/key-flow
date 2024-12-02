@@ -149,11 +149,11 @@ window.onload = function() {
         
         preload() {
             // load background image
-            this.load.image('background','/static/Phaser/images/obstacleBG.jpg');
-            this.load.image('defaultPenguin','/static/Phaser/images/penguinDefault.png');
-            this.load.image('stone','/static/Phaser/images/stone.png');
-            this.load.image('bush','/static/Phaser/images/bush.png');
-            this.load.image('log','/static/Phaser/images/log.png');
+            this.load.image('background','/static/images/obstacleBG.jpg');
+            this.load.image('defaultPenguin','/static/images/penguinDefault.png');
+            this.load.image('stone','/static/images/stone.png');
+            this.load.image('bush','/static/images/bush.png');
+            this.load.image('log','/static/images/log.png');
         }
         
         create(){

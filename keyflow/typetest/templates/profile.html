@@ -10,7 +10,7 @@
         <div class="profile-info">
             <h2>Your Profile</h2>
             <p><strong>Username:</strong> {{ user.username }}</p>
-            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Email:</strong> {{ user.emailAddress }}</p>
             <p><strong>Date Joined:</strong> {{ user.date_joined|date:"F j, Y" }}</p>
         </div>
         <div class="statistics">
@@ -22,6 +22,8 @@
                 <li>{{item}}</li>
             {% endfor %}
         </div>
+        <b>Level: {{user.level}}</b><br>
+        <b>XP: {{user.xp}}</b>
 
         <div class="profile-actions">
             <form id="logout-form" method="post" action="{% url 'logout' %}">

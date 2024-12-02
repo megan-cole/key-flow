@@ -56,6 +56,8 @@ class Account(AbstractBaseUser):
     password = models.CharField(max_length=256)
     emailAddress = models.EmailField(max_length=64, unique=True)
     battlePass = models.BooleanField(default=False)
+    level = models.IntegerField(default=0)
+    xp = models.IntegerField(default=0)
 
     USERNAME_FIELD = "username"
     objects = UserManager()

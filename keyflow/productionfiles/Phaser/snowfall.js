@@ -65,6 +65,7 @@ window.onload = function(){
                     gameGo = false;
                     for(let i = 0; i < scene.wordsOnScreen.length; ++i){
                         scene.wordsOnScreen[i].destroy();
+                        scene.flakes[i].destroy();
                     }
                     if(userInputDisplay)
                         userInputDisplay.destroy();
@@ -79,16 +80,16 @@ window.onload = function(){
                     `Score: ${scene.points}`,
                     {fontSize: '24px', 
                     fontFamily:'"Consolas"', 
-                    fill: '#0096FF'});
+                    fill: '#000000'});
 
-                    passStatistics(scene.points);
+                    passStatistics(scene.points, scene.difficulty);
         
                     accuracy = (scene.wordsCorrect / word) * 100;
                     showaccuracy = scene.add.text((window.innerWidth/2)-100, (window.innerHeight/2)+20,
                     `Accuracy: ${accuracy.toFixed(0)}%`,
                     {fontSize: '24px', 
                     fontFamily:'"Consolas"', 
-                    fill: '#0096FF'});
+                    fill: '#000000'});
                     scene.newgamebutton.visible = true;
                 }
                 
@@ -110,7 +111,9 @@ window.onload = function(){
                         worddisplay = scene.add.text(xpos - (curwords[word].length*24)/4, 6, curwords[word], { 
                                 fontSize: '24px', 
                                 fontFamily:'"Consolas"', 
-                                fill: '#000000'});
+                                fill: '#000000',
+                                stroke: '#FFFFFF',
+                                strokeThickness: 2,});
                     }
                     //make words different colors for 'crazy' mode
                     else{
@@ -450,7 +453,7 @@ function getWords() {
 
 }
 
-function passStatistics(score){
+function passStatistics(score, difficulty){
     fetch('/getStatisticsSnowFall/', {
         method: 'POST',
         headers: {
@@ -458,7 +461,8 @@ function passStatistics(score){
             'X-CSRFToken': csrfToken
         },
         body: JSON.stringify({
-            score: score
+            "score": score,
+            "difficulty": difficulty
         })
     })
 }

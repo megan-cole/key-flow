@@ -1,7 +1,7 @@
 let textDisplay, textDisplay2, userInputDisplay, gameDone;
 let isPersonalizedActive = false;
 window.onload = function() {
-    function createTypingGame(scene, textToType,timer) {
+    function createTypingGame(scene, textToType, timer) {
         let typedText = '';  
         let startTime = 0;
         let lettersMissed = {}
@@ -85,7 +85,7 @@ window.onload = function() {
                     const wpm = Math.floor((numWords*60) / timer)
                     
                      // pass these statistics to the function to send them back to django
-                    passStatistics(wpm,lettersMissed,textToType);
+                    passStatistics(wpm, lettersMissed, textToType, timer, difficulty);
     
                     gameDone = scene.add.text(50, 350, `Well done! Time: ${elapsedTime.toFixed(2)}s. WPM: ${wpm}`, { fontSize: '32px Arial', fill: '#ff0000' });
                     typedText = '';  //resets
@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // function to send the statistics from phaser js to django view
 // "getStatistics"
-function passStatistics(wpm, lettersMissed, sentence) {
+function passStatistics(wpm, lettersMissed, sentence, time, difficulty) {
 
     fetch('/getStatistics/', {
         method: 'POST',
@@ -290,9 +290,12 @@ function passStatistics(wpm, lettersMissed, sentence) {
             'X-CSRFToken': csrfToken
         },
         body: JSON.stringify({
-            wpm: wpm,
-            lettersMissed: lettersMissed,
-            sentence: sentence
+            'wpm': wpm,
+            'lettersMissed': lettersMissed,
+            'sentence': sentence,
+            'time': time,
+            'difficulty': difficulty
+            
         })
     })
 

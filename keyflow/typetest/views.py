@@ -285,8 +285,6 @@ def getStatistics(request):
 
 
     if request.method == 'POST':
-
-
         # parse json into dictionary
         data = json.loads(request.body)
 
@@ -298,7 +296,8 @@ def getStatistics(request):
 
         # get sentence so we know the letter frequency
         sentence = data.get('sentence')
-
+        time = int(data.get('time'))
+        diff = data.get('difficulty').lower()
         accuracy = 0
         # accuracy is the # of letters missed // of num letters in sentence
         numLettersMissed = sum(lettersMissed.values())
@@ -308,6 +307,25 @@ def getStatistics(request):
         # if user is an anonymous user (not logged in) don't save their stats
         if request.user.is_authenticated:
 
+            if time == 30:
+                timemult = .5
+            elif time == 60:
+                timemult = 1
+            else:
+                timemult = 1.5
+
+            if diff == "easy":
+                diffmult = .5
+            elif diff == "medium":
+                diffmult = .7
+            else:
+                diffmult = .9
+            
+            xpToAdd = wpm * (accuracy/100) * diffmult * timemult
+
+            user.xp += int(xpToAdd)
+            user.save()
+            check_level(user)
             # store data from only previous 10 attempts, so if there are more 
             # than 10 records for this user, remove the earliest one
             userRecords = Statistics.objects.filter(username=user,gameMode='basic')
@@ -330,6 +348,7 @@ def getStatistics(request):
             except Exception as e:
                 print('error', e)
 
+
     
         return JsonResponse({'success':True})
 
@@ -348,9 +367,18 @@ def getStatisticsSnowFall(request):
 
         # get data from game
         score = data.get('score')
+        diff = data.get('difficulty')
 
         # if user is an anonymous user (not logged in) don't save their stats
         if request.user.is_authenticated:
+
+            if diff == 0:
+                xpToAdd = (int(score / 100)) * 10
+            elif diff == 1:
+                xpToAdd = (int(score / 100)) * 15
+            user.xp += xpToAdd
+            user.save()
+            check_level(user)
             userRecord = MinigameStatistics.objects.filter(username=user)
             if not userRecord:
                 # store data in database for user
@@ -362,7 +390,7 @@ def getStatisticsSnowFall(request):
                     )
                 except Exception as e:
                     print('error', e)
-            elif userRecord and score > userRecord.first().snowFallHighScore:
+            elif score > userRecord.first().snowFallHighScore:
                 userRecord = userRecord.first()
                 try:
                     userRecord.snowFallHighScore = score
@@ -390,6 +418,13 @@ def getStatisticsObstacle(request):
 
         # if user is an anonymous user (not logged in) don't save their stats
         if request.user.is_authenticated:
+            if time < 60:
+                xpToAdd = time * (4/6)
+            else:
+                xpToAdd = 40 + (time-60)
+            
+            user.xp += int(xpToAdd)
+            user.save()
             userRecord = MinigameStatistics.objects.filter(username=user)
             if not userRecord:
                 # store data in database for user
@@ -415,3 +450,29 @@ def getStatisticsObstacle(request):
 
 
     return JsonResponse({'success':False})
+
+def check_level(user):
+    if user.xp >= 7500:
+        user.level = 10
+    elif user.xp >= 5100:
+        user.level = 9
+    elif user.xp >= 3400:
+        user.level = 8
+    elif user.xp >=2300:
+        user.level = 7
+    elif user.xp >= 1500:
+        user.level = 6
+    elif user.xp >= 1000:
+        user.level = 5
+    elif user.xp >= 675:
+        user.level = 4
+    elif user.xp >= 450:
+        user.level = 3
+    elif user.xp >= 300:
+        user.level = 2
+    elif user.xp >= 200:
+        user.level = 1
+    else:
+        user.level = 0
+
+    user.save()
