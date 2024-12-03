@@ -275,6 +275,9 @@ window.onload = function() {
                 if (firstRound==true) {
                     createObstacle(this);
                 }
+                else {
+                    this.newRound();
+                }
             }
         }
 
@@ -384,8 +387,6 @@ window.onload = function() {
 
             // word has hit the penguin
             if (words[0].y + words[0].height >= this.penguinImage.y - (this.penguinImage.height / 5)) {
-                console.log('word', words[0].y + words[0].height);
-                console.log('pneguibn',this.penguinImage.y - (this.penguinImage.height / 4));
 
                 this.lives--;
 
@@ -439,9 +440,10 @@ window.onload = function() {
             this.adjustSize = true;
 
             // ran out of words
-            if (this.word >= 90) {
-                getWords().then(words => { this.newbank(words,false)})
+            if (this.word >= 80) {
+                getWords().then(words => { this.newbank(words,false)});
                 this.word = 0;
+                return;
             }
 
             // first round
