@@ -86,6 +86,13 @@ def profile(request):
     data['accuracy'] = int((sum(accuracy) / len(accuracy))) if accuracy else 0
     data['lettersMissed'] = list(lettersMissed.keys())
 
+    # get high scores for minigames
+    try:
+        data['snowHigh'] = MinigameStatistics.objects.filter(username=user).values('snowFallHighScore').first()['snowFallHighScore']
+        
+        data['obstacleHigh'] = MinigameStatistics.objects.filter(username=user).values('obstacleBestTime').first()['obstacleBestTime']
+    except Exception as e:
+        print(e)
 
     return render(request, 'profile.html',data)
 
