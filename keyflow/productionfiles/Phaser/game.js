@@ -172,15 +172,8 @@ window.onload = function() {
         create() {
             this.newgamebutton = this.add.text(50, 400, 'New Game', { fontFamily:'"Consolas"', fill: '#0f0'})
             .setInteractive()
-<<<<<<< Updated upstream
             .on('pointerdown', () => {
                 if (isPersonalizedActive) {
-=======
-            .on('pointerdown', () => getSen(difficulty,timer).then(text => {
-                this.newSentence(text,timer);
-                flag = false
-
->>>>>>> Stashed changes
                 
                     getpSen(timer||'60').then(text => {
                         this.newSentence(text, timer||'60');
