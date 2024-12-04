@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block head %}
+    <title>Leaderboard</title>
     <link 
     rel="stylesheet" 
     href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
@@ -59,7 +60,7 @@
                     </button>
                     <div class="dropdown-menu" aria-labelledby="gameMenuButton" id="gameMenu">
                         <button type="button" class="dropdown-item" value="Snowfall" name="snowfall">Snowfall</button>
-                        <button type="button" class="dropdown-item" value="Obstacle" name="obstacle">Obstacles</button>
+                        <button type="button" class="dropdown-item" value="SnowSlope" name="obstacle">SnowSlope</button>
                     </div>
                 </div>
                 <script>
@@ -72,7 +73,8 @@
                             item.addEventListener('click',(e) => {
                                 e.preventDefault();
                                 minigame = e.currentTarget.value;
-                                dropdownButton.textContent = e.currentTarget.value;
+                                dropdownButton.textContent = minigame;
+                                
 
                                 if(minigame) {
                                     window.location.href = `/leaderboard/${encodeURIComponent(minigame)}/`;
@@ -101,7 +103,7 @@
                             {% if minigame == 'Snowfall' %}
                                 <td>{{stat.snowFallHighScore}}</td>
                             {% endif %}
-                            {% if minigame == 'Obstacle' %}
+                            {% if minigame == 'SnowSlope' %}
                                 <td>{{stat.obstacleBestTime}}s</td>
                             {% endif %}
                         </tr>

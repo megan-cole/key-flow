@@ -199,6 +199,16 @@ window.onload = function(){
             this.difficultyText = new Array("Normal", "Hard", "Crazy");
             this.newgame();
             this.startdisplay(); 
+
+            this.scale.on('resize',this.centerButton,this);
+
+        }
+
+        // recenter things
+        centerButton() {
+            this.bg.setScale(window.innerWidth / this.bg.width, window.innerHeight / this.bg.height);
+            this.startgamebutton.setPosition((window.innerWidth/2)-100, (window.innerHeight/2)-50);
+            this.difficultybutton.setPosition((window.innerWidth/2)-100, (window.innerHeight/2));
         }
 
         newgame(){

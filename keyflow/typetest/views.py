@@ -103,14 +103,14 @@ def leaderboard(request,minigame='Minigame'):
     try:
         statistics = []
 
-        if minigame != 'Snowfall' and minigame != 'Minigame' and minigame != 'Obstacle':
+        if minigame != 'Snowfall' and minigame != 'Minigame' and minigame != 'SnowSlope':
             return redirect('leaderboard')
         
         if minigame == 'Snowfall':
                 
             # get top 10 statistics from snowfall
             statistics = list(MinigameStatistics.objects.filter(snowFallHighScore__gt=0).order_by('-snowFallHighScore').values('username__username','snowFallHighScore')[:10])
-        elif minigame == 'Obstacle':
+        elif minigame == 'SnowSlope':
             statistics = list(MinigameStatistics.objects.filter(obstacleBestTime__gt=0).order_by('-obstacleBestTime').values('username__username','obstacleBestTime')[:10])
 
     except Exception as e:
