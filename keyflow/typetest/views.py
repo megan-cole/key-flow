@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Account, Statistics, MinigameStatistics
-from .forms import UserRegistrationForm
+from .forms import UserRegistrationForm, MonetaryTransctionForm
 from django.contrib.auth.hashers import make_password
 from wonderwords import RandomWord, RandomSentence
 from django.http import JsonResponse
@@ -117,19 +117,49 @@ def leaderboard(request,minigame='Minigame'):
         print('error',e)
     return render(request,'leaderboard.html',{'statistics':statistics,'minigame':minigame})
 
+def battlepass_view(request):
+    user = request.user
+    return render(request, 'battlepass.html')
 
+def buy_battlepass_view(request):
+    error = ""
+    if request.method == 'POST':
+        form = MonetaryTransctionForm(request.POST)
+        if form.is_valid():
+            user = request.user
+            if user.is_authenticated:
+                code = form.cleaned_data["coupon_code"].upper()
+                if code == "KEYFLOW":
+                    user.battlePass = True
+                    user.save()
+                    return redirect("/")
+                else:
+                    error = "Invalid coupon code"
+            else:
+                return redirect("/accounts/login")
+    else:
+        form = MonetaryTransctionForm()
+    return render(request, 'buyBP.html', {"form": form, "error": error})
 
 
 def register_view(request):
     error =""
     if request.method == "POST":
+        print("bello")
         form = UserRegistrationForm(request.POST)
+        print("bello pt 2")
         if form.is_valid():
+            print("hello")
             try:
+                print("trying")
                 newuser = form.save()
+                print("success")
                 return redirect("/")
             except Exception as e:
+                print("failed")
                 print(e)
+        else:
+            return render(request, "register.html", {"form": form, "error": error})
             
                 
     form = UserRegistrationForm()

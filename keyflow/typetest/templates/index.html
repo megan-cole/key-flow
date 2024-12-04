@@ -89,7 +89,10 @@
         </div>
         <div class="bottomBox">
             <div class="battlepass">
-                <h2>Battlepass Progress</h2>
+                <a href="/battlepass/"><h2>BattlePass Progress</h2></a>
+                {% if user.battlePass == False %}
+                    <a href="/buyBP/">Buy BattlePass Here!</a>
+                {% endif %}
             </div>
         </div>
     </div>

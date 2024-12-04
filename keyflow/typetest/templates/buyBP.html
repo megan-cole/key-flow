@@ -1,0 +1,14 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<body>
+    {{ error }}
+    <h2>Use code "KEYFLOW" for a FREE BattlePass!!</h2>
+    <form action = "" method = "post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Purchase">
+    </form>
+</body>
+
+{%endblock%}

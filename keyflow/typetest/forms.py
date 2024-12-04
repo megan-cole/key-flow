@@ -14,8 +14,11 @@ class UserRegistrationForm(UserCreationForm):
             emailAddress = forms.EmailField(label="Email", max_length=64)
             firstName = forms.CharField(label="First Name", max_length=32)
             lastName = forms.CharField(label="Last Name", max_length=32) 
-            battlePass = forms.BooleanField(label="BattlePass", required=False)
-            fields = UserCreationForm.Meta.fields + ("emailAddress", "firstName", "lastName", "battlePass")
+            fields = UserCreationForm.Meta.fields + ("emailAddress", "firstName", "lastName")
+
+class MonetaryTransctionForm(Form):
+    coupon_code = forms.CharField(label="Coupon Code", max_length=10)
+    
     
     
          
