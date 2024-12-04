@@ -207,6 +207,9 @@ window.onload = function() {
 
             this.startgamebutton.setPosition((window.innerWidth/2)-100,(window.innerHeight/2)-50);
             this.bg.setScale(window.innerWidth / this.bg.width, window.innerHeight / this.bg.height);
+            this.newgamebutton.setPosition((window.innerWidth/2), (window.innerHeight/2)+60);
+            this.gameOverText.setPosition((window.innerWidth/2), (window.innerHeight/2)-50);
+            this.survivedTimeText.setPosition((window.innerWidth/2), (window.innerHeight/2)+10);
 
         }
 
