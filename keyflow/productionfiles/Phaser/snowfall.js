@@ -21,7 +21,7 @@ window.onload = function(){
         let gameGo = true;
         let accuracy = 0;
         let difficultyDelays = new Array([1700, 18000, 1900], [1300, 1100, 900], [800, 500, 300])
-        let hexCodes = new Array("#FF0000", "#FFA500", "#FFFF00", "#00FF00", "#10277f", "#800080");
+        let hexCodes = new Array("#E23F44", "#FFA500", "#FFFF00", "#00FF00", "#90d5ff", "#BF40BF");
 
         //index tracker for wordbank
         var word = 0;
@@ -120,7 +120,9 @@ window.onload = function(){
                     worddisplay = scene.add.text(xpos - (curwords[word].length*24)/4, 6, curwords[word], { 
                             fontSize: '24px', 
                             fontFamily:'"Consolas"', 
-                            fill: hexCodes[word % 6]});
+                            fill: "#000000",
+                            stroke: hexCodes[word % 6],
+                            strokeThickness: 2,});
                     }
                     ++word;
                     scene.wordsOnScreen.push(worddisplay);
@@ -132,7 +134,7 @@ window.onload = function(){
 
             }); 
             
-            userInputDisplay = scene.add.text(300, 400, typedWord, { fontSize: '24px', fontFamily:'"Courier New",monospace', fill: '#000000'}); 
+            userInputDisplay = scene.add.text(450, 650, typedWord, { fontSize: '24px', fontFamily:'"Courier New",monospace', fill: '#000000'}); 
             scene.input.keyboard.off('keydown');
 
             scene.input.keyboard.on('keydown', function(event) {

@@ -92,6 +92,18 @@
                 <a href="/battlepass/"><h2>BattlePass Progress</h2></a>
                 {% if user.battlePass == False %}
                     <a href="/buyBP/">Buy BattlePass Here!</a>
+                {% else %}
+                <b>XP to next reward: </b>
+                <script>
+                    var xpNeeded = {{user.xp}};
+                    document.write(xpNeeded);
+                </script>
+                <br>
+                <img id="bpimg" src="" />
+                <script>
+                    nextLevel = {{user.level}} + 1;
+                    document.getElementById("bpimg").src = `./../static/images/level${nextLevel}.png`;
+                </script>
                 {% endif %}
             </div>
         </div>
