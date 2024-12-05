@@ -86,7 +86,7 @@ def profile(request):
     data['accuracy'] = int((sum(accuracy) / len(accuracy))) if accuracy else 0
     data['lettersMissed'] = list(lettersMissed.keys())
 
-    data['profilepicture'] =  "level1" #EquippedItems.objects.filter(username=user).values('profilePicture').first()['profilePicture']
+    data['profilepicture'] =  EquippedItems.objects.filter(username=user).values('profilePicture').first()['profilePicture']
     print(data['profilepicture'])
 
     # get high scores for minigames
