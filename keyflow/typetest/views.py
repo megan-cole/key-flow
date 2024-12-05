@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Account, Statistics, MinigameStatistics
+from .models import Account, Statistics, MinigameStatistics, EquippedItems
 from .forms import UserRegistrationForm, MonetaryTransctionForm
 from django.contrib.auth.hashers import make_password
 from wonderwords import RandomWord, RandomSentence
@@ -86,15 +86,19 @@ def profile(request):
     data['accuracy'] = int((sum(accuracy) / len(accuracy))) if accuracy else 0
     data['lettersMissed'] = list(lettersMissed.keys())
 
+    data['profilepicture'] = EquippedItems.objects.filter(username=user).values('profilePicture').first()['profilePicture']
+    print(data['profilepicture'])
+
     # get high scores for minigames
     try:
         data['snowHigh'] = MinigameStatistics.objects.filter(username=user).values('snowFallHighScore').first()['snowFallHighScore']
         
         data['obstacleHigh'] = MinigameStatistics.objects.filter(username=user).values('obstacleBestTime').first()['obstacleBestTime']
+
     except Exception as e:
         print(e)
 
-    return render(request, 'profile.html',data)
+    return render(request, 'profile.html', data)
 
 
 def leaderboard(request,minigame='Minigame'):
@@ -145,18 +149,13 @@ def buy_battlepass_view(request):
 def register_view(request):
     error =""
     if request.method == "POST":
-        print("bello")
         form = UserRegistrationForm(request.POST)
-        print("bello pt 2")
         if form.is_valid():
-            print("hello")
             try:
-                print("trying")
                 newuser = form.save()
-                print("success")
+                EquippedItems.objects.create(username=newuser)
                 return redirect("/")
             except Exception as e:
-                print("failed")
                 print(e)
         else:
             return render(request, "register.html", {"form": form, "error": error})

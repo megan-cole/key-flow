@@ -82,3 +82,12 @@ class MinigameStatistics(models.Model):
     username = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
     snowFallHighScore = models.PositiveIntegerField()
     obstacleBestTime = models.PositiveIntegerField()
+
+class EquippedItems(models.Model):
+    username = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+    profilePicture = models.CharField(default="default")
+    snowSlopeAvatar = models.CharField(default="default")
+    snowSlopeObstacle1 = models.BooleanField(default=False)
+    snowSlopeObstacle2 = models.BooleanField(default=False)
+    snowSlopeObstacle3 = models.BooleanField(default=False)
+    snowFallBackground = models.CharField(default="default")
