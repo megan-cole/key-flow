@@ -86,7 +86,7 @@ def profile(request):
     data['accuracy'] = int((sum(accuracy) / len(accuracy))) if accuracy else 0
     data['lettersMissed'] = list(lettersMissed.keys())
 
-    data['profilepicture'] = EquippedItems.objects.filter(username=user).values('profilePicture').first()['profilePicture']
+    data['profilepicture'] =  "level1" #EquippedItems.objects.filter(username=user).values('profilePicture').first()['profilePicture']
     print(data['profilepicture'])
 
     # get high scores for minigames
@@ -412,9 +412,11 @@ def getStatisticsSnowFall(request):
                 xpToAdd = (int(score / 100)) * 10
             elif diff == 1:
                 xpToAdd = (int(score / 100)) * 15
-            user.xp += xpToAdd
-            user.save()
-            check_level(user)
+
+            if diff != 2:
+                user.xp += xpToAdd
+                user.save()
+                check_level(user)
             userRecord = MinigameStatistics.objects.filter(username=user)
             if not userRecord:
                 # store data in database for user
