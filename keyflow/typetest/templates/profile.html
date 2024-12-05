@@ -1,6 +1,7 @@
 {% extends 'index.html' %}
 
 {% block head %}
+<title>Profile</title>
 <style>
 
     .profileContainer {
@@ -146,6 +147,12 @@
                     <h5>{{user.emailAddress}}</h5>
                 </div>
                 <div class="pfp">
+                    <img id="pfpimg" src="" />
+                <script>
+                    imgName = "{{profilepicture}}";
+                    imgElement.src = `./../static/images/${imgName}pfp.png`;
+                    
+                </script>
                 </div>
             </div>
             <div class="battlepassInfo">
@@ -171,7 +178,7 @@
             </div>
             <div class="box minigames">
                 <h4><u>Snowfall High Score:</u> {{snowHigh}}</h4>
-                <h4><u>Obstacle Game High Score:</u> {{obstacleHigh}}</h4>
+                <h4><u>Snow Slope Best Time:</u> {{obstacleHigh}}s</h4>
             </div>
         </div>
 

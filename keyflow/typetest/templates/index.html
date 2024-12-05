@@ -3,7 +3,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <link rel="stylesheet" href="{% static 'style.css' %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,11 +19,6 @@
 
         .topBox {
             display: flex;
-            height: 50vh;
-        }
-
-        .bottomBox {
-            height: 50vh;
         }
 
         .box {
@@ -35,17 +29,15 @@
             text-align: center;
         }
 
-        .friends {
-            text-align: center;
-        }
         .battlepass {
             text-align: center;
             color: #9900CC;
             text-decoration: underline;
             margin-top: 10px;
+            margin-top: 35px;
         }
 
-        .stats h2, .friends h2 {
+        .stats h2 {
             margin-top: 35px;
             margin-bottom: 50px;
             color: #9900CC;
@@ -60,7 +52,7 @@
 
     </style>
     {% block head %}
-   
+    <title>Home</title>
     {% endblock %}
 </head>
 <style>
@@ -83,15 +75,24 @@
                     {{item}}
                 {% endfor %}
             </div>
-            <div class="box friends">
-                <h2>Friends</h2>
-            </div>
-        </div>
-        <div class="bottomBox">
-            <div class="battlepass">
+            <div class="box battlepass">
                 <a href="/battlepass/"><h2>BattlePass Progress</h2></a>
                 {% if user.battlePass == False %}
                     <a href="/buyBP/">Buy BattlePass Here!</a>
+                {% else %}
+                <br>
+                <b>XP to next reward: </b>
+                <script>
+                    var xpNeeded = {{user.xp}};
+                    document.write(xpNeeded);
+                </script>
+                <br>
+                <br>
+                <img id="bpimg" src="" />
+                <script>
+                    nextLevel = {{user.level}} + 1;
+                    document.getElementById("bpimg").src = `./../static/images/level${nextLevel}.png`;
+                </script>
                 {% endif %}
             </div>
         </div>

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Account, Statistics, MinigameStatistics
+from .models import Account, Statistics, MinigameStatistics, EquippedItems
 from .forms import UserRegistrationForm, MonetaryTransctionForm
 from django.contrib.auth.hashers import make_password
 from wonderwords import RandomWord, RandomSentence
@@ -86,15 +86,19 @@ def profile(request):
     data['accuracy'] = int((sum(accuracy) / len(accuracy))) if accuracy else 0
     data['lettersMissed'] = list(lettersMissed.keys())
 
+    data['profilepicture'] =  "level1" #EquippedItems.objects.filter(username=user).values('profilePicture').first()['profilePicture']
+    print(data['profilepicture'])
+
     # get high scores for minigames
     try:
         data['snowHigh'] = MinigameStatistics.objects.filter(username=user).values('snowFallHighScore').first()['snowFallHighScore']
         
         data['obstacleHigh'] = MinigameStatistics.objects.filter(username=user).values('obstacleBestTime').first()['obstacleBestTime']
+
     except Exception as e:
         print(e)
 
-    return render(request, 'profile.html',data)
+    return render(request, 'profile.html', data)
 
 
 def leaderboard(request,minigame='Minigame'):
@@ -103,14 +107,14 @@ def leaderboard(request,minigame='Minigame'):
     try:
         statistics = []
 
-        if minigame != 'Snowfall' and minigame != 'Minigame' and minigame != 'Obstacle':
+        if minigame != 'Snowfall' and minigame != 'Minigame' and minigame != 'SnowSlope':
             return redirect('leaderboard')
         
         if minigame == 'Snowfall':
                 
             # get top 10 statistics from snowfall
             statistics = list(MinigameStatistics.objects.filter(snowFallHighScore__gt=0).order_by('-snowFallHighScore').values('username__username','snowFallHighScore')[:10])
-        elif minigame == 'Obstacle':
+        elif minigame == 'SnowSlope':
             statistics = list(MinigameStatistics.objects.filter(obstacleBestTime__gt=0).order_by('-obstacleBestTime').values('username__username','obstacleBestTime')[:10])
 
     except Exception as e:
@@ -145,18 +149,13 @@ def buy_battlepass_view(request):
 def register_view(request):
     error =""
     if request.method == "POST":
-        print("bello")
         form = UserRegistrationForm(request.POST)
-        print("bello pt 2")
         if form.is_valid():
-            print("hello")
             try:
-                print("trying")
                 newuser = form.save()
-                print("success")
+                EquippedItems.objects.create(username=newuser)
                 return redirect("/")
             except Exception as e:
-                print("failed")
                 print(e)
         else:
             return render(request, "register.html", {"form": form, "error": error})
@@ -413,9 +412,11 @@ def getStatisticsSnowFall(request):
                 xpToAdd = (int(score / 100)) * 10
             elif diff == 1:
                 xpToAdd = (int(score / 100)) * 15
-            user.xp += xpToAdd
-            user.save()
-            check_level(user)
+
+            if diff != 2:
+                user.xp += xpToAdd
+                user.save()
+                check_level(user)
             userRecord = MinigameStatistics.objects.filter(username=user)
             if not userRecord:
                 # store data in database for user
