@@ -123,11 +123,11 @@ ul, ol, dl {
 
 /* Card container styling */
 .card-container {
-  width: 100%;              /* Ensure the container spans full width */
+  width: 100%;              
   display: flex;            /* Enable flexbox */
-  justify-content: center;  /* Center the content */
-  padding: 20px;            /* Add spacing around the container */
-  box-sizing: border-box;   /* Include padding in width calculation */
+  justify-content: center;  
+  padding: 20px;            
+  box-sizing: border-box;   
 }
 
 /* Card wrapper */
@@ -138,9 +138,9 @@ ul, ol, dl {
 /* Card list styling */
 .card-list {
   display: flex;            /* Use flexbox for layout */
-  flex-wrap: wrap;          /* Allow wrapping to the next row */
-  gap: 20px;                /* Add spacing between cards */
-  justify-content: center;  /* Center cards horizontally */
+  flex-wrap: wrap;          
+  gap: 20px;               
+  justify-content: center;  
   padding: 0;
   margin: 0;
   list-style: none;         /* Remove default list styling */
@@ -148,10 +148,10 @@ ul, ol, dl {
 
 /* Individual card items */
 .card-item {
-  flex: 1 1 calc(25% - 20px); /* Take up 25% of the row with gap adjustment */
+  flex: 1 1 calc(25% - 20px);
   max-width: 300px;          /* Limit maximum card size */
-  box-sizing: border-box;    /* Include padding and border in width */
-  background-color: #f9f9f9;
+  box-sizing: border-box;    
+  background-color:#f9f9f9;
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -268,13 +268,5 @@ ul, ol, dl {
   margin-right: auto;               
 }
 
-.buybp_container{
-  background-color: #fff;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
-  text-align: center;
-}
+
 
