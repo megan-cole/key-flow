@@ -1,5 +1,6 @@
 {% extends 'index.html' %}
 {% block head %}
+<title>Minigames</title>
 <style>
     body {
         background-color: #CBCBCB;
@@ -48,15 +49,26 @@
         width: 33%;
     }
 
-    #snowfallLink, #obstacleLink {
+    #snowfallLink {
         color: #add8e6;
         font-size: 35px;
         text-decoration: none;
         font-weight: bold;
         text-shadow: 2px 2px 1px grey;
     }
+    #obstacleLink {
+        color: #429654;
+        font-size: 35px;
+        text-decoration: none;
+        font-weight: bold;
+        text-shadow: 2px 2px 1px grey;
+    }
+    #obstacleLink:hover {
+        text-decoration: underline;
+        color: #429654;
+    }
 
-    #snowfallLink:hover, #obstacleLink:hover {
+    #snowfallLink:hover {
         text-decoration: underline;
         color: #add8e6;
     }
@@ -83,7 +95,7 @@
                 <a href="/snowfall/" id="snowfallLink">Snowfall</a>
             </div>
             <div class="minigame two">
-                <a href="/obstacles/" id="obstacleLink">Obstacles</a>
+                <a href="/obstacles/" id="obstacleLink">SnowSlope</a>
             </div>
             <div class="minigame three">
                 <a id="soon">Coming Soon...</a>
