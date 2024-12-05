@@ -143,13 +143,18 @@ ul, ol, dl {
   justify-content: center;  
   padding: 0;
   margin: 0;
-  list-style: none;         /* Remove default list styling */
+  list-style: none;         
 }
 
 /* Individual card items */
 .card-item {
+<<<<<<< HEAD
   flex: 1 1 calc(25% - 20px);
   max-width: 300px;          /* Limit maximum card size */
+=======
+  flex: 1 1 calc(25% - 20px); 
+  max-width: 300px;          
+>>>>>>> 92-equip
   box-sizing: border-box;    
   background-color: #f9f9f9;
   border: 1px solid #ddd;
@@ -226,12 +231,12 @@ ul, ol, dl {
 
 /* Card details container */
 .card-details {
-  text-align: center;                /* Align text to the left */
-  margin-top: 10px;                /* Space above the details */
-  font-size: 0.9rem;               /* Smaller font size for details */
-  color: #444;                     /* Slightly darker text color */
-  padding: 0 10px;                 /* Add padding for spacing */
-  line-height: 1.6;                /* Increase line height for readability */
+  text-align: center;                
+  margin-top: 10px;                
+  font-size: 0.9rem;              
+  color: #444;                    
+  padding: 0 10px;                 
+  line-height: 1.6;                
 }
 
 /* Individual detail styles */
@@ -239,17 +244,17 @@ ul, ol, dl {
 .card-xp,
 .card-game {
   margin: 5px 0;                   /* Add vertical spacing between details */
-  font-weight: 500;                 /* Make the text slightly bold */
+  font-weight: 500;                 
 }
 
 /* Customize XP and game info */
 .card-xp,
 .card-game {
-  font-style: italic;              /* Italicize for differentiation */
-  color: #888;                     /* Lighter text color for less emphasis */
+  font-style: italic;              
+  color: #888;                     
 }
 
-/* Style for Battlepass Rewards Header */
+
 .battlepass-header {
   font-size: 2.5rem;                
   font-weight: 700;                 
