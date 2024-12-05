@@ -125,6 +125,34 @@ def battlepass_view(request):
     user = request.user
     return render(request, 'battlepass.html')
 
+def equipitem(request, itemName):
+    user = request.user
+    level = int(itemName[-1])
+    if level == 0:
+        level = 10
+
+    if user.level >= level:
+        userRecord = EquippedItems.objects.filter(username=user).first()
+        if level == 1 or level == 4 or level == 7:
+            userRecord.profilePicture = itemName
+        elif level == 2 or level == 5 or level == 8:
+            userRecord.snowSlopeAvatar = itemName
+        elif level == 3:
+            userRecord.snowSlopeObstacle1 = True
+        elif level == 6:
+            userRecord.snowSlopeObstacle2 = True
+        elif level == 9:
+            userRecord.snowSlopeObstacle1 = True
+        else:
+            userRecord.snowFallBackground = itemName
+
+        try:
+            userRecord.save()
+        except:
+            pass
+        
+    return redirect('/battlepass/')
+
 def buy_battlepass_view(request):
     error = ""
     if request.method == 'POST':

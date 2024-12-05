@@ -12,6 +12,7 @@ urlpatterns = [
     path('register/', views.register_view, name='register'),
     path('profile/', views.profile, name='profile'),
     path('battlepass/', views.battlepass_view, name='battlepass'),
+    path('equipitem/<str:itemName>/', views.equipitem, name='equipitem'),
     path('buyBP/', views.buy_battlepass_view, name='buyBP'),
     path('generateSentences/',views.generateSentences,name='generateSentences'),
     path('generateWordBank/', views.generateWordBank, name='generateWordBank'),
