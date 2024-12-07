@@ -67,13 +67,18 @@
     <div class="homeContainer">
         <div class="topBox">
             <div class="box stats">
-                <h2>Recent Game Stats</h2>
-                <p><strong>Average WPM: </strong>{{avgWPM}}</p>
-                <p><strong>Average Accuracy: </strong>{{accuracy}}%</p>
-                <p><strong>Top 5 Frequently Missed Letters: </strong></p>
-                {% for item in lettersMissed %}
-                    {{item}}
-                {% endfor %}
+                {% if user.is_authenticated %}
+                    <h2>Recent Game Stats</h2>
+                    <p><strong>Average WPM: </strong>{{avgWPM}}</p>
+                    <p><strong>Average Accuracy: </strong>{{accuracy}}%</p>
+                    <p><strong>Top 5 Frequently Missed Letters: </strong></p>
+                    {% for item in lettersMissed %}
+                        {{item}}
+                    {% endfor %}
+                {% else %}
+                    <h2>Recent Game Stats</h2>
+                    <p><strong><a href="{% url 'login' %}">Log in</a> to save your stats!</strong></p>
+                {% endif %}
             </div>
             <div class="box battlepass">
                 <a href="/battlepass/"><h2>BattlePass Progress</h2></a>
