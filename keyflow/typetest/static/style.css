@@ -249,7 +249,21 @@ ul, ol, dl {
   color: #888;                     /* Lighter text color for less emphasis */
 }
 
-/* Style for Battlepass Rewards Header */
+.augie-header {
+  font-size: 1.5rem;                                
+  color: #640684;                           
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 10px 0;                  
+  text-align: center;               
+  background: linear-gradient(45deg, #9900CC, #FF99FF);  
+  border-radius: 8px;             
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);  
+  max-width: 40%;                  
+  margin-left: auto;     
+  margin-right: auto;     
+}
+
 .battlepass-header {
   font-size: 2.5rem;                
   font-weight: 700;                 

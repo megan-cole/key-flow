@@ -134,7 +134,7 @@ window.onload = function(){
 
             }); 
             
-            userInputDisplay = scene.add.text(450, 650, typedWord, { fontSize: '24px', fontFamily:'"Courier New",monospace', fill: '#000000'}); 
+            userInputDisplay = scene.add.text(867/(scene.bg.width/window.innerWidth), 1158/(scene.bg.height/window.innerHeight), typedWord, { fontSize: '24px', fontFamily:'"Courier New",monospace', fill: '#000000'}); 
             scene.input.keyboard.off('keydown');
 
             scene.input.keyboard.on('keydown', function(event) {

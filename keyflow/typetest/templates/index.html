@@ -6,7 +6,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
+     <link rel="stylesheet" href="/static/style.css">
+     <style>
         body {
             background-color: #CBCBCB;
         }
@@ -15,84 +16,138 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
         .topBox {
             display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 20px;
         }
 
         .box {
             flex: 1;
-        }
-
-        .stats {
+            background-color: #FFFFFF;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
             text-align: center;
         }
 
-        .battlepass {
-            text-align: center;
+        .battlepass h2 {
             color: #9900CC;
             text-decoration: underline;
-            margin-top: 10px;
-            margin-top: 35px;
+            margin-bottom: 15px;
         }
-
         .stats h2 {
-            margin-top: 35px;
-            margin-bottom: 50px;
             color: #9900CC;
-            text-decoration: underline;
+            margin-bottom: 15px;
         }
 
         .stats p {
-            padding: 5px;
+            margin: 10px 0;
+            color: #333333;
         }
 
-        
+        .battlepass a {
+            color: #9900CC;
+            text-decoration: underline;
+            font-weight: bold;
+        }
 
+        .battlepass img {
+            max-width: 100%;
+            margin-top: 15px;
+        }
+
+        .user-section img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            object-fit: cover;
+        }
+
+        .user-section h2 {
+            margin-top: 10px;
+            color: #333333;
+            padding-bottom: 30px;
+        }
+
+        .user-section a {
+            color: #9900CC;
+            text-decoration: underline;
+            font-weight: bold;
+            
+        }
     </style>
     {% block head %}
     <title>Home</title>
     {% endblock %}
 </head>
-<style>
 
-</style>
 <body>
     {% block navbar %}
-    {% include  'navbar.html' %}
+    {% include 'navbar.html' %}
     {% endblock %}
 
     {% block content %}
     <div class="homeContainer">
         <div class="topBox">
+        
+             <!-- BattlePass Section -->
+            <div class="box battlepass">
+                {%if user.is_authenticated%}
+                    <a href="/battlepass/"><h2>BattlePass Progress</h2>
+                    {% if user.battlePass == False %}
+                    <p>BattlePass made by Augustín</p>
+                    <img id="bpimg" src="{% static 'level1.png' %}" alt="BattlePass Level" />
+                    <p>Level One Reward</p>
+                    </a>
+                    {% else %}
+                        <p><b>XP to next reward: </b>{{user.xp}}</p>
+                        <img id="bpimg" src="{% static 'images/level' %}{{user.level|add:1}}.png" alt="BattlePass Level" />
+                        </a>
+                    {% endif %}
+                {%else%}
+                    <a href="/battlepass/"><h2>BattlePass</h2>
+                    <p>BattlePass made by Augustín</p>
+                    <p>Make an account TODAY to get the BattlePass</p>
+                    <img id="bpimg" src="{% static 'images/level1.png' %}" alt="BattlePass Level" />
+                    <p>Level One Reward</p>
+                    </a>
+                    
+                {%endif%}
+                
+            </div>
+            <!-- Stats Section -->
             <div class="box stats">
                 <h2>Recent Game Stats</h2>
                 <p><strong>Average WPM: </strong>{{avgWPM}}</p>
                 <p><strong>Average Accuracy: </strong>{{accuracy}}%</p>
                 <p><strong>Top 5 Frequently Missed Letters: </strong></p>
                 {% for item in lettersMissed %}
-                    {{item}}
+                    <p>{{item}}</p>
                 {% endfor %}
             </div>
-            <div class="box battlepass">
-                <a href="/battlepass/"><h2>BattlePass Progress</h2></a>
-                {% if user.battlePass == False %}
-                    <a href="/buyBP/">Buy BattlePass Here!</a>
+
+            <!-- User Profile Section -->
+            <div class="box user-section">
+                {% if user.is_authenticated %}
+                    <div class="pfp">
+                        <img id="pfpimg" src="" />
+                        <script>
+                            imgName = "{{profilepicture}}";
+                            imgElement = document.getElementById('pfpimg');
+                            imgElement.src = `./../static/images/${imgName}pfp.png`;
+                        </script>
+                    </div>
+                    <p>Welcome back, {{user.username}}!</p>
                 {% else %}
-                <br>
-                <b>XP to next reward: </b>
-                <script>
-                    var xpNeeded = {{user.xp}};
-                    document.write(xpNeeded);
-                </script>
-                <br>
-                <br>
-                <img id="bpimg" src="" />
-                <script>
-                    nextLevel = {{user.level}} + 1;
-                    document.getElementById("bpimg").src = `./../static/images/level${nextLevel}.png`;
-                </script>
+                    <h2>Welcome to our site!</h2>
+                    <a href="/register/">Make an account today</a>
                 {% endif %}
             </div>
         </div>
@@ -100,8 +155,6 @@
     {% endblock %}
 
     {% block scripts %}
-   
     {% endblock %}
 </body>
 </html>
-
