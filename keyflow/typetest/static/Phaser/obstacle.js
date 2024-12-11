@@ -1,4 +1,4 @@
-let worddisplay, gameTimer, index, wordToType, timer;
+let wordToType;
 window.onload = function() {
     function createObstacle(scene) {
 
@@ -63,8 +63,6 @@ window.onload = function() {
                 // typed word must match the correct (green) word
                 if(scene.typedWord == scene.roundsOnScreen[0][scene.correctPosition].text){
                     
-                    // word from this round was typed correctly, so mark as correct
-                    scene.typedCorrectly = true;
 
                     const positionOffset = Math.round(window.innerWidth*0.1);
                     // move penguin to correct side
@@ -106,7 +104,7 @@ window.onload = function() {
             centerText();
         });
 
-
+        // center text again if the screen is resized
         function centerText() {
 
             if(scene.leftText) {
@@ -157,6 +155,7 @@ window.onload = function() {
         }
         
         create(){
+            this.sys.game.loop.targetFps = 60;
             this.bg = this.add.image(0, 0, 'background').setOrigin(0,0);
             this.bg.setScale(window.innerWidth / this.bg.width, window.innerHeight / this.bg.height);
             this.bg.setDepth(-1);   // behind everything
@@ -172,11 +171,8 @@ window.onload = function() {
             this.gameOver = false;
             this.roundsOnScreen = [];
             this.points = 0;
-            this.missedWords = [];
-            this.typedCorrectly = false;
             this.timeText = null;
 
-            this.changedOnce = false;
             this.lives = 3;
             this.lifeLost = false;
             this.startTime = 0;
@@ -407,6 +403,7 @@ window.onload = function() {
 
         }
 
+        // game over
         clearGame() {
             this.gameUpdate = false;
             this.gameOver = true;
@@ -434,6 +431,7 @@ window.onload = function() {
 
         }
 
+        // generate new round of obstacles
         newRound() {
 
             if(this.gameOver)
@@ -544,6 +542,7 @@ window.onload = function() {
             this.roundsOnScreen.push(currentRound);
         }
 
+        // move to next round after life lost
         clearRound() {
 
             this.roundsOnScreen[0][0].destroy();
@@ -561,6 +560,7 @@ window.onload = function() {
             this.newRound();
         }
         
+        // get rid of obstacles
         clearObstacles() {
             if (this.leftImage)
                 this.leftImage.destroy();

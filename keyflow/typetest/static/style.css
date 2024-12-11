@@ -143,15 +143,15 @@ ul, ol, dl {
   justify-content: center;  
   padding: 0;
   margin: 0;
-  list-style: none;         /* Remove default list styling */
+  list-style: none;         
 }
 
 /* Individual card items */
 .card-item {
-  flex: 1 1 calc(25% - 20px);
-  max-width: 300px;          /* Limit maximum card size */
+  flex: 1 1 calc(25% - 20px); 
+  max-width: 300px;          
   box-sizing: border-box;    
-  background-color:#f9f9f9;
+  background-color: #f9f9f9;
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -226,12 +226,12 @@ ul, ol, dl {
 
 /* Card details container */
 .card-details {
-  text-align: center;                /* Align text to the left */
-  margin-top: 10px;                /* Space above the details */
-  font-size: 0.9rem;               /* Smaller font size for details */
-  color: #444;                     /* Slightly darker text color */
-  padding: 0 10px;                 /* Add padding for spacing */
-  line-height: 1.6;                /* Increase line height for readability */
+  text-align: center;                
+  margin-top: 10px;                
+  font-size: 0.9rem;              
+  color: #444;                    
+  padding: 0 10px;                 
+  line-height: 1.6;                
 }
 
 /* Individual detail styles */
@@ -239,30 +239,16 @@ ul, ol, dl {
 .card-xp,
 .card-game {
   margin: 5px 0;                   /* Add vertical spacing between details */
-  font-weight: 500;                 /* Make the text slightly bold */
+  font-weight: 500;                 
 }
 
 /* Customize XP and game info */
 .card-xp,
 .card-game {
-  font-style: italic;              /* Italicize for differentiation */
-  color: #888;                     /* Lighter text color for less emphasis */
+  font-style: italic;              
+  color: #888;                     
 }
 
-.augie-header {
-  font-size: 1.5rem;                                
-  color: #640684;                           
-  margin-top: 20px;
-  margin-bottom: 20px;
-  padding: 10px 0;                  
-  text-align: center;               
-  background: linear-gradient(45deg, #9900CC, #FF99FF);  
-  border-radius: 8px;             
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);  
-  max-width: 40%;                  
-  margin-left: auto;     
-  margin-right: auto;     
-}
 
 .battlepass-header {
   font-size: 2.5rem;                
