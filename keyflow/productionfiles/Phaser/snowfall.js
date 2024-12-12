@@ -102,7 +102,7 @@ window.onload = function(){
         let wordTimer = scene.time.addEvent({
             delay: delayVal,
             callback: () =>{
-                    if(timer > 0){
+                    if(timer > 1){
                     //generate random x postion for word
                     let xpos = Math.floor(Math.random() * ((window.innerWidth - 150) - 100) + 100); 
                     snowflakedisplay = scene.add.image(xpos, 15, 'snowflake');
@@ -134,7 +134,7 @@ window.onload = function(){
 
             }); 
             
-            userInputDisplay = scene.add.text(867/(scene.bg.width/window.innerWidth), 1158/(scene.bg.height/window.innerHeight), typedWord, { fontSize: '24px', fontFamily:'"Courier New",monospace', fill: '#000000'}); 
+            userInputDisplay = scene.add.text(856/(scene.bg.width/window.innerWidth), 1158/(scene.bg.height/window.innerHeight), typedWord, { fontSize: '24px', fontFamily:'"Courier New",monospace', fill: '#000000'}); 
             scene.input.keyboard.off('keydown');
 
             scene.input.keyboard.on('keydown', function(event) {
@@ -188,13 +188,12 @@ window.onload = function(){
 
     class GameScene extends Phaser.Scene{
         preload(){
-            this.load.image('background', '/static/images/snowfall.png');
+            this.load.image('default', "/static/images/defaultbackground.png");
+            this.load.image('level10', "/static/images/level10background.png");
             this.load.image('snowflake', '/static/images/snowflake.png');
         }
         create(){
-            this.bg = this.add.image(0, 0, 'background').setOrigin(0, 0);
-            this.bg.setScale(window.innerWidth / this.bg.width, window.innerHeight / this.bg.height);
-            this.bg.setDepth(-1);
+            getBackground().then(item => {this.setBackground(item)});
             this.difficulty = 0;
             this.difficultyText = new Array("Normal", "Hard", "Crazy");
             this.newgame();
@@ -202,6 +201,12 @@ window.onload = function(){
 
             this.scale.on('resize',this.centerButton,this);
 
+        }
+
+        setBackground(name){
+            this.bg = this.add.image(0, 0, name).setOrigin(0, 0);
+            this.bg.setScale(window.innerWidth / this.bg.width, window.innerHeight / this.bg.height);
+            this.bg.setDepth(-1);
         }
 
         // recenter things
@@ -313,6 +318,8 @@ window.onload = function(){
                 createSnowFall(this, wordbank);
             }
         }
+
+
 
         moveword(word, snowflake, speed, i){
             word.y += speed;
@@ -476,5 +483,25 @@ function passStatistics(score, difficulty){
             "score": score,
             "difficulty": difficulty
         })
+    })
+}
+
+function getBackground(){
+    return fetch('/getItemInfo/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+            "game": "snowFall"
+        })
+    }) 
+    // get the data from the django view and parse it in javascript
+    .then(response => response.json())
+    .then(data => {
+        // extract the words and return it
+        return data.item;
+        
     })
 }

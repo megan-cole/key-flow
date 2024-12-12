@@ -86,6 +86,7 @@ class MinigameStatistics(models.Model):
 class EquippedItems(models.Model):
     username = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
     profilePicture = models.CharField(default="default")
+    character = models.CharField(default="paul")
     snowSlopeAvatar = models.CharField(default="default")
     snowSlopeObstacle1 = models.BooleanField(default=False)
     snowSlopeObstacle2 = models.BooleanField(default=False)

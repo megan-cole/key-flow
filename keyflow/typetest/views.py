@@ -14,6 +14,7 @@ import logging
 def index(request):
     data = {}
     if request.user.is_authenticated:
+        xpLevels = [200, 300, 450, 675, 1000, 1500, 2300, 3400, 5100, 7500]
         user = request.user
 
         # get the list of all this user's statistics
@@ -40,6 +41,12 @@ def index(request):
         data['avgWPM'] = int((sum(wpm) / len(wpm))) if wpm else 0
         data['accuracy'] = int((sum(accuracy) / len(accuracy))) if accuracy else 0
         data['lettersMissed'] = list(lettersMissed.keys())
+
+        if user.level < 10:
+            data['nextXP'] = xpLevels[user.level] - user.xp
+
+        data['profilepicture'] =  EquippedItems.objects.filter(username=user).values('profilePicture').first()['profilePicture']
+        data['character'] = EquippedItems.objects.filter(username=user).values('character').first()['character']
 
 
     return render(request, 'index.html',data)
@@ -87,7 +94,6 @@ def profile(request):
     data['lettersMissed'] = list(lettersMissed.keys())
 
     data['profilepicture'] =  EquippedItems.objects.filter(username=user).values('profilePicture').first()['profilePicture']
-    print(data['profilepicture'])
 
     # get high scores for minigames
     try:
@@ -134,18 +140,43 @@ def equipitem(request, itemName):
     if user.level >= level:
         userRecord = EquippedItems.objects.filter(username=user).first()
         if level == 1 or level == 4 or level == 7:
-            userRecord.profilePicture = itemName
+            characters ={}
+            characters["default"] = "paul"
+            characters["level1"] = "benson"
+            characters["level4"] = "cate"
+            characters["level7"] = "alex"
+            if userRecord.profilePicture != itemName:
+                userRecord.profilePicture = itemName
+                userRecord.character = characters[itemName]
+            else:
+                userRecord.profilePicture = "default"
+                userRecord.character = characters["default"]
         elif level == 2 or level == 5 or level == 8:
-            userRecord.snowSlopeAvatar = itemName
+            if userRecord.snowSlopeAvatar != itemName:
+                userRecord.snowSlopeAvatar = itemName
+            else:
+                userRecord.snowSlopeAvatar = "default"
         elif level == 3:
-            userRecord.snowSlopeObstacle1 = True
-        elif level == 6:
-            userRecord.snowSlopeObstacle2 = True
-        elif level == 9:
-            userRecord.snowSlopeObstacle1 = True
-        else:
-            userRecord.snowFallBackground = itemName
+            if userRecord.snowSlopeObstacle1 != True:
+                userRecord.snowSlopeObstacle1 = True
+            else:
+                userRecord.snowSlopeObstacle1 = False
 
+        elif level == 6:
+            if userRecord.snowSlopeObstacle2 != True:
+                userRecord.snowSlopeObstacle2 = True
+            else:
+                userRecord.snowSlopeObstacle2 = False
+        elif level == 9:
+            if userRecord.snowSlopeObstacle3 != True:
+                userRecord.snowSlopeObstacle3 = True
+            else:
+                userRecord.snowSlopeObstacle3 = False
+        else:
+            if userRecord.snowFallBackground != itemName:
+                userRecord.snowFallBackground = itemName
+            else:
+                userRecord.snowFallBackground = "default"
         try:
             userRecord.save()
         except:
@@ -223,63 +254,63 @@ def generateSentences(request):
     # for easiest difficulty level, use bare_bone_with_adjectives
     # for medium difficulty level, use sentence
     if request.method == 'POST':
-
+        text = "bruh"
         difficulty = json.loads(request.body).get('difficulty','normal')
         timer = json.loads(request.body).get('timer','30s')
 
-    s = RandomSentence()
-    time = int(timer)
+        s = RandomSentence()
+        time = int(timer)
 
-    numWords = (time / 60.0) * 150
-    numSentences = math.ceil(numWords / 4.0)
-    if difficulty.lower() == 'normal':
-        sentences = [s.bare_bone_with_adjective() for _ in range(numSentences)]
+        numWords = (time / 60.0) * 150
+        numSentences = math.ceil(numWords / 4.0)
+        if difficulty.lower() == 'normal':
+            sentences = [s.bare_bone_with_adjective() for _ in range(numSentences)]
 
-        # remove capitalization and punctuation
-        for i in range(len(sentences)):
-            sentences[i] = sentences[i][:-1].lower()
+            # remove capitalization and punctuation
+            for i in range(len(sentences)):
+                sentences[i] = sentences[i][:-1].lower()
+                
+            text = ' '.join(random.sample(sentences,k=numSentences))
+        elif difficulty.lower() == 'hard':
+            sentences = [s.sentence() for _ in range(numSentences)]
+            text = ' '.join(random.sample(sentences,k=numSentences))
+        elif difficulty.lower() == 'crazy':
             
-        text = ' '.join(random.sample(sentences,k=numSentences))
-    elif difficulty.lower() == 'hard':
-        sentences = [s.sentence() for _ in range(numSentences)]
-        text = ' '.join(random.sample(sentences,k=numSentences))
-    elif difficulty.lower() == 'crazy':
-        
-        
-        sentences = [s.sentence() for _ in range(numSentences)]
-        text = ' '.join(random.sample(sentences,k=numSentences))
+            
+            sentences = [s.sentence() for _ in range(numSentences)]
+            text = ' '.join(random.sample(sentences,k=numSentences))
 
-        # randomly capitalize letters in the sentence
-        textLen = len(text)
-        randomIndices = random.sample(range(0,textLen),textLen//3)
+            # randomly capitalize letters in the sentence
+            textLen = len(text)
+            randomIndices = random.sample(range(0,textLen),textLen//3)
 
-       
-        newText = ''
-        for i in range(len(text)):
-            if i in randomIndices:
-                newText += text[i].upper()
-            else:
-                newText += text[i]
-        # vary the punctuation characters
-        text = ''
-        hyphen = False
-        puncChars = ['.','?','!',',',':',';',':','-']
-        for i in range(len(newText)):
-            if newText[i] == '.':
-                punc = random.choice(puncChars)
-                text += punc
-                if punc == '-':
-                    hyphen = True
-            else:
-                # remove space after hyphen to combine the words
-                if hyphen:
-                    hyphen = False 
+        
+            newText = ''
+            for i in range(len(text)):
+                if i in randomIndices:
+                    newText += text[i].upper()
                 else:
-                    text += newText[i]
+                    newText += text[i]
+            # vary the punctuation characters
+            text = ''
+            hyphen = False
+            puncChars = ['.','?','!',',',':',';',':','-']
+            for i in range(len(newText)):
+                if newText[i] == '.':
+                    punc = random.choice(puncChars)
+                    text += punc
+                    if punc == '-':
+                        hyphen = True
+                else:
+                    # remove space after hyphen to combine the words
+                    if hyphen:
+                        hyphen = False 
+                    else:
+                        text += newText[i]
 
-            
-    # return a JSON response that can be fetched by Phaser to get the words
-    return JsonResponse({'text':text})
+                
+        # return a JSON response that can be fetched by Phaser to get the words
+        return JsonResponse({'text':text})
 
 logger = logging.getLogger(__name__)
 
@@ -336,7 +367,6 @@ def personalizedSentences(request):
             sentences.append(sentence)
 
         logger.info(f"Generated sentences: {sentences}")
-
         # Return sentences in JSON format
         return JsonResponse({'text': ' '.join(sentences)})
 
@@ -519,6 +549,23 @@ def getStatisticsObstacle(request):
 
 
     return JsonResponse({'success':False})
+
+def getItemInfo(request):
+    if request.method == 'POST':
+
+        game = json.loads(request.body).get('game')
+        user = request.user
+        if game == "snowFall":
+            item =  EquippedItems.objects.filter(username=user).values('snowFallBackground').first()['snowFallBackground']
+        elif game == "snowSlopeAvatar":
+            item = EquippedItems.objects.filter(username=user).values('snowSlopeAvatar').first()['snowSlopeAvatar']
+        elif game == "snowSlopeObs":
+            item = []
+            item.append(EquippedItems.objects.filter(username=user).values('snowSlopeObstacle1').first()['snowSlopeObstacle1'])
+            item.append(EquippedItems.objects.filter(username=user).values('snowSlopeObstacle2').first()['snowSlopeObstacle2'])
+            item.append(EquippedItems.objects.filter(username=user).values('snowSlopeObstacle2').first()['snowSlopeObstacle2'])
+            print(item)
+    return JsonResponse({'item': item})
 
 def check_level(user):
     if user.xp >= 7500:

@@ -62,13 +62,7 @@
             margin-top: 15px;
         }
 
-        .user-section img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            margin-bottom: 15px;
-            object-fit: cover;
-        }
+        
 
         .user-section h2 {
             margin-top: 10px;
@@ -107,9 +101,15 @@
                     <p>Level One Reward</p>
                     </a>
                     {% else %}
-                        <p><b>XP to next reward: </b>{{user.xp}}</p>
-                        <img id="bpimg" src="{% static 'images/level' %}{{user.level|add:1}}.png" alt="BattlePass Level" />
-                        </a>
+                        {% if user.level < 10 %}
+                            <p><b>XP to next reward: </b>{{nextXP}}</p>
+                            <img id="bpimg" src="{% static 'images/level' %}{{user.level|add:1}}.png" alt="BattlePass Level" />
+                            </a>
+                        {% else %}
+                            <p><b>BattlePass Complete!</b></p>
+                            <img id="bpimg" src="{% static 'images/completeBP.png' %}" alt="BattlePass Level" />
+                            </a>
+                        {% endif %}
                     {% endif %}
                 {%else%}
                     <a href="/battlepass/"><h2>BattlePass</h2>
@@ -141,14 +141,12 @@
             <!-- User Profile Section -->
             <div class="box user-section">
                 {% if user.is_authenticated %}
-                    <div class="pfp">
-                        <img id="pfpimg" src="" />
+                        <img id="characterimg" src="" />
                         <script>
-                            imgName = "{{profilepicture}}";
-                            imgElement = document.getElementById('pfpimg');
-                            imgElement.src = `./../static/images/${imgName}pfp.png`;
+                            imgName = "{{character}}";
+                            imgElement = document.getElementById('characterimg');
+                            imgElement.src = `./../static/images/${imgName}.png`;
                         </script>
-                    </div>
                     <p>Welcome back, {{user.username}}!</p>
                 {% else %}
                     <h2>Welcome to our site!</h2>

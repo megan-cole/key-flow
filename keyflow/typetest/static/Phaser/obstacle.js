@@ -1,6 +1,6 @@
 let wordToType;
 window.onload = function() {
-    function createObstacle(scene) {
+    function createObstacle(scene, avatarName) {
 
 
         scene.startgamebutton.destroy();
@@ -21,9 +21,9 @@ window.onload = function() {
                     fill: true}}
         );
 
-        scene.penguinImage = scene.add.image((window.innerWidth/2)-50, (window.innerHeight/2)+175,'defaultPenguin');
-        scene.penguinImage.setScale(0.3);
-        scene.penguinImage.setOrigin(0.5);
+        scene.avatarImage = scene.add.image((window.innerWidth/2)-50, (window.innerHeight/2)+175, avatarName);
+        scene.avatarImage.setScale(0.3);
+        scene.avatarImage.setOrigin(0.5);
 
         scene.timeText = scene.add.text(0,5, 'Time: ', 
             { fontSize: '26px', 
@@ -67,15 +67,15 @@ window.onload = function() {
                     const positionOffset = Math.round(window.innerWidth*0.1);
                     // move penguin to correct side
                     if (scene.correctPosition === 0) {
-                        scene.penguinImage.setPosition((window.innerWidth/2)-200-positionOffset, (window.innerHeight/2)+175);
+                        scene.avatarImage.setPosition((window.innerWidth/2)-200-positionOffset, (window.innerHeight/2)+175);
 
                     }
                     else if (scene.correctPosition === 1) {
-                        scene.penguinImage.setPosition((window.innerWidth/2)-50, (window.innerHeight/2)+175);
+                        scene.avatarImage.setPosition((window.innerWidth/2)-50, (window.innerHeight/2)+175);
 
                     }
                     else if (scene.correctPosition === 2) {
-                        scene.penguinImage.setPosition((window.innerWidth/2)+75+positionOffset, (window.innerHeight/2)+175);
+                        scene.avatarImage.setPosition((window.innerWidth/2)+75+positionOffset, (window.innerHeight/2)+175);
                     }
 
                     // destroy the round
@@ -114,7 +114,7 @@ window.onload = function() {
                 scene.rightText.setPosition((window.innerWidth/2)+60+positionOffset, 32);
                 scene.middleText.setPosition((window.innerWidth/2)-100, 32);
                 scene.livesText.setPosition(5,5);
-                scene.penguinImage.setPosition((window.innerWidth/2)-50, (window.innerHeight/2)+175);
+                scene.avatarImage.setPosition((window.innerWidth/2)-50, (window.innerHeight/2)+175);
                 scene.timeText.setPosition(window.innerWidth-5,5);
 
                 if(scene.leftImage) {
@@ -148,10 +148,14 @@ window.onload = function() {
         preload() {
             // load background image
             this.load.image('background','/static/images/obstacleBG.jpg');
-            this.load.image('defaultPenguin','/static/images/penguinDefault.png');
-            this.load.image('stone','/static/images/stone.png');
-            this.load.image('bush','/static/images/bush.png');
-            this.load.image('log','/static/images/log.png');
+            this.load.image('default','/static/images/defaultavatar.png');
+            this.load.image('level2','/static/images/level2avatar.png');
+            this.load.image('level5','/static/images/level5avatar.png');
+            this.load.image('level8','/static/images/level8avatar.png');
+            this.load.image('stone','/static/images/defaultobstacle.png');
+            this.load.image('level3','/static/images/level3obstacle.png');
+            this.load.image('level6','/static/images/level6obstacle.png');
+            this.load.image('level9','/static/images/level9obstacle.png');
         }
         
         create(){
@@ -184,7 +188,8 @@ window.onload = function() {
             this.typedWord = '';
 
             // add obstacle images
-            this.obstacles = ['stone','bush','log'];
+            this.obstacles = ['stone'];
+            getObbys().then(item => {this.setObbys(item)});
 
             // index tracker for word bank
             this.word = 0;
@@ -196,6 +201,15 @@ window.onload = function() {
                 event.preventDefault();
             });
             this.scale.on('resize',this.centerButton,this);
+        }
+
+        setObbys(list){
+            var names = ['level3', 'level6', 'level9'];
+            for(let i = 0; i < 3; ++i){
+                if(list[i]){
+                    this.obstacles.push(names[i]);
+                }
+            }
         }
 
         // recenter buttons and background when screen is resized
@@ -272,7 +286,7 @@ window.onload = function() {
                 this.curwords = this.wordbank;
 
                 if (firstRound==true) {
-                    createObstacle(this);
+                    getAvatar().then(item => {createObstacle(this, item)});
                 }
                 else {
                     this.newRound();
@@ -385,7 +399,7 @@ window.onload = function() {
             }
 
             // word has hit the penguin
-            if (words[0].y + words[0].height >= this.penguinImage.y - (this.penguinImage.height / 5)) {
+            if (words[0].y + words[0].height >= this.avatarImage.y - (this.avatarImage.height / 5)) {
 
                 this.lives--;
 
@@ -415,7 +429,7 @@ window.onload = function() {
             }
             this.timeText.destroy();
             this.userInputDisplay.destroy();
-            this.penguinImage.destroy();
+            this.avatarImage.destroy();
             this.roundsOnScreen = [];
             this.time.removeAllEvents();
             this.clearObstacles();
@@ -617,5 +631,45 @@ function passStatistics(time){
         body: JSON.stringify({
             time: time
         })
+    })
+}
+
+function getAvatar(){
+    return fetch('/getItemInfo/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+            "game": "snowSlopeAvatar"
+        })
+    }) 
+    // get the data from the django view and parse it in javascript
+    .then(response => response.json())
+    .then(data => {
+        // extract the words and return it
+        return data.item;
+        
+    })
+}
+
+function getObbys(){
+    return fetch('/getItemInfo/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+            "game": "snowSlopeObs"
+        })
+    }) 
+    // get the data from the django view and parse it in javascript
+    .then(response => response.json())
+    .then(data => {
+        // extract the words and return it
+        return data.item;
+        
     })
 }

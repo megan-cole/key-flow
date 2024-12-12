@@ -396,7 +396,6 @@ function getDifficulty(game) {
 
             // Check if personalized practice is active if it is do nothing else 
             if (!isPersonalizedActive) {
-                difficulty = 'Medium'
                 if (difficulty && timer) {
                     getSen(difficulty, timer).then(text => {
                         scene.newSentence(text, timer);
@@ -433,7 +432,7 @@ function getDifficulty(game) {
             this.blur()
         });
     });
-    if (personalizedButton) {
+    
         personalizedButton.addEventListener('click', () => {
 
             const scene = game.scene.getScene('TypingScene');
@@ -454,7 +453,5 @@ function getDifficulty(game) {
                 console.log("Personalized Practice deactivated. Awaiting user input...");
             }
         });
-    } else {
-        console.error("Personalized Practice button not found in the DOM.");
-    }
+    
 }
