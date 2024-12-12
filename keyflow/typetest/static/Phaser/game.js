@@ -51,19 +51,44 @@ window.onload = function() {
         if (scene.currentCharBox){
              scene.currentCharBox.destroy();
         }
-        textDisplay = scene.add.text(50, 100, currentSentence, { fontSize: '24px', fontFamily:'"Courier New", monospace', fill: '#ffffff'});  // Correct color to '#ffffff'
-        textDisplay2 = scene.add.text(50, 200, nextSentence, { fontSize: '24px', fontFamily:'"Courier New", monospace', fill: '#808080'});    //got rid of word wrapping
-     
-        userInputDisplay = scene.add.text(50, 300, curTyped, { fontSize: '24px', fontFamily:'"Courier New",monospace', fill: '#ffffff'});    // added monospace so each character is equilength
+        function stringOffset(str) {
+            // Count the total characters
+            const totalChars = str.length;
+            console.log(Math.floor(str.length/2))
+            half = str.slice(0,Math.floor(str.length/2))
+            // Count the spaces
+            const spaceCount = half.split(' ').length - 1;
+          
+            // Calculate the character count without spaces
+            const charCountWithoutSpaces = totalChars - spaceCount;
+            const num = totalChars*7.15 + spaceCount
+          
+            return num;
+          }
+        
+        half = window.innerWidth/2
+        textDisplay = scene.add.text(half, 100, currentSentence, { fontSize: '24px', fontFamily:'"Courier New", monospace', fill: '#ffffff'});  // Correct color to '#ffffff'
+        textDisplay.setOrigin(0.5,0.5)
+        console.log(window.innerWidth)
+        console.log(window.outerWidth)
+        textDisplay2 = scene.add.text(half, 200, nextSentence, { fontSize: '24px', fontFamily:'"Courier New", monospace', fill: '#808080'});    //got rid of word wrapping
+        textDisplay2.setOrigin(0.5,0.5)
+        userInputDisplay = scene.add.text(half, 300, curTyped, { fontSize: '24px', fontFamily:'"Courier New",monospace', fill: '#ffffff'});    // added monospace so each character is equilength
+        userInputDisplay.setOrigin(0.5,0.5)
 
+        let testChar = scene.add.text(-200, 0, " ", { fontSize: '24px', fontFamily: '"Courier New", monospace' });
+        let bounds = testChar.getBounds();
+        let charWidth = bounds.width;
+        console.log(charWidth)
+        
 
         // Clean up by removing the temporary text objects
         var timeTextStyle = {font: "32px Arial",  fill: '#99ffcc'};    // somethings are inevitable :)
         scene.timeText = scene.add.text(16,16, "Time Elapsed: ", timeTextStyle)
 
         scene.currentCharBox = scene.add.rectangle(
-            textDisplay.x+8, 
-            textDisplay.y+12, 
+            textDisplay.x-stringOffset(currentSentence)+7, 
+            textDisplay.y, 
             14, 
             28, 
             0x808080, 
@@ -117,17 +142,17 @@ window.onload = function() {
                     curTyped += key;
                     backspace = false;
                     userInputDisplay.setText(curTyped);
-                    offset = 4
-                    let totalTextWidth = userInputDisplay.width + textDisplay.x + offset
+                    offset = 14.1
+                    let totalTextWidth = offset 
                     xPosition = totalTextWidth;
-                    scene.currentCharBox.x = xPosition;
+                    scene.currentCharBox.x += offset;
                     console.log(xPosition)
                     
                     // if key is a space, count this as one word done
                     if (key == " ") {
                         numWords++;
-                        let spaceWidth = 1; // Adjust this value as needed
-                        //xPosition += spaceWidth;
+                        let spaceWidth = 1.25; // Adjust this value as needed
+                        scene.currentCharBox.x += spaceWidth;
                         
                     }
                     scene.currentCharBox.setFillStyle(0x808080, 0.2);
@@ -149,12 +174,12 @@ window.onload = function() {
                 currentSentence = nextSentence  //get next sentence
                 nextSentence = textToType.split(' ').slice(wordIndex,wordIndex+6).join(' '); //get next next sentence
                 nextSentence += ' ';
-                textDisplay.setText(currentSentence);
-                textDisplay2.setText(nextSentence);
+                textDisplay.setText(currentSentence).setOrigin(0.5,0.5);
+                textDisplay2.setText(nextSentence).setOrigin(0.5, 0.5);
                 curTyped = '';
                 typedText += ' ';
                 numWords++;
-                scene.currentCharBox.setPosition(textDisplay.x + 8, textDisplay.y + 12);
+                scene.currentCharBox.setPosition(textDisplay.x -stringOffset(currentSentence)+7, textDisplay.y);
                 xPosition = textDisplay.x + 8
             }
 
@@ -371,6 +396,7 @@ function getDifficulty(game) {
 
             // Check if personalized practice is active if it is do nothing else 
             if (!isPersonalizedActive) {
+                difficulty = 'Medium'
                 if (difficulty && timer) {
                     getSen(difficulty, timer).then(text => {
                         scene.newSentence(text, timer);
