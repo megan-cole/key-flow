@@ -41,8 +41,12 @@ def index(request):
         data['avgWPM'] = int((sum(wpm) / len(wpm))) if wpm else 0
         data['accuracy'] = int((sum(accuracy) / len(accuracy))) if accuracy else 0
         data['lettersMissed'] = list(lettersMissed.keys())
-        data['nextXP'] = xpLevels[user.level] - user.xp
+
+        if user.level < 10:
+            data['nextXP'] = xpLevels[user.level] - user.xp
+
         data['profilepicture'] =  EquippedItems.objects.filter(username=user).values('profilePicture').first()['profilePicture']
+        data['character'] = EquippedItems.objects.filter(username=user).values('character').first()['character']
 
 
     return render(request, 'index.html',data)
@@ -136,10 +140,17 @@ def equipitem(request, itemName):
     if user.level >= level:
         userRecord = EquippedItems.objects.filter(username=user).first()
         if level == 1 or level == 4 or level == 7:
+            characters ={}
+            characters["default"] = "paul"
+            characters["level1"] = "benson"
+            characters["level4"] = "cate"
+            characters["level7"] = "alex"
             if userRecord.profilePicture != itemName:
                 userRecord.profilePicture = itemName
+                userRecord.character = characters[itemName]
             else:
                 userRecord.profilePicture = "default"
+                userRecord.character = characters["default"]
         elif level == 2 or level == 5 or level == 8:
             if userRecord.snowSlopeAvatar != itemName:
                 userRecord.snowSlopeAvatar = itemName

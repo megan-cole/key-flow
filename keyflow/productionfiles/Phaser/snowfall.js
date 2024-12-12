@@ -102,7 +102,7 @@ window.onload = function(){
         let wordTimer = scene.time.addEvent({
             delay: delayVal,
             callback: () =>{
-                    if(timer > 0){
+                    if(timer > 1){
                     //generate random x postion for word
                     let xpos = Math.floor(Math.random() * ((window.innerWidth - 150) - 100) + 100); 
                     snowflakedisplay = scene.add.image(xpos, 15, 'snowflake');
