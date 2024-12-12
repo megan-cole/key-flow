@@ -148,13 +148,8 @@ ul, ol, dl {
 
 /* Individual card items */
 .card-item {
-<<<<<<< HEAD
-  flex: 1 1 calc(25% - 20px);
-  max-width: 300px;          /* Limit maximum card size */
-=======
   flex: 1 1 calc(25% - 20px); 
   max-width: 300px;          
->>>>>>> 92-equip
   box-sizing: border-box;    
   background-color:#f9f9f9;
   border: 1px solid #ddd;
