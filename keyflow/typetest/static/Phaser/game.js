@@ -396,7 +396,6 @@ function getDifficulty(game) {
 
             // Check if personalized practice is active if it is do nothing else 
             if (!isPersonalizedActive) {
-                difficulty = 'Medium'
                 if (difficulty && timer) {
                     getSen(difficulty, timer).then(text => {
                         scene.newSentence(text, timer);

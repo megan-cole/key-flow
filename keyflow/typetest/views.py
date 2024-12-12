@@ -254,63 +254,63 @@ def generateSentences(request):
     # for easiest difficulty level, use bare_bone_with_adjectives
     # for medium difficulty level, use sentence
     if request.method == 'POST':
-
+        text = "bruh"
         difficulty = json.loads(request.body).get('difficulty','normal')
         timer = json.loads(request.body).get('timer','30s')
 
-    s = RandomSentence()
-    time = int(timer)
+        s = RandomSentence()
+        time = int(timer)
 
-    numWords = (time / 60.0) * 150
-    numSentences = math.ceil(numWords / 4.0)
-    if difficulty.lower() == 'normal':
-        sentences = [s.bare_bone_with_adjective() for _ in range(numSentences)]
+        numWords = (time / 60.0) * 150
+        numSentences = math.ceil(numWords / 4.0)
+        if difficulty.lower() == 'normal':
+            sentences = [s.bare_bone_with_adjective() for _ in range(numSentences)]
 
-        # remove capitalization and punctuation
-        for i in range(len(sentences)):
-            sentences[i] = sentences[i][:-1].lower()
+            # remove capitalization and punctuation
+            for i in range(len(sentences)):
+                sentences[i] = sentences[i][:-1].lower()
+                
+            text = ' '.join(random.sample(sentences,k=numSentences))
+        elif difficulty.lower() == 'hard':
+            sentences = [s.sentence() for _ in range(numSentences)]
+            text = ' '.join(random.sample(sentences,k=numSentences))
+        elif difficulty.lower() == 'crazy':
             
-        text = ' '.join(random.sample(sentences,k=numSentences))
-    elif difficulty.lower() == 'hard':
-        sentences = [s.sentence() for _ in range(numSentences)]
-        text = ' '.join(random.sample(sentences,k=numSentences))
-    elif difficulty.lower() == 'crazy':
-        
-        
-        sentences = [s.sentence() for _ in range(numSentences)]
-        text = ' '.join(random.sample(sentences,k=numSentences))
+            
+            sentences = [s.sentence() for _ in range(numSentences)]
+            text = ' '.join(random.sample(sentences,k=numSentences))
 
-        # randomly capitalize letters in the sentence
-        textLen = len(text)
-        randomIndices = random.sample(range(0,textLen),textLen//3)
+            # randomly capitalize letters in the sentence
+            textLen = len(text)
+            randomIndices = random.sample(range(0,textLen),textLen//3)
 
-       
-        newText = ''
-        for i in range(len(text)):
-            if i in randomIndices:
-                newText += text[i].upper()
-            else:
-                newText += text[i]
-        # vary the punctuation characters
-        text = ''
-        hyphen = False
-        puncChars = ['.','?','!',',',':',';',':','-']
-        for i in range(len(newText)):
-            if newText[i] == '.':
-                punc = random.choice(puncChars)
-                text += punc
-                if punc == '-':
-                    hyphen = True
-            else:
-                # remove space after hyphen to combine the words
-                if hyphen:
-                    hyphen = False 
+        
+            newText = ''
+            for i in range(len(text)):
+                if i in randomIndices:
+                    newText += text[i].upper()
                 else:
-                    text += newText[i]
+                    newText += text[i]
+            # vary the punctuation characters
+            text = ''
+            hyphen = False
+            puncChars = ['.','?','!',',',':',';',':','-']
+            for i in range(len(newText)):
+                if newText[i] == '.':
+                    punc = random.choice(puncChars)
+                    text += punc
+                    if punc == '-':
+                        hyphen = True
+                else:
+                    # remove space after hyphen to combine the words
+                    if hyphen:
+                        hyphen = False 
+                    else:
+                        text += newText[i]
 
-            
-    # return a JSON response that can be fetched by Phaser to get the words
-    return JsonResponse({'text':text})
+                
+        # return a JSON response that can be fetched by Phaser to get the words
+        return JsonResponse({'text':text})
 
 logger = logging.getLogger(__name__)
 
