@@ -367,7 +367,6 @@ def personalizedSentences(request):
             sentences.append(sentence)
 
         logger.info(f"Generated sentences: {sentences}")
-
         # Return sentences in JSON format
         return JsonResponse({'text': ' '.join(sentences)})
 

@@ -432,7 +432,7 @@ function getDifficulty(game) {
             this.blur()
         });
     });
-    if (personalizedButton) {
+    
         personalizedButton.addEventListener('click', () => {
 
             const scene = game.scene.getScene('TypingScene');
@@ -453,7 +453,5 @@ function getDifficulty(game) {
                 console.log("Personalized Practice deactivated. Awaiting user input...");
             }
         });
-    } else {
-        console.error("Personalized Practice button not found in the DOM.");
-    }
+    
 }
