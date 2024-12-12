@@ -18,6 +18,7 @@ urlpatterns = [
     path('generateWordBank/', views.generateWordBank, name='generateWordBank'),
     path('getStatistics/',views.getStatistics,name='getStatistics'),
     path('getStatisticsSnowFall/',views.getStatisticsSnowFall,name='getStatisticsSnowFall'),
+    path('getItemInfo/', views.getItemInfo, name='getItemInfo'),
     path('logout/', LogoutView.as_view(next_page='index'), name='logout'),
     path('snowfall/', views.snowfall, name='snowfall'),
     path('leaderboard/<str:minigame>/',views.leaderboard,name='minigameLeaderboard'),

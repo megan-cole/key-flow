@@ -107,7 +107,7 @@
                     <p>Level One Reward</p>
                     </a>
                     {% else %}
-                        <p><b>XP to next reward: </b>{{user.xp}}</p>
+                        <p><b>XP to next reward: </b>{{nextXP}}</p>
                         <img id="bpimg" src="{% static 'images/level' %}{{user.level|add:1}}.png" alt="BattlePass Level" />
                         </a>
                     {% endif %}

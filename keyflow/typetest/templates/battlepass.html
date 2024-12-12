@@ -17,8 +17,12 @@
             <ul class="card-list ">
                 <li class="card-item ">
                     <div class="card-link">
-                        <img src="{% static 'images/level1.png' %}" alt="Card Image" class="card-image">
-                        <p class="badge">Garfield Profile Photo</p>
+                        {% if user.level >= 1 %}
+                            <img src="{% static 'images/level1.png' %}" alt="Card Image" class="card-image">
+                        {% else %}
+                            <img src="{% static 'images/level1grey.png' %}" alt="Card Image" class="card-image">
+                        {%endif%}
+                        <p class="badge">Bunny Profile Photo</p>
                         <h2 class="card-title">Level 1</h2>
                         <div class="card-details">
                             <p class="card-xp">XP Required: 200</p>
@@ -29,8 +33,12 @@
                 </li>
                 <li class="card-item ">
                     <div class="card-link">
-                        <img src="{% static 'images/level2.png' %}" alt="Card Image" class="card-image">
-                        <p class="badge">Pig Avatar</p>
+                        {% if user.level >= 2 %}
+                            <img src="{% static 'images/level2.png' %}" alt="Card Image" class="card-image">
+                        {% else %}
+                            <img src="{% static 'images/level2grey.png' %}" alt="Card Image" class="card-image">
+                        {%endif%}
+                        <p class="badge">Bunny Avatar</p>
                         <h2 class="card-title">Level 2</h2>
                         <div class="card-details">
                             <p class="card-xp">XP Required: 300</p>
@@ -41,8 +49,12 @@
                 </li>
                 <li class="card-item ">
                     <div class="card-link">
-                        <img src="{% static 'images/level3.png' %}" alt="Card Image" class="card-image">
-                        <p class="badge">Trashcan Obstacle</p>
+                        {% if user.level >= 3 %}
+                            <img src="{% static 'images/level3.png' %}" alt="Card Image" class="card-image">
+                        {% else %}
+                            <img src="{% static 'images/level3grey.png' %}" alt="Card Image" class="card-image">
+                        {%endif%}
+                        <p class="badge">Log Obstacle</p>
                         <h2 class="card-title">Level 3</h2>
                         <div class="card-details">
                             <p class="card-xp">XP Required: 450</p>
@@ -53,8 +65,12 @@
                 </li>
                 <li class="card-item ">
                     <div class="card-link">
-                        <img src="{% static 'images/level4.png' %}" alt="Card Image" class="card-image">
-                        <p class="badge">Gojo Profile Picture</p>
+                        {% if user.level >= 4 %}
+                            <img src="{% static 'images/level4.png' %}" alt="Card Image" class="card-image">
+                        {% else %}
+                            <img src="{% static 'images/level4grey.png' %}" alt="Card Image" class="card-image">
+                        {%endif%}
+                        <p class="badge">Cat Profile Picture</p>
                         <h2 class="card-title">Level 4</h2>
                         <div class="card-details">
                             <p class="card-xp">XP Required: 675</p>
@@ -65,8 +81,12 @@
                 </li>
                 <li class="card-item ">
                     <div class="card-link">
-                        <img src="{% static 'images/level5.png' %}" alt="Card Image" class="card-image">
-                        <p class="badge">Duck Avatar</p>
+                        {% if user.level >= 5 %}
+                            <img src="{% static 'images/level5.png' %}" alt="Card Image" class="card-image">
+                        {% else %}
+                            <img src="{% static 'images/level5grey.png' %}" alt="Card Image" class="card-image">
+                        {%endif%}
+                        <p class="badge">Cat Avatar</p>
                         <h2 class="card-title">Level 5</h2>
                         <div class="card-details">
                             <p class="card-xp">XP Required: 1000</p>
@@ -77,8 +97,12 @@
                 </li>
                 <li class="card-item ">
                     <div class="card-link">
-                        <img src="{% static 'images/level6.png' %}" alt="Card Image" class="card-image">
-                        <p class="badge">Tree Obstacle</p>
+                        {% if user.level >= 6 %}
+                            <img src="{% static 'images/level6.png' %}" alt="Card Image" class="card-image">
+                        {% else %}
+                            <img src="{% static 'images/level6grey.png' %}" alt="Card Image" class="card-image">
+                        {%endif%}
+                        <p class="badge">Snowman Obstacle</p>
                         <h2 class="card-title">Level 6</h2>
                         <div class="card-details">
                             <p class="card-xp">XP Required: 1500</p>
@@ -89,8 +113,12 @@
                 </li>
                 <li class="card-item ">
                     <div class="card-link">
-                        <img src="{% static 'images/level7.png' %}" alt="Card Image" class="card-image">
-                        <p class="badge">Freddy Fazbear Profile Photo</p>
+                        {% if user.level >= 7 %}
+                            <img src="{% static 'images/level7.png' %}" alt="Card Image" class="card-image">
+                        {% else %}
+                            <img src="{% static 'images/level7grey.png' %}" alt="Card Image" class="card-image">
+                        {%endif%}
+                        <p class="badge">Aligator Profile Photo</p>
                         <h2 class="card-title">Level 7</h2>
                         <div class="card-details">
                             <p class="card-xp">XP Required: 2300</p>
@@ -100,8 +128,12 @@
                     </div>
                 </li><li class="card-item ">
                     <div class="card-link">
-                        <img src="{% static 'images/level8.png' %}" alt="Card Image" class="card-image">
-                        <p class="badge">Fortnite Avatar</p>
+                        {% if user.level >= 8 %}
+                            <img src="{% static 'images/level8.png' %}" alt="Card Image" class="card-image">
+                        {% else %}
+                            <img src="{% static 'images/level8grey.png' %}" alt="Card Image" class="card-image">
+                        {%endif%}
+                        <p class="badge">Aligator Avatar</p>
                         <h2 class="card-title">Level 8</h2>
                         <div class="card-details">
                             <p class="card-xp">XP Required: 3400</p>
@@ -111,8 +143,12 @@
                     </div>
                 </li><li class="card-item ">
                     <div class="card-link">
-                        <img src="{% static 'images/level9.png' %}" alt="Card Image" class="card-image">
-                        <p class="badge">Mountain Obstacle</p>
+                        {% if user.level >= 9 %}
+                            <img src="{% static 'images/level9.png' %}" alt="Card Image" class="card-image">
+                        {% else %}
+                            <img src="{% static 'images/level9grey.png' %}" alt="Card Image" class="card-image">
+                        {%endif%}
+                        <p class="badge">Cats Obstacle</p>
                         <h2 class="card-title">Level 9</h2>
                         <div class="card-details">
                             <p class="card-xp">XP Required: 5100</p>
@@ -122,7 +158,11 @@
                     </div>
                 </li><li class="card-item ">
                     <div class="card-link">
-                        <img src="{% static 'images/level10.png' %}" alt="Card Image" class="card-image">
+                        {% if user.level >= 10 %}
+                            <img src="{% static 'images/level10.png' %}" alt="Card Image" class="card-image">
+                        {% else %}
+                            <img src="{% static 'images/level10grey.png' %}" alt="Card Image" class="card-image">
+                        {%endif%}
                         <p class="badge">Snowfall Background</p>
                         <h2 class="card-title">Level 10</h2>
                         <div class="card-details">

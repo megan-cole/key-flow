@@ -14,6 +14,7 @@ import logging
 def index(request):
     data = {}
     if request.user.is_authenticated:
+        xpLevels = [200, 300, 450, 675, 1000, 1500, 2300, 3400, 5100, 7500]
         user = request.user
 
         # get the list of all this user's statistics
@@ -40,6 +41,8 @@ def index(request):
         data['avgWPM'] = int((sum(wpm) / len(wpm))) if wpm else 0
         data['accuracy'] = int((sum(accuracy) / len(accuracy))) if accuracy else 0
         data['lettersMissed'] = list(lettersMissed.keys())
+        data['nextXP'] = xpLevels[user.level] - user.xp
+        data['profilepicture'] =  EquippedItems.objects.filter(username=user).values('profilePicture').first()['profilePicture']
 
 
     return render(request, 'index.html',data)
@@ -87,7 +90,6 @@ def profile(request):
     data['lettersMissed'] = list(lettersMissed.keys())
 
     data['profilepicture'] =  EquippedItems.objects.filter(username=user).values('profilePicture').first()['profilePicture']
-    print(data['profilepicture'])
 
     # get high scores for minigames
     try:
@@ -134,18 +136,36 @@ def equipitem(request, itemName):
     if user.level >= level:
         userRecord = EquippedItems.objects.filter(username=user).first()
         if level == 1 or level == 4 or level == 7:
-            userRecord.profilePicture = itemName
+            if userRecord.profilePicture != itemName:
+                userRecord.profilePicture = itemName
+            else:
+                userRecord.profilePicture = "default"
         elif level == 2 or level == 5 or level == 8:
-            userRecord.snowSlopeAvatar = itemName
+            if userRecord.snowSlopeAvatar != itemName:
+                userRecord.snowSlopeAvatar = itemName
+            else:
+                userRecord.snowSlopeAvatar = "default"
         elif level == 3:
-            userRecord.snowSlopeObstacle1 = True
-        elif level == 6:
-            userRecord.snowSlopeObstacle2 = True
-        elif level == 9:
-            userRecord.snowSlopeObstacle1 = True
-        else:
-            userRecord.snowFallBackground = itemName
+            if userRecord.snowSlopeObstacle1 != True:
+                userRecord.snowSlopeObstacle1 = True
+            else:
+                userRecord.snowSlopeObstacle1 = False
 
+        elif level == 6:
+            if userRecord.snowSlopeObstacle2 != True:
+                userRecord.snowSlopeObstacle2 = True
+            else:
+                userRecord.snowSlopeObstacle2 = False
+        elif level == 9:
+            if userRecord.snowSlopeObstacle3 != True:
+                userRecord.snowSlopeObstacle3 = True
+            else:
+                userRecord.snowSlopeObstacle3 = False
+        else:
+            if userRecord.snowFallBackground != itemName:
+                userRecord.snowFallBackground = itemName
+            else:
+                userRecord.snowFallBackground = "default"
         try:
             userRecord.save()
         except:
@@ -516,6 +536,23 @@ def getStatisticsObstacle(request):
 
 
     return JsonResponse({'success':False})
+
+def getItemInfo(request):
+    if request.method == 'POST':
+
+        game = json.loads(request.body).get('game')
+        user = request.user
+        if game == "snowFall":
+            item =  EquippedItems.objects.filter(username=user).values('snowFallBackground').first()['snowFallBackground']
+        elif game == "snowSlopeAvatar":
+            item = EquippedItems.objects.filter(username=user).values('snowSlopeAvatar').first()['snowSlopeAvatar']
+        elif game == "snowSlopeObs":
+            item = []
+            item.append(EquippedItems.objects.filter(username=user).values('snowSlopeObstacle1').first()['snowSlopeObstacle1'])
+            item.append(EquippedItems.objects.filter(username=user).values('snowSlopeObstacle2').first()['snowSlopeObstacle2'])
+            item.append(EquippedItems.objects.filter(username=user).values('snowSlopeObstacle2').first()['snowSlopeObstacle2'])
+            print(item)
+    return JsonResponse({'item': item})
 
 def check_level(user):
     if user.xp >= 7500:
