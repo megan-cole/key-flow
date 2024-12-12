@@ -361,7 +361,10 @@ def getStatistics(request):
         # get sentence so we know the letter frequency
         sentence = data.get('sentence')
         time = int(data.get('time'))
-        diff = data.get('difficulty').lower()
+        if(data.get('difficulty') == None):
+            diff = "medium"
+        else:
+            diff = data.get('difficulty').lower()
         accuracy = 0
         # accuracy is the # of letters missed // of num letters in sentence
         numLettersMissed = sum(lettersMissed.values())
