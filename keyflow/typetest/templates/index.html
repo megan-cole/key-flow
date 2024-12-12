@@ -96,8 +96,8 @@
                 {%if user.is_authenticated%}
                     <a href="/battlepass/"><h2>BattlePass Progress</h2>
                     {% if user.battlePass == False %}
-                    <p>BattlePass made by Augustín</p>
-                    <img id="bpimg" src="{% static 'level1.png' %}" alt="BattlePass Level" />
+                    <a href="/buyBP/"><p>Buy BattlePass Here!</p></a>
+                    <img id="bpimg" src="{% static 'images/level1.png' %}" alt="BattlePass Level" />
                     <p>Level One Reward</p>
                     </a>
                     {% else %}
