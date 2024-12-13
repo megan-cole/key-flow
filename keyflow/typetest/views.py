@@ -328,6 +328,9 @@ def personalizedSentences(request):
         # Retrieve most missed letters
         userRecords = Statistics.objects.filter(username=user, gameMode='basic')
         logger.info(f"Retrieved {userRecords.count()} records for user: {user}.")
+        if userRecords.count() < 5:
+            logger.info("User does not enough records.")
+            return JsonResponse({'text': 'You need more runs on non personalized type test to play personalized practice'})
 
         lettersMissed = {}
         for record in userRecords:
