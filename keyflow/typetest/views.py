@@ -137,6 +137,7 @@ def equipitem(request, itemName):
     if level == 0:
         level = 10
 
+
     if user.battlePass == True and user.level >= level:
         userRecord = EquippedItems.objects.filter(username=user).first()
         if level == 1 or level == 4 or level == 7:
@@ -561,15 +562,24 @@ def getItemInfo(request):
         game = json.loads(request.body).get('game')
         user = request.user
         if game == "snowFall":
-            item =  EquippedItems.objects.filter(username=user).values('snowFallBackground').first()['snowFallBackground']
+            if not user.is_authenticated:
+                item = "default"
+            else:
+                item =  EquippedItems.objects.filter(username=user).values('snowFallBackground').first()['snowFallBackground']
         elif game == "snowSlopeAvatar":
-            item = EquippedItems.objects.filter(username=user).values('snowSlopeAvatar').first()['snowSlopeAvatar']
+            if not user.is_authenticated:
+                item = "default"
+            else:
+                item = EquippedItems.objects.filter(username=user).values('snowSlopeAvatar').first()['snowSlopeAvatar']
         elif game == "snowSlopeObs":
-            item = []
-            item.append(EquippedItems.objects.filter(username=user).values('snowSlopeObstacle1').first()['snowSlopeObstacle1'])
-            item.append(EquippedItems.objects.filter(username=user).values('snowSlopeObstacle2').first()['snowSlopeObstacle2'])
-            item.append(EquippedItems.objects.filter(username=user).values('snowSlopeObstacle2').first()['snowSlopeObstacle2'])
-            print(item)
+            if not user.is_authenticated:
+                item = [False, False, False]
+            else:
+                item = []
+                item.append(EquippedItems.objects.filter(username=user).values('snowSlopeObstacle1').first()['snowSlopeObstacle1'])
+                item.append(EquippedItems.objects.filter(username=user).values('snowSlopeObstacle2').first()['snowSlopeObstacle2'])
+                item.append(EquippedItems.objects.filter(username=user).values('snowSlopeObstacle2').first()['snowSlopeObstacle2'])
+        
     return JsonResponse({'item': item})
 
 def check_level(user):
