@@ -137,7 +137,7 @@ def equipitem(request, itemName):
     if level == 0:
         level = 10
 
-    if user.level >= level:
+    if user.battlePass == True and user.level >= level:
         userRecord = EquippedItems.objects.filter(username=user).first()
         if level == 1 or level == 4 or level == 7:
             characters ={}
@@ -346,20 +346,23 @@ def personalizedSentences(request):
         for _ in range(100):  # Generate a pool of 100 random words
             word = r.word().lower()
             if any(letter in word for letter in mostMissedLetters):
+                print(word)
                 wordbank.append(word)
 
         logger.info(f"Initial word bank size: {len(wordbank)}")
 
         # Ensure at least 45 valid words in the word bank
         wordbank = [word for word in wordbank if len(word) <= 10 and "-" not in word and " " not in word]
+        
         logger.info(f"Filtered word bank size: {len(wordbank)}")
+        print(len(wordbank))
         while len(wordbank) < 45:
             word = r.word().lower()
             if any(letter in word for letter in mostMissedLetters) and len(word) <= 10 and "-" not in word:
                 wordbank.append(word)
 
         logger.info(f"Final word bank size: {len(wordbank)}")
-
+        print("here")
         # Generate sentences using these words
         sentences = []
         for _ in range(10):  # Create 10 sentences
