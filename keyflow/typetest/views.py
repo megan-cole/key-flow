@@ -358,14 +358,12 @@ def personalizedSentences(request):
         wordbank = [word for word in wordbank if len(word) <= 10 and "-" not in word and " " not in word]
         
         logger.info(f"Filtered word bank size: {len(wordbank)}")
-        print(len(wordbank))
         while len(wordbank) < 45:
             word = r.word().lower()
             if any(letter in word for letter in mostMissedLetters) and len(word) <= 10 and "-" not in word:
                 wordbank.append(word)
 
         logger.info(f"Final word bank size: {len(wordbank)}")
-        print("here")
         # Generate sentences using these words
         sentences = []
         for _ in range(10):  # Create 10 sentences
@@ -530,6 +528,7 @@ def getStatisticsObstacle(request):
             
             user.xp += int(xpToAdd)
             user.save()
+            check_level(user)
             userRecord = MinigameStatistics.objects.filter(username=user)
             if not userRecord:
                 # store data in database for user
