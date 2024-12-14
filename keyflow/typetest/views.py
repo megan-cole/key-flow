@@ -138,11 +138,12 @@ def equipitem(request, itemName):
         level = 10
 
 
-    if user.battlePass == True and user.level >= level:
+    if user.is_authenticated and user.battlePass == True and user.level >= level:
         userRecord = EquippedItems.objects.filter(username=user).first()
         if level == 1 or level == 4 or level == 7:
             characters ={}
             characters["default"] = "paul"
+            
             characters["level1"] = "benson"
             characters["level4"] = "cate"
             characters["level7"] = "alex"
